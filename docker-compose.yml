@@ -16,7 +16,9 @@ services:
     
     labels:
       - traefik.enable=true
-      - traefik.http.routers.estatisticasbackend.entrypoints=http
+      - traefik.http.routers.estatisticasbackend.entrypoints=web, websecure
+      - traefik.http.routers.estatisticasbackend.tls=true
+      - traefik.http.routers.estatisticasbackend.tls.certresolver=production
       - traefik.http.routers.estatisticasbackend.rule=Host(`$API_ESTATISTICAS_URL`)
       - traefik.docker.network=traefik
 
@@ -28,7 +30,7 @@ services:
     depends_on:
       - estatisticas_backend
     environment:
-      API_URL: "http://172.25.0.2:2020/"
+      API_URL: $API_ESTATISTICAS_URL
       PORT: 2121
     ports:
       - 2121:2121
@@ -38,7 +40,9 @@ services:
 
     labels:
       - traefik.enable=true
-      - traefik.http.routers.estatisticasfrontend.entrypoints=http
+      - traefik.http.routers.estatisticasfrontend.entrypoints=web, websecure
+      - traefik.http.routers.estatisticasbackend.tls=true
+      - traefik.http.routers.estatisticasbackend.tls.certresolver=production
       - traefik.http.routers.estatisticasfrontend.rule=Host(`$ESTATISTICAS_URL`)
       - traefik.docker.network=traefik
 
