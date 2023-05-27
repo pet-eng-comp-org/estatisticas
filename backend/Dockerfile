@@ -7,6 +7,6 @@ RUN mv node_modules/npm /usr/local/lib/node_modules/npm
 
 WORKDIR /app
 
-COPY package.json .
+COPY . .
 
 CMD npm install && npm run dev && npm knex:migrate 
