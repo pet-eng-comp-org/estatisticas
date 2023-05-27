@@ -1,0 +1,44 @@
+version: "2.1"
+
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      TOKEN_SECRET: $API_TOKEN_SECRET
+    networks:
+      - estatisticas
+      - traefik
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.estatisticasbackend.entrypoints=web, websecure
+      - traefik.http.routers.estatisticasbackend.tls=true
+      - traefik.http.routers.estatisticasbackend.tls.certresolver=production
+      - traefik.http.routers.estatisticasbackend.rule=Host(`$ESTATISTICAS_URL`)
+      - traefik.docker.network=$TRAEFIK_NETWORK
+      
+  frontend:
+    build:
+      context: ./frontend
+    depends_on:
+      - backend
+    environment:
+      API_URL: $API_URL
+    networks:
+      - estatisticas
+      - traefik
+
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.estatisticasfrontend.entrypoints=http
+      - traefik.http.routers.estatisticasfrontend.rule=Host(`$ESTATISTICAS_URL`)
+      - traefik.docker.network=$TRAEFIK_NETWORK
+
+networks:
+  estatisticas:
+    driver: bridge
+    name: estatisticas
+  traefik:
+    name: $TRAEFIK_NETWORK
+    external: true
