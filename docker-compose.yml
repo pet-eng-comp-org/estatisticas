@@ -10,19 +10,13 @@ services:
       - estatisticas
       - traefik
 
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.estatisticasbackend.entrypoints=http
-      - traefik.http.routers.estatisticasbackend.rule=Host(`$ESTATISTICAS_URL`)
-      - traefik.docker.network=$TRAEFIK_NETWORK
-      
   frontend:
     build:
       context: ./frontend
     depends_on:
       - backend
     environment:
-      API_URL: $API_URL
+      API_URL: backend
     networks:
       - estatisticas
       - traefik
