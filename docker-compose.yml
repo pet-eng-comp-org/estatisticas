@@ -13,6 +13,7 @@ services:
   frontend:
     build:
       context: ./frontend
+    stdin_open: true
     depends_on:
       - backend
     environment:
