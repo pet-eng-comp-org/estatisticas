@@ -1,0 +1,74 @@
+.sticky-top {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 2s ease-in-out;
+    width: 50%;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.chart-container {
+    background-color: #f5f5f5;
+    border-radius: 15px;
+    border: 1px solid gray;
+    width: 90%;
+    margin-left: 5%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.chart-title {
+    font-size: large;
+}
+
+.title-subtitle {
+    max-width: 95%;
+    padding-left: 5%;
+    height: 20%;
+    /* font-size: small; */
+}
+
+.chart {
+    max-width: 95%;
+    height: 100%;
+}
+
+.py-1{
+    height: 100%;
+}
+
+.ocult-chart{
+    width: 0;
+    visibility: hidden;
+    opacity: 0;
+}
+
+@media only screen and (max-width: 768px) {
+    .col-lg-7 {
+        padding: 0 !important
+    }
+    .chart-container {
+        border: 0;
+        width: 100%;
+        margin-left: 0;
+        border-radius: 0;
+    }
+    .chart-title {
+        font-size: 20px;
+        font-weight: bold
+    }
+    .x-icon {
+        display: none
+    }
+    .title-subtitle {
+        width: 100%;
+    }
+    .chart {
+        padding-left: 5%
+    }
+}

@@ -1,0 +1,38 @@
+.menu{
+    height: 10vh;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+    color: black;
+    background-color: #92AD8B;
+}
+
+.menu-title{
+    display: flex;
+    justify-content: flex-start;
+    width: 50%;
+    height: 100%;
+    align-items: center;
+}
+
+.pet-logo {
+    padding: 2%;
+}
+
+.menu-links {
+    display: flex;
+    align-items: center;
+    margin-right: 2%;
+    font-weight: bold;
+}
+
+.menutext{
+    color: black !important;
+    padding-right: 20px;
+}
+
+.menutext:hover {
+    transform: scale(1.05);
+    text-shadow: white 0px 0px 5px ;
+}
