@@ -12,9 +12,7 @@ services:
 
     labels:
       - traefik.enable=true
-      - traefik.http.routers.estatisticasbackend.entrypoints=web, websecure
-      - traefik.http.routers.estatisticasbackend.tls=true
-      - traefik.http.routers.estatisticasbackend.tls.certresolver=production
+      - traefik.http.routers.estatisticasbackend.entrypoints=http
       - traefik.http.routers.estatisticasbackend.rule=Host(`$ESTATISTICAS_URL`)
       - traefik.docker.network=$TRAEFIK_NETWORK
       
