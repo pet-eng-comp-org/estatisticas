@@ -1,7 +1,8 @@
 version: "2.1"
 
 services:
-  backend:
+  estatisticas_backend:
+    container_name: estatisticas_backend
     build:
       context: ./backend
     environment:
@@ -13,14 +14,15 @@ services:
       - estatisticas
       - traefik
 
-  frontend:
+  estatisticas_frontend:
+    container_name: estatisticas_frontend
     build:
       context: ./frontend
     stdin_open: true
     depends_on:
       - backend
     environment:
-      API_URL: backend
+      API_URL: estatisticas_backend
       PORT: 2121
     ports:
       - 2121:2121

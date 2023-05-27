@@ -7,8 +7,6 @@ RUN mv node_modules/npm /usr/local/lib/node_modules/npm
 
 WORKDIR /app
 
-COPY . .
-
-EXPOSE 2020
+COPY package.json .
 
 CMD npm install && npm run dev && npm knex:migrate 
