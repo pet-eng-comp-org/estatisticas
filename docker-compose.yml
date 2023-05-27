@@ -6,13 +6,19 @@ services:
     build:
       context: ./backend
     environment:
-      TOKEN_SECRET: $API_TOKEN_SECRET
+      TOKEN_SECRET: desejotodaasortedomundoparaquemestamexendonisso
       BACKEND_PORT: 2020
     ports:
       - 2020:2020
     networks:
       - estatisticas
       - traefik
+    
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.estatisticasbackend.entrypoints=http
+      - traefik.http.routers.estatisticasbackend.rule=Host(`$API_ESTATISTICAS_URL`)
+      - traefik.docker.network=traefik
 
   estatisticas_frontend:
     container_name: estatisticas_frontend
@@ -22,7 +28,7 @@ services:
     depends_on:
       - estatisticas_backend
     environment:
-      API_URL: estatisticas_backend
+      API_URL: "http://172.25.0.2:2020/"
       PORT: 2121
     ports:
       - 2121:2121
@@ -34,12 +40,12 @@ services:
       - traefik.enable=true
       - traefik.http.routers.estatisticasfrontend.entrypoints=http
       - traefik.http.routers.estatisticasfrontend.rule=Host(`$ESTATISTICAS_URL`)
-      - traefik.docker.network=$TRAEFIK_NETWORK
+      - traefik.docker.network=traefik
 
 networks:
   estatisticas:
     driver: bridge
     name: estatisticas
   traefik:
-    name: $TRAEFIK_NETWORK
+    name: traefik
     external: true
