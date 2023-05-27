@@ -20,7 +20,7 @@ services:
       context: ./frontend
     stdin_open: true
     depends_on:
-      - backend
+      - estatisticas_backend
     environment:
       API_URL: estatisticas_backend
       PORT: 2121
