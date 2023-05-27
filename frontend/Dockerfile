@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 2121
 
-CMD npm install && npm run dev && npm knex:migrate 
+CMD npm install && npm start
