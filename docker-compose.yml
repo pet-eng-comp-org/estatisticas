@@ -6,7 +6,9 @@ services:
       context: ./backend
     environment:
       TOKEN_SECRET: $API_TOKEN_SECRET
-      BACKEND_PORT: $BACKEND_PORT
+      BACKEND_PORT: 2020
+    ports:
+      - 2020:2020
     networks:
       - estatisticas
       - traefik
@@ -19,7 +21,9 @@ services:
       - backend
     environment:
       API_URL: backend
-      PORT: $FRONTEND_PORT
+      PORT: 2121
+    ports:
+      - 2121:2121
     networks:
       - estatisticas
       - traefik
