@@ -30,7 +30,7 @@ services:
     depends_on:
       - estatisticas_backend
     environment:
-      API_URL: $API_ESTATISTICAS_URL
+      API_URL: $API_ESTATISTICAS_URL_FULL
       PORT: 2121
     ports:
       - 2121:2121
