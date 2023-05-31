@@ -21,7 +21,7 @@ services:
       - traefik.http.routers.estatisticasbackend.tls.certresolver=production
       - traefik.http.routers.estatisticasbackend.rule=Host(`$API_ESTATISTICAS_URL`)
       - traefik.http.services.estatisticasbackend.loadbalancer.server.port=2020
-      - traefik.docker.network=traefik
+      - traefik.docker.network=$TRAEFIK_NETWORK
 
   estatisticas_frontend:
     container_name: estatisticas_frontend
@@ -46,7 +46,7 @@ services:
       - traefik.http.routers.estatisticasfrontend.tls.certresolver=production
       - traefik.http.routers.estatisticasfrontend.rule=Host(`$ESTATISTICAS_URL`)
       - traefik.http.services.estatisticasfrontend.loadbalancer.server.port=2121
-      - traefik.docker.network=traefik
+      - traefik.docker.network=$TRAEFIK_NETWORK
 
 networks:
   estatisticas:
