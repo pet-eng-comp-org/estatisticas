@@ -18,7 +18,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.estatisticasbackend.entrypoints=web, websecure
       - traefik.http.routers.estatisticasbackend.tls=true
-      - traefik.http.routers.estatisticasbackend.tls.certresolver=staging
+      - traefik.http.routers.estatisticasbackend.tls.certresolver=production
       - traefik.http.routers.estatisticasbackend.rule=Host(`$API_ESTATISTICAS_URL`)
       - traefik.http.services.estatisticasbackend.loadbalancer.server.port=2020
       - traefik.docker.network=traefik
@@ -43,7 +43,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.estatisticasfrontend.entrypoints=web, websecure
       - traefik.http.routers.estatisticasfrontend.tls=true
-      - traefik.http.routers.estatisticasfrontend.tls.certresolver=staging
+      - traefik.http.routers.estatisticasfrontend.tls.certresolver=production
       - traefik.http.routers.estatisticasfrontend.rule=Host(`$ESTATISTICAS_URL`)
       - traefik.http.services.estatisticasfrontend.loadbalancer.server.port=2121
       - traefik.docker.network=traefik
@@ -53,5 +53,5 @@ networks:
     driver: bridge
     name: estatisticas
   traefik:
-    name: traefik
+    name: $TRAEFIK_NETWORK
     external: true
