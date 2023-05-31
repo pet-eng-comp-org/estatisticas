@@ -9,7 +9,8 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors({origin: 'https://estatistica.pet.inf.ufes.br/'}));
+// app.use(cors({origin: 'https://estatistica.pet.inf.ufes.br/'}));
+app.use(cors())
 app.use(express.json());
 app.use(routes);
 app.use('/uploads', express.static(path.resolve(__dirname, "..", "uploads")))
