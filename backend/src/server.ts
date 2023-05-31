@@ -16,4 +16,6 @@ app.use('/uploads', express.static(path.resolve(__dirname, "..", "uploads")))
 
 app.use(errors());
 
-app.listen(2020, () => console.log("Server running on " + 2020));
+app.listen(process.env.BACKENDPORT, () =>
+  console.log("Server running on " + process.env.BACKENDPORT)
+);

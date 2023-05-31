@@ -9,7 +9,7 @@ services:
       TOKEN_SECRET: desejotodaasortedomundoparaquemestamexendonisso
       BACKEND_PORT: 2020
     ports:
-      - 2020:2020
+      - 2020:80
     networks:
       - estatisticas
       - traefik
@@ -33,7 +33,7 @@ services:
       API_URL: $API_ESTATISTICAS_URL_FULL
       PORT: 2121
     ports:
-      - 2121:2121
+      - 2121:80
     networks:
       - estatisticas
       - traefik
