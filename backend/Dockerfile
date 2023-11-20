@@ -9,4 +9,6 @@ WORKDIR /app
 
 COPY . .
 
-CMD npm install && npm run dev && npm knex:migrate 
+RUN npm install
+
+CMD  npm run dev && npm knex:migrate 
