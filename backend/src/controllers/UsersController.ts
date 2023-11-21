@@ -15,7 +15,11 @@ interface User {
 
 class UsersController {
     async index(req: Request, res: Response){
-        const items = await knex('user').distinct()
+        const items = (await knex('user').distinct()).map(item => {
+            const newItem = {...item};
+            delete newItem["senha"];
+            return newItem;
+        })
         return res.json(items);
     }
 
