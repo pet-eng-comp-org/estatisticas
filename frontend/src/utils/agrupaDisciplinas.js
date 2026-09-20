@@ -1,5 +1,27 @@
 import departmentByCode from "./departmentByCode";
 
+/** Sem acento e em minusculas: "calculo" encontra "Cálculo". */
+function chave(texto) {
+  return String(texto)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+export function filtraPorTexto(grupos, texto) {
+  const busca = chave(texto).trim();
+  if (!busca) return grupos;
+
+  return grupos
+    .map((grupo) => ({
+      ...grupo,
+      disciplinas: grupo.disciplinas.filter(
+        (d) => chave(d.nome).includes(busca) || chave(d.codigo).includes(busca)
+      ),
+    }))
+    .filter((grupo) => grupo.disciplinas.length > 0);
+}
+
 // As tres telas mostram a mesma grade recortada de jeitos diferentes. Cada
 // funcao devolve o mesmo formato -- [{ titulo, disciplinas }] -- para que a
 // lista em si seja um componente so.

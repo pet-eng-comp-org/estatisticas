@@ -7,7 +7,7 @@ import "./style.css";
  * nome). Antes cada tela tinha a sua copia, e uma correcao precisava ser
  * feita tres vezes.
  */
-const ListaDisciplinas = ({ grupos, aoSelecionar, carregando, erro }) => {
+const ListaDisciplinas = ({ grupos, aoSelecionar, carregando, erro, marcarCurriculo }) => {
   if (carregando) {
     return (
       <div className="cartao">
@@ -47,7 +47,7 @@ const ListaDisciplinas = ({ grupos, aoSelecionar, carregando, erro }) => {
                     </button>
                     <span className="codigo-disciplina">
                       {disciplina.codigo}
-                      {disciplina.curriculo === 2022 && (
+                      {marcarCurriculo && disciplina.curriculo === 2022 && (
                         <span className="selo-curriculo">2022</span>
                       )}
                     </span>
