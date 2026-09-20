@@ -83,7 +83,7 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
   }, [selectedSubjectCode]);
 
   if (estado === "vazio" || fechado) {
-    return <div className="col-lg-7" />;
+    return <div className="coluna-grafico" />;
   }
 
   // As duas medias descrevem populacoes diferentes: a do Centro Tecnologico
@@ -99,16 +99,16 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
       .every((d) => Math.abs(d.mediaCt - d.mediaDi) < 0.05);
 
   return (
-    <div className="col-lg-7 grafico-coluna">
+    <div className="coluna-grafico grafico-coluna">
       <div className="chart-container">
-        <div className="d-flex title-subtitle">
-          <div className="pb-2">
+        <div className="title-subtitle">
+          <div>
             <h2 className="chart-title">
               {selectedSubject} <span className="chart-codigo">{selectedSubjectCode}</span>
             </h2>
             <p className="chart-departamento">{departamento}</p>
           </div>
-          <div className="ml-auto x-icon">
+          <div className="x-icon">
             <button
               type="button"
               className="botao-fechar"
@@ -169,7 +169,17 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
                 <Tooltip />
                 <Legend />
                 <Line dataKey="mediaCt" name="Média do CT" stroke={COR_MEDIA_CT} strokeWidth={2} dot={{ r: 3 }} connectNulls />
-                <Line dataKey="mediaDi" name="Média do DI" stroke={COR_MEDIA_DI} strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                {/* Tracejada de proposito: de 2022 em diante as duas medias
+                    coincidem, e uma linha continua sobre a outra sumiria. */}
+                <Line
+                  dataKey="mediaDi"
+                  name="Média do DI"
+                  stroke={COR_MEDIA_DI}
+                  strokeWidth={2}
+                  strokeDasharray="5 3"
+                  dot={{ r: 3 }}
+                  connectNulls
+                />
               </LineChart>
             </ResponsiveContainer>
 

@@ -27,8 +27,11 @@
     font-weight: bold;
 }
 
-.menutext{
-    color: black !important;
+.menutext {
+    /* O reset do Bootstrap tirava o sublinhado dos links; sem ele, o menu
+       inteiro vinha sublinhado. */
+    color: black;
+    text-decoration: none;
     padding-right: 20px;
 }
 

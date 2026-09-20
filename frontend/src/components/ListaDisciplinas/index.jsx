@@ -1,5 +1,4 @@
 import React from "react";
-import { Card } from "react-bootstrap";
 
 import "./style.css";
 
@@ -11,38 +10,31 @@ import "./style.css";
 const ListaDisciplinas = ({ grupos, aoSelecionar, carregando, erro }) => {
   if (carregando) {
     return (
-      <Card>
-        <Card.Body className="lista-aviso" aria-live="polite">
-          Carregando disciplinas…
-        </Card.Body>
-      </Card>
+      <div className="cartao">
+        <p className="lista-aviso" aria-live="polite">Carregando disciplinas…</p>
+      </div>
     );
   }
 
   if (erro) {
     return (
-      <Card>
-        <Card.Body className="lista-aviso lista-erro" role="alert">
-          Não foi possível carregar a lista de disciplinas.
-          <br />
-          Recarregue a página; se continuar assim, o servidor pode estar fora do ar.
-        </Card.Body>
-      </Card>
+      <div className="cartao">
+        <p className="lista-aviso lista-erro" role="alert">
+          Não foi possível carregar a lista de disciplinas. Recarregue a página;
+          se continuar assim, o servidor pode estar fora do ar.
+        </p>
+      </div>
     );
   }
 
   return (
     <div>
       {grupos.map((grupo, indice) => (
-        <Card key={indice}>
-          <div>
-            <Card.Header>{grupo.titulo}</Card.Header>
-            <ul className="list-group">
+        <section className="cartao" key={indice}>
+          <h2 className="cartao-titulo">{grupo.titulo}</h2>
+          <ul className="lista">
               {grupo.disciplinas.map((disciplina) => (
-                <li
-                  key={disciplina.codigo}
-                  className="list-group-item py-1 border-0"
-                >
+                <li key={disciplina.codigo} className="lista-item">
                   <div>
                     {/* Botao, nao link: a acao troca o grafico ao lado e nao
                         navega para lugar nenhum. */}
@@ -62,9 +54,8 @@ const ListaDisciplinas = ({ grupos, aoSelecionar, carregando, erro }) => {
                   </div>
                 </li>
               ))}
-            </ul>
-          </div>
-        </Card>
+          </ul>
+        </section>
       ))}
     </div>
   );

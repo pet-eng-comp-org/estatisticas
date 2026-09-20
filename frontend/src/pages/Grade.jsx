@@ -47,9 +47,8 @@ function Grade({ modo }) {
   return (
     <div className="main-container">
       <MenuBar />
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-lg-5 coluna-lista">
+      <div className="conteudo">
+          <div className="coluna-lista">
             <FiltroCurriculo valor={curriculo} aoMudar={setCurriculo} />
             <ListaDisciplinas
               grupos={grupos}
@@ -58,13 +57,12 @@ function Grade({ modo }) {
               erro={erro}
             />
           </div>
-          <Suspense fallback={<div className="col-lg-7" />}>
+          <Suspense fallback={<div className="coluna-grafico" />}>
             <SubjectChart
               selectedSubject={disciplinaSelecionada}
               selectedSubjectCode={codigoSelecionado}
             />
           </Suspense>
-        </div>
       </div>
     </div>
   );

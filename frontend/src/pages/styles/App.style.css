@@ -1,42 +1,76 @@
 @import url('./fontes.css');
 
-* {
-    font-family: 'Roboto Mono', monospace;
+/*
+ * O layout vinha do Bootstrap, 145 KB de CSS para usar doze classes: a grade
+ * de duas colunas, os cartoes e meia duzia de utilitarios. Esta folha faz o
+ * mesmo em algumas dezenas de linhas.
+ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    background-color: #3b3b3b;
+    color: #1b1b1b;
 }
 
 .main-container {
-    background-color: #3B3B3B;
+    background-color: #3b3b3b;
     min-height: 100vh;
 }
 
-.container-fluid {
-    height: 90vh;
-    width: 100%;
-}
-
-.row {
-    height: 100%;
+.conteudo {
     display: flex;
-    justify-content: center;
-}
-
-.col-lg-5 {
-    max-height: 98%;
-    overflow: auto;
-    display: flex;
-    justify-content: center;
-    width: 50%;
-    padding: 2%;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.25rem 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
 }
 
 .coluna-lista {
+    flex: 0 0 38%;
+    max-width: 38%;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
-    /* A coluna herda justify-content: center. Na horizontal isso centralizava
-       a lista; na vertical passa a centralizar no eixo do scroll, e com
-       conteudo mais alto que a area o topo fica cortado e inalcancavel -- o
-       filtro ficava 2670px acima da viewport, sem como rolar ate ele. */
-    justify-content: flex-start;
+}
+
+.coluna-grafico {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cartao {
+    background-color: #f5f5f5;
+    border: 1px solid #8a8a86;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+}
+
+.cartao-titulo {
+    margin: 0;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.95rem;
+    background-color: #e9e9e6;
+    border-bottom: 1px solid #ddddd9;
+}
+
+.lista {
+    list-style: none;
+    margin: 0;
+    padding: 0.35rem 0.9rem 0.6rem;
+}
+
+.lista-item {
+    padding: 0.22rem 0;
 }
 
 ::-webkit-scrollbar {
@@ -44,35 +78,28 @@
 }
 
 ::-webkit-scrollbar-track {
-    background: #3B3B3B;
+    background: #3b3b3b;
 }
 
 ::-webkit-scrollbar-thumb {
-    height: 10vh;
     background-color: #888;
     border-radius: 10px;
-    border: none;
 }
 
-/* Abaixo de 992px o Bootstrap ja empilha as colunas lg, mas as larguras e
-   alturas fixas acima continuavam valendo e espremiam a lista e o grafico
-   lado a lado. Na vertical cada um ocupa a largura toda e cresce conforme o
-   conteudo. */
+/* Na vertical a lista e o grafico deixam de dividir a largura. */
 @media only screen and (max-width: 991px) {
-    .container-fluid {
-        height: auto;
-    }
-
-    .row {
-        height: auto;
+    .conteudo {
         flex-direction: column;
+        padding: 1rem 0.75rem 2rem;
     }
 
-    .col-lg-5 {
+    .coluna-lista,
+    .coluna-grafico {
+        flex: 1 1 auto;
+        max-width: 100%;
         width: 100%;
         max-height: none;
-        overflow: visible;
-        padding: 1rem;
+        overflow-y: visible;
     }
 }
 

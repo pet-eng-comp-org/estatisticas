@@ -1,14 +1,23 @@
-FROM node:14-alpine
-
-RUN npm config set registry http://registry.npmjs.org/
-RUN npm i npm@6.14.18
-RUN rm -rf /usr/local/lib/node_modules/npm
-RUN mv node_modules/npm /usr/local/lib/node_modules/npm
+# O bundle e montado aqui, na construcao da imagem. Antes o container rodava
+# "npm run build" a cada boot: o deploy levava cerca de um minuto so
+# compilando, e um erro de build so aparecia em producao.
+FROM node:20-alpine AS construcao
 
 WORKDIR /app
 
-COPY . .
+COPY package.json package-lock.json* ./
 RUN npm install
-RUN npm install -g serve
 
-CMD  npm run build && serve -l 80 -s build
+COPY . .
+RUN npm run build
+
+# A imagem final tem so os arquivos prontos e um servidor estatico.
+FROM nginx:1.27-alpine
+
+COPY --from=construcao /app/build /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY entrypoint.sh /entrypoint.sh
+
+EXPOSE 80
+
+ENTRYPOINT ["/entrypoint.sh"]

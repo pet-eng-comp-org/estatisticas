@@ -40,7 +40,7 @@ function Ranking() {
   return (
     <div className="main-container">
       <MenuBar />
-      <div className="container-fluid ranking-container">
+      <div className="ranking-container">
         <div className="ranking-cartao">
           <h2 className="ranking-titulo">Disciplinas que mais reprovam</h2>
           <p className="ranking-subtitulo">
