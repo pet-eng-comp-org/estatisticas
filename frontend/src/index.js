@@ -1,18 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter, Switch, Route} from 'react-router-dom'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.css'
 
-import Departamentos from './pages/Departamentos'
-import Nome from "./pages/Nome"
-import App from './pages/App';
+import Grade from './pages/Grade';
+
 ReactDOM.render(
     <BrowserRouter>
-                <Switch>
-                    <Route path="/" exact={true} component={App}/>
-                    <Route path="/departamentos" component={Departamentos}/>
-                    <Route path="/nome" component={Nome}/>
-                </Switch>
-            </BrowserRouter>
+        <Switch>
+            <Route path="/" exact={true} render={() => <Grade modo="periodo" />} />
+            <Route path="/departamentos" render={() => <Grade modo="departamento" />} />
+            <Route path="/nome" render={() => <Grade modo="nome" />} />
+        </Switch>
+    </BrowserRouter>
     , document.getElementById('root')
 );

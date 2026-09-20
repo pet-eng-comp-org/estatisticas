@@ -1,0 +1,43 @@
+.disciplina-botao {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #007bff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.disciplina-botao:hover,
+.disciplina-botao:focus {
+  text-decoration: underline;
+}
+
+.disciplina-botao:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.codigo-disciplina {
+  display: block;
+  font-size: 0.72rem;
+  color: #6c757d;
+  letter-spacing: 0.02em;
+}
+
+.selo-curriculo {
+  margin-left: 0.4em;
+  padding: 0 0.35em;
+  border: 1px solid currentColor;
+  border-radius: 0.6em;
+  font-size: 0.68rem;
+}
+
+.lista-aviso {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.lista-erro {
+  color: #842029;
+}

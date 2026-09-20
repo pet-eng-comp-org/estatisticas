@@ -6,14 +6,15 @@
 
 .main-container {
     background-color: #3B3B3B;
+    min-height: 100vh;
 }
 
-.container-fluid{
+.container-fluid {
     height: 90vh;
-    width: 100vw;
+    width: 100%;
 }
 
-.row{
+.row {
     height: 100%;
     display: flex;
     justify-content: center;
@@ -33,12 +34,47 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #3B3B3B;
+    background: #3B3B3B;
 }
 
 ::-webkit-scrollbar-thumb {
-  height: 10vh;
-  background-color: #888;
-  border-radius: 10px;
-  border: none;
+    height: 10vh;
+    background-color: #888;
+    border-radius: 10px;
+    border: none;
+}
+
+/* Abaixo de 992px o Bootstrap ja empilha as colunas lg, mas as larguras e
+   alturas fixas acima continuavam valendo e espremiam a lista e o grafico
+   lado a lado. Na vertical cada um ocupa a largura toda e cresce conforme o
+   conteudo. */
+@media only screen and (max-width: 991px) {
+    .container-fluid {
+        height: auto;
+    }
+
+    .row {
+        height: auto;
+        flex-direction: column;
+    }
+
+    .col-lg-5 {
+        width: 100%;
+        max-height: none;
+        overflow: visible;
+        padding: 1rem;
+    }
+}
+
+/* Conteudo so para leitor de tela. */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
