@@ -48,6 +48,15 @@ const CardEstatistica = ({ selectSubject }) => {
                         >
                           {subject.nome}
                         </a>
+                        {/* O curriculo 2022 trouxe disciplinas com o mesmo nome
+                            das antigas. O codigo distingue; o selo mostra qual
+                            e a vigente. */}
+                        <span className="codigo-disciplina">
+                          {subject.codigo}
+                          {subject.curriculo === 2022 && (
+                            <span className="selo-curriculo">2022</span>
+                          )}
+                        </span>
                       </div>
                     </li>
                   );

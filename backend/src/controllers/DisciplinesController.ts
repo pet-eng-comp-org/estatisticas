@@ -16,12 +16,14 @@ interface Disciplina {
     pre_requisitos_ecomp?:string;
     periodo_ccomp?:number;
     pre_requisitos_ccomp?:string;
+    curriculo?:number | null;
 }
 interface Periodo {
     periodo: number;
     disciplinas: Array<{
         nome: string;
-        codigo:string;
+        codigo: string;
+        curriculo: number | null;
     }>;
 }
 
@@ -37,173 +39,36 @@ class DisciplinesController {
         
     }
 
-    async group(req:Request, res:Response){
-        let resultado = {
-            ecomp: <Periodo[]>[],
-            ccomp: <Periodo[]>[]
-        }
-        for(let index = 0; index<11; index++){
-            resultado.ccomp.push({
-                periodo: index===10? 99: index+1,
-                disciplinas: []
-            })
-            resultado.ecomp.push({
-                periodo: index===10? 99: index+1,
-                disciplinas: []
-            })
-        }
+    async group(req: Request, res: Response) {
+        // 11 baldes: periodos 1 a 10 e, no fim, o 99 que o front rotula
+        // como "Optativas".
+        const baldes = () => {
+            const b: Periodo[] = [];
+            for (let i = 0; i < 11; i++) {
+                b.push({ periodo: i === 10 ? 99 : i + 1, disciplinas: [] });
+            }
+            return b;
+        };
+        const resultado = { ecomp: baldes(), ccomp: baldes() };
+
+        const indice = (periodo: number) =>
+            periodo === 99 ? 10 : (periodo >= 1 && periodo <= 10 ? periodo - 1 : -1);
+
         const disciplinas = await knex<Disciplina>('disciplines').distinct();
-        disciplinas.map(disciplina=>{
-            if(disciplina.periodo_ccomp){
-                switch (disciplina.periodo_ccomp) {
-                    case 1:
-                        resultado.ccomp[0].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 2:
-                        resultado.ccomp[1].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 3:
-                        resultado.ccomp[2].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 4:
-                        resultado.ccomp[3].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 5:
-                        resultado.ccomp[4].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 6:
-                        resultado.ccomp[5].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 7:
-                        resultado.ccomp[6].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 8:
-                        resultado.ccomp[7].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 9:
-                        resultado.ccomp[8].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 10:
-                        resultado.ccomp[9].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 99:
-                        resultado.ccomp[10].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if(disciplina.periodo_ecomp){
-                switch (disciplina.periodo_ecomp) {
-                    case 1:
-                        resultado.ecomp[0].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 2:
-                        resultado.ecomp[1].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 3:
-                        resultado.ecomp[2].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 4:
-                        resultado.ecomp[3].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 5:
-                        resultado.ecomp[4].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 6:
-                        resultado.ecomp[5].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 7:
-                        resultado.ecomp[6].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 8:
-                        resultado.ecomp[7].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 9:
-                        resultado.ecomp[8].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 10:
-                        resultado.ecomp[9].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    case 99:
-                        resultado.ecomp[10].disciplinas.push({
-                            nome: disciplina.nome,
-                            codigo: disciplina.codigo_disciplina
-                        })
-                        break;
-                    default:
-                        break;
-                }
-            }
-        })
+        disciplinas.forEach(disciplina => {
+            const entrada = {
+                nome: disciplina.nome,
+                codigo: disciplina.codigo_disciplina,
+                curriculo: disciplina.curriculo === undefined ? null : disciplina.curriculo,
+            };
+            const i = indice(Number(disciplina.periodo_ecomp));
+            if (i >= 0) resultado.ecomp[i].disciplinas.push(entrada);
+            const j = indice(Number(disciplina.periodo_ccomp));
+            if (j >= 0) resultado.ccomp[j].disciplinas.push(entrada);
+        });
+
         return res.json(resultado);
     }
-
-
-
 
     async create (req: Request, res: Response){
         if(!req.user.admin){

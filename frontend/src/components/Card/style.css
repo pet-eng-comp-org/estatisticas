@@ -38,3 +38,18 @@ a{
 a:link{
     text-decoration: none !important;
 }
+
+.codigo-disciplina {
+  display: block;
+  font-size: 0.72rem;
+  color: #6c757d;
+  letter-spacing: 0.02em;
+}
+
+.selo-curriculo {
+  margin-left: 0.4em;
+  padding: 0 0.35em;
+  border: 1px solid currentColor;
+  border-radius: 0.6em;
+  font-size: 0.68rem;
+}
