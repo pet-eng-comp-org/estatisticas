@@ -6,8 +6,12 @@ services:
     build:
       context: ./backend
     environment:
-      TOKEN_SECRET: desejotodaasortedomundoparaquemestamexendonisso
+      TOKEN_SECRET: $TOKEN_SECRET
       BACKEND_PORT: 2020
+      # O banco vive num volume, fora da imagem, para sobreviver a redeploy.
+      DATABASE_PATH: /app/data/database.sqlite
+    volumes:
+      - estatisticas_dados:/app/data
     ports:
       - 2020:2020
     networks:
@@ -47,6 +51,10 @@ services:
       - traefik.http.routers.estatisticasfrontend.rule=Host(`$ESTATISTICAS_URL`)
       - traefik.http.services.estatisticasfrontend.loadbalancer.server.port=2121
       - traefik.docker.network=$TRAEFIK_NETWORK
+
+volumes:
+  estatisticas_dados:
+    name: estatisticas_dados
 
 networks:
   estatisticas:
