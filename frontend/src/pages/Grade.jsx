@@ -55,7 +55,7 @@ function Grade({ modo }) {
   return (
     <div className="main-container">
       <MenuBar />
-      <div className="conteudo">
+      <main className="conteudo">
           <div className="coluna-lista">
             <FiltroCurriculo valor={curriculo} aoMudar={setCurriculo} />
             <ListaDisciplinas
@@ -72,7 +72,7 @@ function Grade({ modo }) {
               aoFechar={fechar}
             />
           </Suspense>
-      </div>
+      </main>
     </div>
   );
 }

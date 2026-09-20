@@ -9,16 +9,18 @@ import "./menu.css";
 
 const MenuBar = () => {
   return (
-    <div className="menu">
+    <header className="menu">
 
       <div className="menu-title">
         <div className="pet-logo">
-          <img src={logo_pet} alt="logo PET"/>
+          <img src={logo_pet} alt="" />
         </div>
-        <span>Estatísticas das disciplinas de Engenharia da Computação</span>
+        <h1 className="menu-h1">
+          Estatísticas das disciplinas de Engenharia da Computação
+        </h1>
       </div>
 
-      <div className="menu-links">
+      <nav className="menu-links" aria-label="Seções do site">
         <Link className="menutext" to="/">
           Períodos{" "}
         </Link>
@@ -31,9 +33,9 @@ const MenuBar = () => {
         <Link className="menutext" to="/reprovacoes">
           Reprovações
         </Link>
-      </div>
+      </nav>
 
-    </div>
+    </header>
   );
 };
 

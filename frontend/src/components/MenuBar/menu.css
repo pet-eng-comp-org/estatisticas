@@ -8,6 +8,14 @@
     background-color: #92AD8B;
 }
 
+/* O titulo do site e o h1 da pagina; o tamanho continua o de antes, quando
+   era um span. */
+.menu-h1 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: normal;
+}
+
 .menu-title{
     display: flex;
     justify-content: flex-start;
