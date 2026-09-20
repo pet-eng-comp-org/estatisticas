@@ -59,9 +59,11 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
           .map((s) => ({
             periodo: s.periodo,
             alunos: s.alunos,
-            aprovados: umaCasa(s.porcentagem_aprovados * 100),
-            reprovadosNota: umaCasa(s.porcentagem_reprovados_por_nota * 100),
-            reprovadosFalta: umaCasa(s.porcentagem_reprovados_por_frequencia * 100),
+            // Sem arredondar: as tres somam exatamente 100. Arredondadas
+            // antes da soma, davam 100,1 e estouravam o topo do eixo.
+            aprovados: s.porcentagem_aprovados * 100,
+            reprovadosNota: s.porcentagem_reprovados_por_nota * 100,
+            reprovadosFalta: s.porcentagem_reprovados_por_frequencia * 100,
             mediaCt: umaCasa(s.media),
             mediaDi: Number.isNaN(s.media_di) ? null : umaCasa(s.media_di),
           }))
@@ -142,12 +144,18 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
               <ComposedChart data={dados} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="#e6e6e3" vertical={false} />
                 <XAxis dataKey="periodo" tick={{ fontSize: 11 }} />
-                <YAxis domain={[0, 100]} unit="%" tick={{ fontSize: 11 }} width={48} />
-                <Tooltip formatter={(v, nome) => [`${v}%`, nome]} />
+                <YAxis
+                  domain={[0, 100]}
+                  ticks={[0, 25, 50, 75, 100]}
+                  unit="%"
+                  tick={{ fontSize: 11 }}
+                  width={48}
+                />
+                <Tooltip formatter={(v, nome) => [`${v.toFixed(1)}%`, nome]} />
                 <Legend />
-                <Bar dataKey="aprovados" name="Aprovados" stackId="r" fill={COR_APROVADO} />
-                <Bar dataKey="reprovadosNota" name="Reprovados por nota" stackId="r" fill={COR_REPROVADO_NOTA} />
-                <Bar dataKey="reprovadosFalta" name="Reprovados por falta" stackId="r" fill={COR_REPROVADO_FALTA} />
+                <Bar dataKey="aprovados" name="Aprovados" stackId="r" fill={COR_APROVADO} stroke="#f5f5f5" strokeWidth={1} />
+                <Bar dataKey="reprovadosNota" name="Reprovados por nota" stackId="r" fill={COR_REPROVADO_NOTA} stroke="#f5f5f5" strokeWidth={1} />
+                <Bar dataKey="reprovadosFalta" name="Reprovados por falta" stackId="r" fill={COR_REPROVADO_FALTA} stroke="#f5f5f5" strokeWidth={1} />
                 {dados.length > 12 && <Brush dataKey="periodo" height={18} stroke="#adadad" />}
               </ComposedChart>
             </ResponsiveContainer>
@@ -204,9 +212,9 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
                       <tr key={d.periodo}>
                         <th scope="row">{d.periodo}</th>
                         <td>{d.alunos}</td>
-                        <td>{d.aprovados}%</td>
-                        <td>{d.reprovadosNota}%</td>
-                        <td>{d.reprovadosFalta}%</td>
+                        <td>{d.aprovados.toFixed(1)}%</td>
+                        <td>{d.reprovadosNota.toFixed(1)}%</td>
+                        <td>{d.reprovadosFalta.toFixed(1)}%</td>
                         <td>{d.mediaCt ?? "—"}</td>
                         <td>{d.mediaDi ?? "—"}</td>
                       </tr>
