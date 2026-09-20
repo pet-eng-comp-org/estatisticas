@@ -4,7 +4,8 @@ import csv from 'csv-parser';
 import fs from 'fs';
 
 interface Dado {
-    periodo:string;
+    // parseInt do periodo: a coluna periodo_ecomp da tabela e inteira.
+    periodo:number;
     codigo_disciplina:string;
     nome_disciplina:string;
     pre_requisitos:string;
@@ -73,13 +74,23 @@ class DisciplinesController {
     }
 
     async create (req: Request, res: Response){
-        if(!req.user.admin){
+        if (!req.user || !req.user.admin) {
             return res.status(401).send("User is not admin. It is necessary to be an admin to create/update the data table.")
         }
+        // upload.fields entrega um mapa de campo -> arquivos; sem os dois nao
+        // ha o que montar.
+        const enviados = req.files as
+            { [campo: string]: Express.Multer.File[] } | undefined;
+        if (!enviados || !enviados.ccomp || !enviados.ecomp) {
+            return res.status(400).json({
+                message: "Envie os arquivos nos campos 'ccomp' e 'ecomp'.",
+            });
+        }
+
         let ccomp = <Dado[]>[];
         let ecomp = <Dado[]>[];
         let grade_disciplinas = <Disciplina[]>[];
-        fs.createReadStream(req.files.ccomp[0].path)
+        fs.createReadStream(enviados.ccomp[0].path)
         .pipe(csv())
         .on('data', (row) => {
 
@@ -101,7 +112,7 @@ class DisciplinesController {
         .on('end', () => {
           console.log('CSV file successfully processed');
         });
-        fs.createReadStream(req.files.ecomp[0].path)
+        fs.createReadStream(enviados.ecomp[0].path)
         .pipe(csv())
         .on('data', (row) => {
            

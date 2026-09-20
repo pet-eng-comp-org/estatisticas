@@ -60,7 +60,7 @@ class ItemsController {
     }
 
     async create(req: Request, res: Response) {
-        if (!req.user.admin) {
+        if (!req.user || !req.user.admin) {
             return res.status(401).send("User is not admin. It is necessary to be an admin to create/update the data table.")
         }
         if (!req.file) {
