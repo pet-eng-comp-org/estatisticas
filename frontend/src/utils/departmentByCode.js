@@ -19,6 +19,13 @@ export default function departmentByCode(code) {
         return "Departamento de Engenharia Ambiental"
     } else if (departmentCode === "EPR") {
         return "Departamento de Engenharia de Produção"
+    } else if (departmentCode === "HID") {
+        // Codigo herdado do Departamento de Hidraulica e Saneamento, que se
+        // tornou o Departamento de Engenharia Ambiental. O curriculo 2022 usa
+        // HID onde o anterior usava DEA.
+        return "Departamento de Engenharia Ambiental"
+    } else if (departmentCode === "LET") {
+        return "Departamento de Línguas e Letras"
     } else {
         return "Departamento"
     }

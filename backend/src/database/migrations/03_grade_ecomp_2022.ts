@@ -29,6 +29,17 @@ export async function up(knex: Knex) {
 }
 
 export async function down(knex: Knex) {
+    // Apaga so o que o up() inseriu. As disciplinas que ele encontrou ja
+    // existentes foram atualizadas, nao criadas: sao compartilhadas com
+    // Ciencia da Computacao e continuam servindo aquele curso, entao apagar
+    // levaria junto periodo_ccomp e pre_requisitos_ccomp.
     const codigos = GRADE_ECOMP_2022.map(d => d.codigo_disciplina);
-    await knex('disciplines').whereIn('codigo_disciplina', codigos).del();
+    await knex('disciplines')
+        .whereIn('codigo_disciplina', codigos)
+        .whereNull('periodo_ccomp')
+        .del();
+    await knex('disciplines')
+        .whereIn('codigo_disciplina', codigos)
+        .whereNotNull('periodo_ccomp')
+        .update({ periodo_ecomp: null, pre_requisitos_ecomp: null });
 }

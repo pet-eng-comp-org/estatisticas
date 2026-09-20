@@ -63,6 +63,9 @@ const CardEstatistica = ({ selectSubject }) => {
                     >
                       {subject.nome} {subject.codigo}
                     </a>
+                    {subject.curriculo === 2022 && (
+                      <span className="selo-curriculo">2022</span>
+                    )}
                   </div>
                 </li>
               );

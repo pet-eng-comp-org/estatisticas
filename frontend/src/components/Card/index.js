@@ -40,7 +40,15 @@ const CardEstatistica = ({ selectSubject }) => {
         var filteredData = [];
 
         vetorVazio.forEach((turma) => {
-          var departmentCode = turma.codigo.substring(0, 3);
+          // Agrupa pelo departamento, nao pelo prefixo do codigo: DEA e HID
+          // sao o mesmo departamento e apareciam como dois cartoes iguais.
+          // Prefixo desconhecido continua separado, para nao juntar coisas
+          // diferentes sob o rotulo generico.
+          const nomeDepartamento = departmentByCode(turma.codigo);
+          var departmentCode =
+            nomeDepartamento === "Departamento"
+              ? turma.codigo.substring(0, 3)
+              : nomeDepartamento;
 
           let index = departamentos.indexOf(departmentCode);
 
@@ -90,6 +98,14 @@ const CardEstatistica = ({ selectSubject }) => {
                         >
                           {subject.nome}
                         </a>
+                        {/* Mesma razao da tela de periodos: as duas geracoes
+                            de curriculo repetem nomes. */}
+                        <span className="codigo-disciplina">
+                          {subject.codigo}
+                          {subject.curriculo === 2022 && (
+                            <span className="selo-curriculo">2022</span>
+                          )}
+                        </span>
                       </div>
                     </li>
                   );

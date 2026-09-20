@@ -56,15 +56,17 @@ class DisciplinesController {
 
         const disciplinas = await knex<Disciplina>('disciplines').distinct();
         disciplinas.forEach(disciplina => {
-            const entrada = {
+            // Um objeto por arvore: compartilhar a mesma referencia faria um
+            // campo especifico de um curso aparecer no outro.
+            const entrada = () => ({
                 nome: disciplina.nome,
                 codigo: disciplina.codigo_disciplina,
                 curriculo: disciplina.curriculo === undefined ? null : disciplina.curriculo,
-            };
+            });
             const i = indice(Number(disciplina.periodo_ecomp));
-            if (i >= 0) resultado.ecomp[i].disciplinas.push(entrada);
+            if (i >= 0) resultado.ecomp[i].disciplinas.push(entrada());
             const j = indice(Number(disciplina.periodo_ccomp));
-            if (j >= 0) resultado.ccomp[j].disciplinas.push(entrada);
+            if (j >= 0) resultado.ccomp[j].disciplinas.push(entrada());
         });
 
         return res.json(resultado);
