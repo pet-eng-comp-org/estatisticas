@@ -6,6 +6,11 @@ import fs from 'fs';
 import { mediaDe, semestreDe, situacaoCanonica } from '../utils/normaliza';
 import { agrega, Item } from '../utils/agregacao';
 
+/** Apaga o arquivo enviado, que fica numa pasta servida publicamente. */
+function descarta(caminho: string) {
+    fs.unlink(caminho, () => { /* ja foi lido; se sumiu antes, tudo bem */ });
+}
+
 /** Le o CSV inteiro antes de devolver. */
 function leCsv(caminho: string): Promise<any[]> {
     return new Promise((resolve, reject) => {
@@ -62,11 +67,17 @@ class ItemsController {
             return res.status(400).json({ message: "Nenhum arquivo enviado." });
         }
 
+        // O relatorio traz nota de aluno e o multer grava em /app/uploads, que
+        // o server.ts serve como estatico, sem autenticacao. O arquivo nao pode
+        // sobreviver a requisicao.
+        const enviado = req.file.path;
         let linhas: any[];
         try {
-            linhas = await leCsv(req.file.path);
+            linhas = await leCsv(enviado);
         } catch (erro) {
             return res.status(400).json({ message: "Nao foi possivel ler o CSV.", erro: String(erro) });
+        } finally {
+            descarta(enviado);
         }
 
         const lista: Item[] = linhas.map(linha => ({

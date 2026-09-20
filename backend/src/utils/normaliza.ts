@@ -58,12 +58,12 @@ export function contaNaTurma(situacao: string | null | undefined): boolean {
  * (o banco ja tinha um "2014/C" dessa natureza).
  *
  * O significado de 201/202 nao vem escrito no relatorio, mas os dados o
- * fixam: a UFES so tem entrada de calouros no primeiro semestre, entao quem
- * cursa o 1o periodo da grade esta no primeiro semestre do ano, o 2o periodo
- * no segundo, e assim por diante. Na planilha de 2022-2025 os periodos
- * impares da grade concentram em 201 (794x147 no 1o, 509x183 no 3o, 372x103
- * no 5o) e os pares em 202 (948x188 no 2o, 545x140 no 4o, 431x115 no 6o),
- * alternando sem excecao. 201 e o primeiro semestre.
+ * fixam. Engenharia de Computacao entra uma vez por ano, no primeiro
+ * semestre, entao quem cursa o 1o periodo da grade esta no primeiro semestre
+ * do ano, o 2o periodo no segundo, e assim por diante. Na planilha de
+ * 2022-2025 os periodos impares da grade concentram em 201 (794x147 no 1o,
+ * 509x183 no 3o, 372x103 no 5o) e os pares em 202 (948x188 no 2o, 545x140 no
+ * 4o, 431x115 no 6o), alternando sem excecao. 201 e o primeiro semestre.
  *
  * O 3xx aparece uma unica vez em toda a planilha e continua sendo leitura
  * nossa: virou periodo especial, como o "2014/C" que o banco ja tinha.
