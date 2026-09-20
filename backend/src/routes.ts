@@ -18,12 +18,14 @@ const disciplinesController = new DisciplinesController();
 const upload = multer(multerConfig);
 
 
-routes.get('/items', itemsController.index);
+// Despeja a tabela inteira; o site nunca usa. Fica atras de autenticacao.
+routes.get('/items', verify, itemsController.index);
 routes.get('/items/:codigo_disciplina', itemsController.show);
 
 // routes.get('/items/:id', itemsController.show);
 
-routes.get('/users', usersController.index);
+// Lista as contas administrativas; o site nunca usa.
+routes.get('/users', verify, usersController.index);
 routes.post('/login', usersController.login);
 routes.post('/register', verify, usersController.register);
 
