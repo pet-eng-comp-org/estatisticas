@@ -72,3 +72,39 @@ Para simplesmente atualizar os dados, basta fazer uma request com corpo do tipo 
 O backend demora um pouco para registrar todos os alunos, então tenha paciência e acompanhe o console para observar tudo.
 
 >Assim que terminar de atualizar localmente, você tem duas opções, ou subir o novo arquivo sqlite na VM direto (mais recomendado), ou então atualizar o código na VM e fazer a request pela API de produção.
+
+## Banco de dados
+
+O arquivo `database.sqlite` não fica no repositório: cada linha da tabela
+`items` é a nota de um aluno identificado por matrícula, e versionar isso
+grava dado pessoal no histórico do git a cada atualização.
+
+Em produção o banco vive no volume `estatisticas_dados`, montado em
+`/app/data`, e o backend o encontra pela variável `DATABASE_PATH`. Sem essa
+variável ele usa `src/database/database.sqlite`, que é o padrão para
+desenvolvimento.
+
+Para começar do zero:
+
+```bash
+yarn knex:migrate
+```
+
+Para trabalhar com os dados reais, peça uma cópia do banco a quem cuida da
+infraestrutura do PET e coloque em `backend/src/database/database.sqlite`.
+Não recoloque esse arquivo no repositório.
+
+## Importação de notas
+
+A carga é feita por `POST /items`, com token de administrador e o relatório da
+PROGRAD em CSV no campo `file`.
+
+O relatório mudou de formato em 2022. A rota aceita os dois: `NOME_CURSO_ALUNO`
+ou `NOME_CURSO`, `PERIODO` ou `PERIODO_ITEM`. O período `201` e `202` vira `1`
+e `2`; `3xx` vira período especial (`C`).
+
+Relatórios até 2021 trazem `MATR_ALUNO` e a rota usa a matrícula para não
+duplicar registros. Os de 2022 em diante não trazem, e aí não há como
+distinguir uma reimportação de dado novo: a rota responde `409` se já
+existirem registros dos semestres do arquivo. Para regravar esses semestres,
+chame `POST /items?modo=substituir`, que apaga e reinsere.
