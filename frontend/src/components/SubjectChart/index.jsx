@@ -127,14 +127,15 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode, aoFechar }) => {
 
         {estado === "erro" && (
           <p className="grafico-aviso grafico-erro" role="alert">
-            Não foi possível carregar os dados desta disciplina. Tente de novo em
-            instantes.
+            Os dados desta disciplina não carregaram. Recarregue a página para
+            tentar de novo.
           </p>
         )}
 
         {estado === "sem-dados" && (
           <p className="grafico-aviso" role="status">
-            Ainda não há notas registradas para esta disciplina.
+            Esta disciplina ainda não tem notas registradas. Escolha outra na
+            lista ao lado.
           </p>
         )}
 
@@ -169,12 +170,12 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode, aoFechar }) => {
                 <YAxis domain={[0, 10]} tick={{ fontSize: 11 }} width={48} />
                 <Tooltip />
                 <Legend />
-                <Line dataKey="mediaCt" name="Média do CT" stroke={COR_MEDIA_CT} strokeWidth={2} dot={{ r: 3 }} connectNulls />
+                <Line dataKey="mediaCt" name="Todos os cursos" stroke={COR_MEDIA_CT} strokeWidth={2} dot={{ r: 3 }} connectNulls />
                 {/* Tracejada de proposito: de 2022 em diante as duas medias
                     coincidem, e uma linha continua sobre a outra sumiria. */}
                 <Line
                   dataKey="mediaDi"
-                  name="Média do DI"
+                  name="Alunos de computação"
                   stroke={COR_MEDIA_DI}
                   strokeWidth={2}
                   strokeDasharray="5 3"
@@ -186,9 +187,9 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode, aoFechar }) => {
 
             {coincidem && (
               <p className="grafico-nota">
-                A partir de 2022 as duas médias coincidem: o relatório da
-                coordenação passou a trazer apenas alunos de Engenharia de
-                Computação, então as duas linhas descrevem o mesmo grupo.
+                As duas linhas coincidem de 2022 em diante: desde então o
+                relatório da coordenação traz apenas alunos de Engenharia de
+                Computação, então os dois grupos são o mesmo.
               </p>
             )}
 
@@ -214,8 +215,8 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode, aoFechar }) => {
                       <th scope="col">Aprovados</th>
                       <th scope="col">Rep. nota</th>
                       <th scope="col">Rep. falta</th>
-                      <th scope="col">Média CT</th>
-                      <th scope="col">Média DI</th>
+                      <th scope="col">Todos</th>
+                      <th scope="col">Computação</th>
                     </tr>
                   </thead>
                   <tbody>

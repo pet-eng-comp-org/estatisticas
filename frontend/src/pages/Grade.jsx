@@ -9,6 +9,7 @@ import BoasVindas from "../components/BoasVindas";
 
 import useGrade from "../hooks/useGrade";
 import useTaxas from "../hooks/useTaxas";
+import useTitulo from "../hooks/useTitulo";
 import {
   porPeriodo,
   porDepartamento,
@@ -69,6 +70,8 @@ function Grade({ modo }) {
         .flatMap((grupo) => grupo.disciplinas)
         .find((d) => d.codigo === codigo)
     : null;
+
+  useTitulo(aberta ? aberta.nome : codigo || null);
 
   return (
     <div className="main-container">

@@ -45,8 +45,8 @@ const ListaDisciplinas = ({
   if (erro) {
     return (
       <p className="lista-aviso lista-erro" role="alert">
-        Não foi possível carregar a lista de disciplinas. Recarregue a página;
-        se continuar assim, o servidor pode estar fora do ar.
+        A lista de disciplinas não carregou. Recarregue a página; se continuar
+        assim, o servidor está fora do ar.
       </p>
     );
   }

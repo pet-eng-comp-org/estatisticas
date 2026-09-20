@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import MenuBar from "../components/MenuBar";
 import api from "../services/api";
+import useTitulo from "../hooks/useTitulo";
 
 import "./styles/App.style.css";
 import "./styles/Ranking.style.css";
@@ -17,6 +18,8 @@ function Ranking() {
   const [estado, setEstado] = useState("carregando");
   const [periodo, setPeriodo] = useState(null);
   const [desde, setDesde] = useState("2018");
+
+  useTitulo("Disciplinas que mais reprovam");
 
   useEffect(() => {
     let ativo = true;
@@ -73,12 +76,13 @@ function Ranking() {
           {estado === "carregando" && <p className="ranking-aviso" aria-live="polite">Calculando…</p>}
           {estado === "erro" && (
             <p className="ranking-aviso ranking-erro" role="alert">
-              Não foi possível carregar o ranking. Tente de novo em instantes.
+              A lista não carregou. Recarregue a página para tentar de novo.
             </p>
           )}
           {estado === "sem-dados" && (
             <p className="ranking-aviso" role="status">
-              Nenhuma disciplina com dados suficientes para esse recorte.
+              Nenhuma disciplina tem dados suficientes nesse período. Escolha um
+              ano inicial mais antigo ou veja todos os períodos.
             </p>
           )}
 
@@ -88,7 +92,7 @@ function Ranking() {
               <thead>
                 <tr>
                   <th scope="col">Disciplina</th>
-                  <th scope="col">Per.</th>
+                  <th scope="col">Período</th>
                   <th scope="col">Alunos</th>
                   <th scope="col">Reprovação</th>
                   <th scope="col">Média</th>
