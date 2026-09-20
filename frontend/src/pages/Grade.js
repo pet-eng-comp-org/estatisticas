@@ -2,9 +2,15 @@ import React, { useState, Suspense, lazy } from "react";
 
 import MenuBar from "../components/MenuBar";
 import ListaDisciplinas from "../components/ListaDisciplinas";
+import FiltroCurriculo from "../components/FiltroCurriculo";
 
 import useGrade from "../hooks/useGrade";
-import { porPeriodo, porDepartamento, porNome } from "../utils/agrupaDisciplinas";
+import {
+  porPeriodo,
+  porDepartamento,
+  porNome,
+  filtraPorCurriculo,
+} from "../utils/agrupaDisciplinas";
 
 import "./styles/App.style.css";
 
@@ -24,6 +30,8 @@ const AGRUPAMENTOS = {
 function Grade({ modo }) {
   const [codigoSelecionado, setCodigoSelecionado] = useState();
   const [disciplinaSelecionada, setDisciplinaSelecionada] = useState();
+  // Comeca no curriculo em vigor: e o de quem esta entrando agora.
+  const [curriculo, setCurriculo] = useState("2022");
 
   const { grade, erro, carregando } = useGrade();
 
@@ -32,14 +40,17 @@ function Grade({ modo }) {
     setCodigoSelecionado(codigo);
   };
 
-  const grupos = grade ? AGRUPAMENTOS[modo](grade) : [];
+  const grupos = grade
+    ? AGRUPAMENTOS[modo](filtraPorCurriculo(grade, curriculo))
+    : [];
 
   return (
     <div className="main-container">
       <MenuBar />
       <div className="container-fluid">
         <div className="row">
-          <div className="col-lg-5">
+          <div className="col-lg-5 coluna-lista">
+            <FiltroCurriculo valor={curriculo} aoMudar={setCurriculo} />
             <ListaDisciplinas
               grupos={grupos}
               aoSelecionar={selecionar}

@@ -4,6 +4,25 @@ import departmentByCode from "./departmentByCode";
 // funcao devolve o mesmo formato -- [{ titulo, disciplinas }] -- para que a
 // lista em si seja um componente so.
 
+/**
+ * Recorta a grade por geracao de curriculo. As disciplinas do curriculo 2022
+ * vem marcadas pela API; as demais sao do anterior.
+ */
+export function filtraPorCurriculo(grade, curriculo) {
+  if (curriculo === "todos") return grade;
+
+  const querNovo = curriculo === "2022";
+  const recorta = (periodos) =>
+    periodos.map((periodo) => ({
+      ...periodo,
+      disciplinas: periodo.disciplinas.filter(
+        (d) => (d.curriculo === 2022) === querNovo
+      ),
+    }));
+
+  return { ecomp: recorta(grade.ecomp), ccomp: recorta(grade.ccomp) };
+}
+
 function todasAsDisciplinas(grade) {
   const todas = [];
   grade.ecomp.forEach((periodo) => {
@@ -13,10 +32,12 @@ function todasAsDisciplinas(grade) {
 }
 
 export function porPeriodo(grade) {
-  return grade.ecomp.map((periodo, indice) => ({
-    titulo: indice + 1 < 11 ? `${indice + 1}º Período` : "Optativas",
-    disciplinas: periodo.disciplinas,
-  }));
+  return grade.ecomp
+    .map((periodo, indice) => ({
+      titulo: indice + 1 < 11 ? `${indice + 1}º Período` : "Optativas",
+      disciplinas: periodo.disciplinas,
+    }))
+    .filter((grupo) => grupo.disciplinas.length > 0);
 }
 
 export function porNome(grade) {

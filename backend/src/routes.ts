@@ -7,6 +7,7 @@ import multerConfig from './config/multer';
 import ItemsController from './controllers/ItemsController';
 import UsersController from './controllers/UsersController';
 import DisciplinesController from './controllers/DisciplinesController';
+import RankingController from './controllers/RankingController';
 
 const routes = express.Router();
 const verify = require('./utils/verifyToken');
@@ -14,6 +15,7 @@ const verify = require('./utils/verifyToken');
 const itemsController = new ItemsController();
 const usersController = new UsersController();
 const disciplinesController = new DisciplinesController();
+const rankingController = new RankingController();
 
 const upload = multer(multerConfig);
 
@@ -49,6 +51,9 @@ routes.post('/items',
   //}
   //),
   itemsController.create);
+
+// Disciplinas ordenadas por taxa de reprovacao, para comparar de uma vez.
+routes.get('/ranking', rankingController.index);
 
 routes.get('/viewGrid', disciplinesController.index);
 routes.get('/viewSortedGrid', disciplinesController.group)

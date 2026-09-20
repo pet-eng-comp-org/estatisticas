@@ -26,7 +26,10 @@ const MenuBar = () => {
           Departamentos{" "}
         </Link>
         <Link className="menutext" to="/nome">
-          Nome
+          Nome{" "}
+        </Link>
+        <Link className="menutext" to="/reprovacoes">
+          Reprovações
         </Link>
       </div>
 

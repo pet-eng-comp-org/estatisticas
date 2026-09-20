@@ -29,6 +29,16 @@
     padding: 2%;
 }
 
+.coluna-lista {
+    flex-direction: column;
+    align-items: stretch;
+    /* A coluna herda justify-content: center. Na horizontal isso centralizava
+       a lista; na vertical passa a centralizar no eixo do scroll, e com
+       conteudo mais alto que a area o topo fica cortado e inalcancavel -- o
+       filtro ficava 2670px acima da viewport, sem como rolar ate ele. */
+    justify-content: flex-start;
+}
+
 ::-webkit-scrollbar {
     width: 8px;
 }
