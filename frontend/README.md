@@ -1,68 +1,49 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Front-end do site de estatísticas
 
-## Available Scripts
+React com Vite. Mostra, por disciplina, a taxa de aprovação e a média por
+semestre, e um ranking das disciplinas que mais reprovam.
 
-In the project directory, you can run:
+## Rodar
 
-### `npm start`
+```bash
+npm install
+npm run dev
+```
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Precisa do back-end no ar. Em desenvolvimento, a URL dele vem de um `.env`:
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+```
+REACT_APP_API_URL=http://localhost:2020
+```
 
-### `npm test`
+O nome da variável ficou de quando o projeto usava create-react-app, e segue
+assim porque é o que a stack em produção já tem configurado.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Em produção
 
-### `npm run build`
+`npm run build` gera `build/`, e a imagem serve esses arquivos com nginx — o
+bundle é montado na construção da imagem, não no boot do container.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+A URL da API **não** entra no bundle: o container escreve `/config.js` ao
+subir, a partir da variável de ambiente, e o `index.html` carrega esse arquivo
+antes do resto. Trocar a URL é questão de mudar a variável na stack e
+reiniciar; não precisa reconstruir a imagem.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## Telas
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Rota | O que mostra |
+|---|---|
+| `/` | disciplinas por período da grade |
+| `/departamentos` | agrupadas por departamento |
+| `/nome` | todas em ordem alfabética |
+| `/reprovacoes` | ranking por taxa de reprovação |
 
-### `npm run eject`
+As três primeiras têm um filtro de currículo. O curso trocou de currículo em
+2022, as duas gerações convivem na grade e várias disciplinas aparecem duas
+vezes com o mesmo nome — o código embaixo do nome e o selo `2022` distinguem.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Fonte
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Roboto Mono é servida pelo próprio site, em `public/fonts`. São os subsets
+`latin` e `latin-ext`, um arquivo por subset: a fonte é variável, então o mesmo
+arquivo cobre todos os pesos.

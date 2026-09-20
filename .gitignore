@@ -1,2 +1,5 @@
 .env
 backend/src/database/*.sqlite
+backend/dist/
+frontend/build/
+node_modules/

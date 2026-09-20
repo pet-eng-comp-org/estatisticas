@@ -31,14 +31,16 @@ services:
     container_name: estatisticas_frontend
     build:
       context: ./frontend
-    stdin_open: true
     depends_on:
       - estatisticas_backend
     environment:
+      # Lida no boot para gerar o config.js que o index.html carrega.
       REACT_APP_API_URL: $API_ESTATISTICAS_URL_FULL
-      PORT: 2121
+    # O nginx que serve o bundle escuta na 80; 2121 e so por onde o host
+    # alcanca em desenvolvimento. Antes a imagem rodava o servidor do
+    # create-react-app, que obedecia a variavel PORT -- o nginx nao.
     ports:
-      - 2121:2121
+      - 2121:80
     networks:
       - estatisticas
       - traefik
@@ -49,7 +51,7 @@ services:
       - traefik.http.routers.estatisticasfrontend.tls=true
       - traefik.http.routers.estatisticasfrontend.tls.certresolver=production
       - traefik.http.routers.estatisticasfrontend.rule=Host(`$ESTATISTICAS_URL`)
-      - traefik.http.services.estatisticasfrontend.loadbalancer.server.port=2121
+      - traefik.http.services.estatisticasfrontend.loadbalancer.server.port=80
       - traefik.docker.network=$TRAEFIK_NETWORK
 
 volumes:
