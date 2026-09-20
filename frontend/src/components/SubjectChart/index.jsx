@@ -31,12 +31,11 @@ const COR_MEDIA_DI = "#e87ba4";
 
 const umaCasa = (n) => (n === null || Number.isNaN(n) ? null : Number(n.toFixed(1)));
 
-const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
+const SubjectChart = ({ selectedSubject, selectedSubjectCode, aoFechar }) => {
   const [dados, setDados] = useState([]);
   const [estado, setEstado] = useState("vazio"); // vazio | carregando | pronto | sem-dados | erro
   const [departamento, setDepartamento] = useState("");
   const [mostrarTabela, setMostrarTabela] = useState(false);
-  const [fechado, setFechado] = useState(false);
 
   useEffect(() => {
     if (!selectedSubjectCode) {
@@ -46,7 +45,6 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
 
     let ativo = true;
     setEstado("carregando");
-    setFechado(false);
     setMostrarTabela(false);
 
     api
@@ -65,7 +63,7 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
             reprovadosNota: s.porcentagem_reprovados_por_nota * 100,
             reprovadosFalta: s.porcentagem_reprovados_por_frequencia * 100,
             mediaCt: umaCasa(s.media),
-            mediaDi: Number.isNaN(s.media_di) ? null : umaCasa(s.media_di),
+            mediaDi: umaCasa(s.media_di),
           }))
           .sort((a, b) => a.periodo.localeCompare(b.periodo));
 
@@ -82,21 +80,24 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
     };
   }, [selectedSubjectCode]);
 
-  if (estado === "vazio" || fechado) {
+  if (estado === "vazio") {
     return <div className="coluna-grafico" />;
   }
 
+  // `every` num conjunto vazio e verdadeiro: sem nenhum par de pontos
+  // comparavel a nota apareceria dizendo que as medias coincidem sem que
+  // nada tenha sido comparado.
   // As duas medias descrevem populacoes diferentes: a do Centro Tecnologico
   // inclui todos os cursos que cursaram a turma; a do DI, so Engenharia e
   // Ciencia da Computacao. Nos dados de 2022 em diante o relatorio so traz
   // alunos de Engenharia de Computacao, entao as duas coincidem e as linhas
   // se sobrepoem -- sem esta nota, parece defeito.
-  const temRecente = dados.some((d) => d.periodo >= "2022");
+  const comparaveis = dados.filter(
+    (d) => d.periodo >= "2022" && d.mediaCt !== null && d.mediaDi !== null
+  );
   const coincidem =
-    temRecente &&
-    dados
-      .filter((d) => d.periodo >= "2022" && d.mediaCt !== null && d.mediaDi !== null)
-      .every((d) => Math.abs(d.mediaCt - d.mediaDi) < 0.05);
+    comparaveis.length > 0 &&
+    comparaveis.every((d) => Math.abs(d.mediaCt - d.mediaDi) < 0.05);
 
   return (
     <div className="coluna-grafico grafico-coluna">
@@ -113,7 +114,7 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode }) => {
               type="button"
               className="botao-fechar"
               aria-label="Fechar gráfico"
-              onClick={() => setFechado(true)}
+              onClick={aoFechar}
             >
               <IoIosCloseCircleOutline color="gray" size={36} />
             </button>

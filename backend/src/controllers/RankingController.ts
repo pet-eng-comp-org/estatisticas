@@ -35,7 +35,10 @@ class RankingController {
         // Por padrao olha os ultimos anos: o desempenho de 2012 nao ajuda quem
         // vai se matricular agora.
         const desde = String(req.query.desde || '2018');
-        const periodo = req.query.periodo ? Number(req.query.periodo) : null;
+        // Valor nao numerico vira filtro nenhum: antes comparava contra NaN,
+        // que nunca casa, e a resposta vinha vazia como se nao houvesse dado.
+        const pedido = Number(req.query.periodo);
+        const periodo = Number.isInteger(pedido) ? pedido : null;
 
         const linhas: Linha[] = await knex('items')
             .select('codigo_disciplina', 'nome_disciplina', 'curso', 'media', 'situacao', 'ano')

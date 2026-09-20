@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install
+RUN npm ci
 
 # Compila o TypeScript: producao roda o JavaScript gerado, nao o ts-node-dev,
 # que e um observador de arquivos feito para desenvolvimento.

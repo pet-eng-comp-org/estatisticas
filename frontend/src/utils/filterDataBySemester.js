@@ -24,10 +24,12 @@ export default function filterDataBySemester(response) {
         reprovados_por_frequencia: 0,
         alunos: 0,
         alunosxmedia: 0,
+        comNota: 0,
         alunos_di: 0,
         alunosxmedia_di: 0,
-        media: 0,
-        media_di: 0,
+        comNota_di: 0,
+        media: null,
+        media_di: null,
       });
     }
 
@@ -36,17 +38,28 @@ export default function filterDataBySemester(response) {
     semestre.reprovados_por_nota += turma.reprovados_por_nota;
     semestre.reprovados_por_frequencia += turma.reprovados_por_frequencia;
     semestre.alunos += total;
-    semestre.alunosxmedia += total * turma.media;
     semestre.alunos_di += turma.alunos_di;
-    semestre.alunosxmedia_di += turma.alunos_di * turma.media_di;
+
+    // A media de cada grupo vale pelos alunos que tiveram nota lancada, nao
+    // pelo total: reprovado por falta costuma vir sem nota e entraria como
+    // zero. Grupo sem nota nenhuma chega com media null e fica de fora.
+    if (turma.media !== null && turma.alunos_com_nota > 0) {
+      semestre.alunosxmedia += turma.alunos_com_nota * turma.media;
+      semestre.comNota += turma.alunos_com_nota;
+    }
+    if (turma.media_di !== null && turma.alunos_com_nota_di > 0) {
+      semestre.alunosxmedia_di += turma.alunos_com_nota_di * turma.media_di;
+      semestre.comNota_di += turma.alunos_com_nota_di;
+    }
   });
 
   return Array.from(porSemestre.values()).map((semestre) => {
-    // Disciplina sem nenhum aluno do DI naquele semestre: a media do DI nao
-    // existe, e NaN e o que sinaliza "sem ponto" para o grafico.
+    // Sem ninguem com nota lancada nao ha media: null vira ausencia de ponto
+    // no grafico, enquanto zero seria lido como media zero.
     semestre.media_di =
-      semestre.alunos_di > 0 ? semestre.alunosxmedia_di / semestre.alunos_di : NaN;
-    semestre.media = semestre.alunosxmedia / semestre.alunos;
+      semestre.comNota_di > 0 ? semestre.alunosxmedia_di / semestre.comNota_di : null;
+    semestre.media =
+      semestre.comNota > 0 ? semestre.alunosxmedia / semestre.comNota : null;
     semestre.porcentagem_aprovados = semestre.aprovados / semestre.alunos;
     semestre.porcentagem_reprovados_por_nota =
       semestre.reprovados_por_nota / semestre.alunos;

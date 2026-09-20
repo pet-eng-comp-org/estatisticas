@@ -40,6 +40,14 @@ function Grade({ modo }) {
     setCodigoSelecionado(codigo);
   };
 
+  // Fechar limpa a selecao. Enquanto o grafico guardava esse estado por conta
+  // propria, clicar de novo na mesma disciplina nao reabria nada: o codigo
+  // selecionado nao mudava, e nada disparava.
+  const fechar = () => {
+    setDisciplinaSelecionada(undefined);
+    setCodigoSelecionado(undefined);
+  };
+
   const grupos = grade
     ? AGRUPAMENTOS[modo](filtraPorCurriculo(grade, curriculo))
     : [];
@@ -61,6 +69,7 @@ function Grade({ modo }) {
             <SubjectChart
               selectedSubject={disciplinaSelecionada}
               selectedSubjectCode={codigoSelecionado}
+              aoFechar={fechar}
             />
           </Suspense>
       </div>

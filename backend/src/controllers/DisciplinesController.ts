@@ -3,6 +3,11 @@ import knex from '../database/connection';
 import csv from 'csv-parser';
 import fs from 'fs';
 
+/** Mesma razao do ItemsController: /app/uploads e servido sem autenticacao. */
+function descarta(caminho: string) {
+    fs.unlink(caminho, () => { /* ja foi lido */ });
+}
+
 interface Dado {
     // parseInt do periodo: a coluna periodo_ecomp da tabela e inteira.
     periodo:number;
@@ -110,7 +115,7 @@ class DisciplinesController {
             ccomp.push(data);
         })
         .on('end', () => {
-          console.log('CSV file successfully processed');
+          descarta(enviados.ccomp[0].path);
         });
         fs.createReadStream(enviados.ecomp[0].path)
         .pipe(csv())
@@ -132,7 +137,7 @@ class DisciplinesController {
             ecomp.push(data);
         })
         .on('end', () => {
-          console.log('CSV file successfully processed');
+          descarta(enviados.ecomp[0].path);
         });
         
         const trx = await knex.transaction();

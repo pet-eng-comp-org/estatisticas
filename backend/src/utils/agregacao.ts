@@ -23,12 +23,16 @@ export interface Resultado {
     matricula: number;
     dispensa_sem_nota: number;
     professor: string;
-    media: number;
-    media_di: number;
+    // null quando ninguem do grupo teve nota lancada: zero seria um ponto
+    // real no grafico, numa disciplina em que nao houve nota nenhuma.
+    media: number | null;
+    media_di: number | null;
     alunos_di: number;
     aprovados_di: number;
     reprovados_por_nota_di: number;
     reprovados_por_frequencia_di: number;
+    alunos_com_nota: number;
+    alunos_com_nota_di: number;
 }
 
 // Soma das notas e quantidade correspondente, para que a media use sempre o
@@ -52,12 +56,14 @@ function novoAcumulador(periodo: string, professor: string): Acumulador {
             amparo_legal: 0,
             matricula: 0,
             dispensa_sem_nota: 0,
-            media: 0,
-            media_di: 0,
+            media: null,
+            media_di: null,
             alunos_di: 0,
             aprovados_di: 0,
             reprovados_por_nota_di: 0,
             reprovados_por_frequencia_di: 0,
+            alunos_com_nota: 0,
+            alunos_com_nota_di: 0,
         },
         soma: 0,
         comNota: 0,
@@ -130,8 +136,12 @@ export function agrega(items: Item[]): Resultado[] {
     });
 
     return ordem.map(acc => {
-        acc.resultado.media = acc.comNota > 0 ? acc.soma / acc.comNota : 0;
-        acc.resultado.media_di = acc.comNota_di > 0 ? acc.soma_di / acc.comNota_di : 0;
+        acc.resultado.media = acc.comNota > 0 ? acc.soma / acc.comNota : null;
+        acc.resultado.media_di = acc.comNota_di > 0 ? acc.soma_di / acc.comNota_di : null;
+        // Quantos entraram em cada media: o front precisa disso para ponderar
+        // os grupos de um mesmo semestre sem reinventar a conta.
+        acc.resultado.alunos_com_nota = acc.comNota;
+        acc.resultado.alunos_com_nota_di = acc.comNota_di;
         return acc.resultado;
     });
 }

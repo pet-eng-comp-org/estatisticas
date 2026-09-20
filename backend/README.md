@@ -73,6 +73,32 @@ O backend demora um pouco para registrar todos os alunos, então tenha paciênci
 
 >Assim que terminar de atualizar localmente, você tem duas opções, ou subir o novo arquivo sqlite na VM direto (mais recomendado), ou então atualizar o código na VM e fazer a request pela API de produção.
 
+## Implantação
+
+Duas coisas precisam estar no lugar antes de subir a stack, e nenhuma das duas
+o container resolve sozinho.
+
+**`TOKEN_SECRET`** é obrigatório. O compose lê da variável de ambiente e não
+tem valor padrão; sem ela o segredo vira string vazia, `POST /login` responde
+500 e toda rota autenticada devolve "Invalid Token". Trocar o segredo invalida
+os tokens já emitidos — quem estiver logado precisa entrar de novo.
+
+**O banco precisa estar no volume.** Ele vive em `estatisticas_dados`, montado
+em `/app/data`. Num volume vazio o backend sobe, as migrations criam as tabelas
+e o site fica no ar **sem nenhuma nota** — não há erro, só um banco vazio. Ao
+migrar de uma instalação que guardava o banco dentro da imagem, copie antes:
+
+```bash
+docker run --rm -v estatisticas_dados:/dados -v "$PWD":/origem alpine \
+    cp /origem/database.sqlite /dados/database.sqlite
+```
+
+Confira depois que a API responde com dados de verdade, não só com HTTP 200:
+
+```bash
+curl -s https://apiestatisticas.pet.inf.ufes.br/items/MAT15925 | head -c 200
+```
+
 ## Banco de dados
 
 O arquivo `database.sqlite` não fica no repositório: cada linha da tabela
@@ -103,8 +129,13 @@ O relatório mudou de formato em 2022. A rota aceita os dois: `NOME_CURSO_ALUNO`
 ou `NOME_CURSO`, `PERIODO` ou `PERIODO_ITEM`. O período `201` e `202` vira `1`
 e `2`; `3xx` vira período especial (`C`).
 
-Relatórios até 2021 trazem `MATR_ALUNO` e a rota usa a matrícula para não
-duplicar registros. Os de 2022 em diante não trazem, e aí não há como
-distinguir uma reimportação de dado novo: a rota responde `409` se já
-existirem registros dos semestres do arquivo. Para regravar esses semestres,
-chame `POST /items?modo=substituir`, que apaga e reinsere.
+Relatórios até 2021 trazem `MATR_ALUNO`, e a matrícula identifica a linha: dá
+para reenviar o mesmo arquivo sem duplicar nada. Os de 2022 em diante não
+trazem, e aí duas linhas iguais são dois alunos, não uma repetição — se já
+houver registros daquelas disciplinas naqueles semestres, a rota responde
+`409`.
+
+`POST /items?modo=substituir` apaga e regrava. O que ele apaga é o cruzamento
+entre os semestres e as disciplinas **presentes no arquivo**, não os semestres
+inteiros: um relatório só das disciplinas do DI não pode levar junto as de
+matemática e física do mesmo semestre.

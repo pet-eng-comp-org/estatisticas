@@ -92,23 +92,38 @@ class ItemsController {
         })).filter(item => item.codigo_disciplina !== '');
 
         // Relatorios ate 2021 trazem a matricula do aluno, e ela identifica a
-        // linha. Os de 2022 em diante nao trazem: duas linhas iguais sao dois
-        // alunos diferentes e nao da para distinguir reimportacao de dado novo.
-        const temMatricula = lista.some(item => item.matricula !== '');
+        // linha: da para reimportar o mesmo arquivo sem duplicar. Os de 2022 em
+        // diante nao trazem, e ai duas linhas iguais sao dois alunos, nao uma
+        // repeticao.
+        //
+        // A decisao e por linha, nao pelo arquivo: olhar so se "alguma" linha
+        // tem matricula fazia um arquivo misto entrar inteiro em modo de
+        // deduplicacao, e as linhas sem matricula eram gravadas sem checagem
+        // nenhuma -- reimportar duplicava todas elas.
         const semestres = Array.from(new Set(lista.map(item => item.ano)));
+        const codigos = Array.from(new Set(lista.map(item => String(item.codigo_disciplina))));
         const substituir = String(req.query.modo || '') === 'substituir';
+        const semMatricula = lista.filter(item => item.matricula === '');
 
-        if (!temMatricula && !substituir) {
+        if (semMatricula.length > 0 && !substituir) {
+            // So conta o que colide com as linhas sem matricula: disciplinas e
+            // semestres que elas trazem.
+            const anos = Array.from(new Set(semMatricula.map(i => i.ano)));
+            const disciplinas = Array.from(new Set(semMatricula.map(i => String(i.codigo_disciplina))));
+            // Os dois filtros vao em blocos separados: encadear dois whereIn
+            // faz o knex 0.21 resolver para a sobrecarga de varias colunas.
             const jaExiste = await knex('items')
-                .whereIn('ano', semestres)
+                .whereIn('ano', anos)
+                .whereIn('codigo_disciplina', disciplinas)
                 .count({ n: '*' }).first();
             const n = Number(jaExiste && jaExiste.n) || 0;
             if (n > 0) {
                 return res.status(409).json({
-                    message: "O arquivo nao traz MATR_ALUNO, entao nao e possivel "
+                    message: "Ha linhas sem MATR_ALUNO, e sem a matricula nao da para "
                         + "distinguir reimportacao de dado novo. Ja existem registros "
-                        + "nos semestres deste arquivo. Reenvie com ?modo=substituir "
-                        + "para apagar esses semestres e regravar.",
+                        + "dessas disciplinas nesses semestres. Reenvie com "
+                        + "?modo=substituir para apagar e regravar so o que o arquivo "
+                        + "cobre.",
                     semestres,
                     registros_existentes: n,
                 });
@@ -120,12 +135,21 @@ class ItemsController {
         let removidos = 0;
         const trx = await knex.transaction();
         try {
-            if (!temMatricula && substituir) {
-                removidos = await trx('items').whereIn('ano', semestres).del();
+            if (substituir) {
+                // Restrito ao que o arquivo cobre. Apagar o semestre inteiro
+                // levaria junto as disciplinas que nao estao nele: um relatorio
+                // so das materias do DI apagaria as de matematica, fisica e
+                // eletrica daquele semestre, sem repor.
+                removidos = await trx('items')
+                    .whereIn('ano', semestres)
+                    .whereIn('codigo_disciplina', codigos)
+                    .del();
             }
 
             for (const item of lista) {
-                if (temMatricula && item.matricula !== '') {
+                // Depois de substituir nao ha o que deduplicar: a faixa que o
+                // arquivo cobre acabou de ser esvaziada.
+                if (!substituir && item.matricula !== '') {
                     const existente = await trx('items').where({
                         codigo_disciplina: item.codigo_disciplina,
                         matricula: item.matricula,
