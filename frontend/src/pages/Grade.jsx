@@ -8,6 +8,7 @@ import CampoBusca from "../components/CampoBusca";
 import BoasVindas from "../components/BoasVindas";
 
 import useGrade from "../hooks/useGrade";
+import useTaxas from "../hooks/useTaxas";
 import {
   porPeriodo,
   porDepartamento,
@@ -46,6 +47,7 @@ function Grade({ modo }) {
   const [busca, setBusca] = useState("");
 
   const { grade, erro, carregando } = useGrade();
+  const taxas = useTaxas();
 
   const selecionar = (nome, codigoClicado) => {
     navegar(`${RAIZ[modo]}/disciplina/${codigoClicado}`);
@@ -87,6 +89,7 @@ function Grade({ modo }) {
             erro={erro}
             // O selo so distingue quando as duas geracoes estao na mesma lista.
             marcarCurriculo={curriculo === "todos"}
+            taxas={taxas}
           />
         </div>
         {codigo ? (

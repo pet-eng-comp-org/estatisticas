@@ -40,6 +40,12 @@ class RankingController {
         const pedido = Number(req.query.periodo);
         const periodo = Number.isInteger(pedido) ? pedido : null;
 
+        // A lista da grade mostra a taxa de cada disciplina e precisa de um
+        // corte mais baixo que o ranking, onde poucos alunos distorceriam a
+        // ordem.
+        const pedidoMinimo = Number(req.query.minimo);
+        const minimo = Number.isInteger(pedidoMinimo) && pedidoMinimo > 0 ? pedidoMinimo : 20;
+
         const linhas: Linha[] = await knex('items')
             .select('codigo_disciplina', 'nome_disciplina', 'curso', 'media', 'situacao', 'ano')
             .where('ano', '>=', desde);
@@ -86,7 +92,7 @@ class RankingController {
 
         const resultado = Array.from(acumulado.values())
             // Poucos alunos fazem a taxa oscilar demais para servir de guia.
-            .filter(r => r.alunos >= 20)
+            .filter(r => r.alunos >= minimo)
             .map(r => ({
                 codigo: r.codigo,
                 nome: r.nome,
@@ -101,7 +107,7 @@ class RankingController {
             }))
             .sort((a, b) => b.reprovacao - a.reprovacao);
 
-        return res.json({ desde, periodo, disciplinas: resultado });
+        return res.json({ desde, periodo, minimo, disciplinas: resultado });
     }
 }
 

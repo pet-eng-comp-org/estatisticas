@@ -1,28 +1,78 @@
+/*
+ * A lista deixou de ser um indice de links: cada disciplina carrega a taxa de
+ * reprovacao, que e a pergunta que traz o aluno ao site. A barra e a unica
+ * coisa colorida aqui -- o resto fica quieto para ela ser lida de longe.
+ */
+
+.grupo {
+  margin-bottom: 1.5rem;
+}
+
+/* Faixa com regua, nao cartao: a hierarquia vem do peso e do espaco, e nao de
+   repetir a mesma borda arredondada em volta de tudo. */
+.grupo-titulo {
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 2px solid #92AD8B;
+  color: #EDEDE8;
+  font-family: var(--fonte-leitura);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lista-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.32rem 0;
+  border-bottom: 1px solid #3F3F3C;
+}
+
+.lista-item:last-child {
+  border-bottom: 0;
+}
+
 .disciplina-botao {
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 0;
   border: 0;
   background: none;
-  color: #0b5ed7;
   font: inherit;
   text-align: left;
   cursor: pointer;
 }
 
-.disciplina-botao:hover,
-.disciplina-botao:focus {
+.disciplina-nome {
+  display: block;
+  font-family: var(--fonte-leitura);
+  font-size: 0.92rem;
+  color: #EDEDE8;
+}
+
+.disciplina-botao:hover .disciplina-nome,
+.disciplina-botao:focus .disciplina-nome {
+  color: #ffffff;
   text-decoration: underline;
 }
 
 .disciplina-botao:focus-visible {
-  outline: 2px solid #0b5ed7;
-  outline-offset: 2px;
+  outline: 2px solid #92AD8B;
+  outline-offset: 3px;
 }
 
 .codigo-disciplina {
   display: block;
-  font-size: 0.72rem;
-  color: #5c636a;
-  letter-spacing: 0.02em;
+  font-size: 0.68rem;
+  color: #A8A8A2;
+  letter-spacing: 0.03em;
 }
 
 .selo-curriculo {
@@ -30,14 +80,58 @@
   padding: 0 0.35em;
   border: 1px solid currentColor;
   border-radius: 0.6em;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
+}
+
+/* A barra tem largura fixa para as disciplinas ficarem comparaveis entre si
+   sem precisar ler o numero. */
+.taxa {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 7.5rem;
+}
+
+.taxa-vazia {
+  visibility: hidden;
+}
+
+.taxa-trilho {
+  flex: 1 1 auto;
+  height: 0.5rem;
+  background: #4A4A46;
+  overflow: hidden;
+}
+
+.taxa-preenchida {
+  display: block;
+  height: 100%;
+  background: #eb6834;
+}
+
+.taxa-numero {
+  flex: 0 0 auto;
+  width: 2.4rem;
+  text-align: right;
+  font-size: 0.72rem;
+  color: #C9C9C3;
 }
 
 .lista-aviso {
-  color: #5c636a;
+  color: #C9C9C3;
+  font-family: var(--fonte-leitura);
   font-size: 0.9rem;
+  padding: 1rem 0;
+  margin: 0;
 }
 
 .lista-erro {
-  color: #842029;
+  color: #F0A08C;
+}
+
+@media only screen and (max-width: 991px) {
+  .taxa {
+    width: 5.5rem;
+  }
 }

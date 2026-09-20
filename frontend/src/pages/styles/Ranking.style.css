@@ -14,11 +14,13 @@
 }
 
 .ranking-titulo {
+    font-family: var(--fonte-leitura);
     font-size: 1.2rem;
     margin-bottom: 0.3rem;
 }
 
 .ranking-subtitulo {
+    font-family: var(--fonte-leitura);
     font-size: 0.8rem;
     color: #52514e;
 }
