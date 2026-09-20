@@ -1,69 +1,81 @@
+/*
+ * O grafico fica direto no papel, sem cartao em volta: o titulo e as reguas
+ * ja delimitam. Assim ele pertence a mesma folha da lista, em vez de parecer
+ * uma janela colada por cima.
+ */
+
 .grafico-coluna {
     position: sticky;
-    top: 1rem;
+    top: 1.5rem;
 }
 
 .chart-container {
-    background-color: #f5f5f5;
-    border-radius: 15px;
-    border: 1px solid gray;
-    padding: 1rem 1.25rem 1.25rem;
-    max-height: 88vh;
+    max-height: calc(100vh - 9rem);
     overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
-.chart-title {
-    font-family: var(--fonte-leitura);
-    font-size: 1.1rem;
-    margin-bottom: 0.15rem;
-}
-
-.chart-codigo {
-    color: #52514e;
-    font-size: 0.85rem;
-    font-weight: normal;
-}
-
-.chart-departamento {
-    color: #52514e;
-    font-size: 0.85rem;
-    margin-bottom: 0;
-}
-
-/* Antes vinha do utilitario d-flex do Bootstrap. */
 .title-subtitle {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
+    gap: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--pet);
+    margin-bottom: 1.25rem;
+}
+
+.chart-title {
+    font-size: var(--t-titulo);
+    line-height: 1.15;
+    margin: 0 0 0.2rem;
+    font-weight: 600;
+}
+
+.chart-codigo {
+    font-family: var(--fonte-dado);
+    font-size: var(--t-aux);
+    font-weight: 400;
+    color: var(--tinta-fraca);
+    margin-left: 0.5rem;
+}
+
+.chart-departamento {
+    color: var(--tinta-fraca);
+    font-size: var(--t-aux);
+    margin: 0;
 }
 
 .grafico-subtitulo {
-    font-size: 0.85rem;
-    color: #52514e;
-    margin: 0.75rem 0 0.25rem;
-    font-weight: normal;
+    font-size: var(--t-aux);
+    color: var(--tinta-fraca);
+    margin: 1.5rem 0 0.5rem;
+    font-weight: 600;
+}
+
+.grafico-subtitulo:first-of-type {
+    margin-top: 0;
 }
 
 .grafico-aviso {
-    color: #52514e;
-    font-size: 0.9rem;
-    padding: 1.5rem 0;
+    color: var(--tinta-fraca);
+    font-size: var(--t-corpo);
+    padding: 2rem 0;
     margin: 0;
 }
 
 .grafico-erro {
-    color: #842029;
+    color: var(--dado);
 }
 
+/* Anotacao de margem, como a da tela de chegada. */
 .grafico-nota {
-    font-family: var(--fonte-leitura);
-    font-size: 0.78rem;
-    color: #52514e;
-    border-left: 3px solid #adadad;
-    padding-left: 0.6rem;
-    margin: 0.5rem 0 0;
+    font-size: var(--t-aux);
+    color: var(--tinta-fraca);
+    border-left: 3px solid var(--regua-forte);
+    padding-left: 0.75rem;
+    margin: 1.25rem 0 0;
+    max-width: 44rem;
 }
 
 .botao-fechar,
@@ -73,44 +85,57 @@
     padding: 0;
     cursor: pointer;
     font: inherit;
+    color: var(--tinta-fraca);
+}
+
+.botao-fechar:hover {
+    color: var(--tinta);
 }
 
 .botao-tabela {
-    margin-top: 0.75rem;
-    color: #0b5ed7;
-    font-size: 0.82rem;
+    margin-top: 1.25rem;
+    color: var(--dado);
+    font-size: var(--t-aux);
     text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
 .botao-fechar:focus-visible,
 .botao-tabela:focus-visible {
-    outline: 2px solid #0b5ed7;
+    outline: 2px solid var(--dado);
     outline-offset: 2px;
 }
 
 .tabela-rolagem {
     overflow-x: auto;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
 }
 
 .tabela-dados {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.78rem;
+    font-family: var(--fonte-dado);
+    font-size: var(--t-cod);
 }
 
 .tabela-dados th,
 .tabela-dados td {
-    border-bottom: 1px solid #ddd;
-    padding: 0.25rem 0.4rem;
+    border-bottom: 1px solid var(--regua);
+    padding: 0.35rem 0.5rem;
     text-align: right;
     white-space: nowrap;
 }
 
-.tabela-dados thead th,
+.tabela-dados thead th {
+    border-bottom: 1px solid var(--regua-forte);
+    color: var(--tinta-fraca);
+    font-weight: 400;
+}
+
+.tabela-dados thead th:first-child,
 .tabela-dados tbody th {
     text-align: left;
-    font-weight: 600;
+    font-weight: 400;
 }
 
 @media only screen and (max-width: 991px) {
@@ -120,6 +145,7 @@
 
     .chart-container {
         max-height: none;
+        padding-right: 0;
     }
 
     .x-icon {

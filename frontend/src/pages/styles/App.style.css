@@ -1,27 +1,43 @@
 @import url('./fontes.css');
 
 /*
- * Duas familias, com papeis distintos: a monoespacada fica onde a largura fixa
- * serve -- codigo de disciplina, numero, tabela -- e o texto de leitura usa a
- * fonte do sistema. Antes tudo era monoespacado, inclusive nome de disciplina
- * e paragrafo, o que deixava a leitura mais lenta sem ganho nenhum.
+ * O site mostra o que um boletim mostra: disciplina, turma, quantos passaram.
+ * O desenho vem dai -- papel claro, regua separando as linhas, numero alinhado
+ * a direita em largura fixa. Nao ha cartao nenhum: moldura em volta de tudo
+ * nao carrega informacao, e a regua sozinha ja separa.
+ *
+ * A cor e reservada ao dado. Tudo que nao e a taxa de reprovacao fica em
+ * tinta, papel ou regua.
  */
+
 :root {
-    --fonte-leitura: ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-        Roboto, "Helvetica Neue", Arial, sans-serif;
-    --fonte-dado: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    /* Sans para ler, mono para numero e codigo, onde a largura fixa alinha
+       coluna e deixa os valores comparaveis. */
+    --fonte-texto: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --fonte-dado: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
 
-    --oliva: #92AD8B;
-    --grafite: #2E2E2C;
-    --papel: #F2F1EC;
-    --reprovacao: #eb6834;
+    --papel: #FAF9F6;
+    --papel-fundo: #F1EFE9;
+    --tinta: #1F1E1C;
+    --tinta-fraca: #5A5852;
+    --regua: #DDD9CF;
+    --regua-forte: #B9B4A6;
+
+    /* Unica cor do site, e so para a taxa de reprovacao. */
+    --dado: #B03A1F;
+
+    /* Verde do PET, com o tom fechado para sair do pastel e conversar com a
+       tinta. Estrutura, nunca dado: neste tom ele le como cinza num grafico. */
+    --pet: #6F8F66;
+
+    /* Escala com razao proxima de 1,25, para haver hierarquia de verdade em
+       vez de tudo no mesmo tamanho. */
+    --t-cod: 0.75rem;
+    --t-aux: 0.8125rem;
+    --t-corpo: 0.9375rem;
+    --t-secao: 1.1875rem;
+    --t-titulo: 1.5rem;
 }
-
-/*
- * O layout vinha do Bootstrap, 145 KB de CSS para usar doze classes: a grade
- * de duas colunas, os cartoes e meia duzia de utilitarios. Esta folha faz o
- * mesmo em algumas dezenas de linhas.
- */
 
 *,
 *::before,
@@ -31,32 +47,35 @@
 
 body {
     margin: 0;
-    font-family: var(--fonte-dado);
-    background-color: var(--grafite);
-    color: #1b1b1b;
+    font-family: var(--fonte-texto);
+    font-size: var(--t-corpo);
+    line-height: 1.5;
+    background-color: var(--papel-fundo);
+    color: var(--tinta);
+    -webkit-font-smoothing: antialiased;
 }
 
 .main-container {
-    background-color: var(--grafite);
     min-height: 100vh;
 }
 
 .conteudo {
     display: flex;
     align-items: flex-start;
-    gap: 1rem;
-    padding: 1.25rem 1.25rem 2rem;
-    max-width: 1600px;
+    gap: 2.5rem;
+    padding: 1.75rem 2rem 3rem;
+    max-width: 1500px;
     margin: 0 auto;
 }
 
 .coluna-lista {
-    flex: 0 0 38%;
-    max-width: 38%;
-    max-height: calc(100vh - 8rem);
+    flex: 0 0 37%;
+    max-width: 37%;
+    max-height: calc(100vh - 9rem);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    padding-right: 0.5rem;
 }
 
 .coluna-grafico {
@@ -65,23 +84,24 @@ body {
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #3b3b3b;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 10px;
+    background-color: var(--regua-forte);
+    border-radius: 5px;
+    border: 3px solid var(--papel-fundo);
 }
 
-/* Na vertical a lista e o grafico deixam de dividir a largura. */
 @media only screen and (max-width: 991px) {
     .conteudo {
         flex-direction: column;
-        padding: 1rem 0.75rem 2rem;
+        gap: 1.5rem;
+        padding: 1rem 1rem 2.5rem;
     }
 
     .coluna-lista,
@@ -91,10 +111,10 @@ body {
         width: 100%;
         max-height: none;
         overflow-y: visible;
+        padding-right: 0;
     }
 }
 
-/* Conteudo so para leitor de tela. */
 .sr-only {
     position: absolute;
     width: 1px;

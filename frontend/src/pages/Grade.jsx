@@ -63,11 +63,12 @@ function Grade({ modo }) {
   const conta = (lista) =>
     lista.reduce((soma, grupo) => soma + grupo.disciplinas.length, 0);
 
-  // O nome vem da propria grade: assim o endereco aberto direto mostra o
-  // titulo certo, sem depender de quem clicou.
-  const aberta = codigo
-    ? todos
-        .flatMap((grupo) => grupo.disciplinas)
+  // O nome vem da grade inteira, nao da lista filtrada: abrir o link de uma
+  // disciplina do curriculo anterior com o filtro em 2022 mostrava o codigo
+  // no lugar do nome, porque ela nao estava entre as visiveis.
+  const aberta = codigo && grade
+    ? [...grade.ecomp, ...grade.ccomp]
+        .flatMap((periodo) => periodo.disciplinas)
         .find((d) => d.codigo === codigo)
     : null;
 

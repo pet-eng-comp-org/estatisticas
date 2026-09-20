@@ -16,7 +16,7 @@ const MenuBar = () => {
           <img src={logo_pet} alt="" />
         </div>
         <h1 className="menu-h1">
-          Estatísticas das disciplinas de Engenharia da Computação
+          Estatísticas das disciplinas de Engenharia de Computação
         </h1>
       </div>
 

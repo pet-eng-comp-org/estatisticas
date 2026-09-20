@@ -1,55 +1,63 @@
-.ranking-container {
-    height: auto;
-    padding: 1.5rem 0 3rem;
-    display: flex;
-    justify-content: center;
-}
+/*
+ * A tabela e o formato certo aqui: o leitor compara disciplinas entre si, e
+ * comparar e o que uma tabela faz melhor. A barra repete a linguagem da lista.
+ */
 
-.ranking-cartao {
-    background-color: #f5f5f5;
-    border-radius: 15px;
-    border: 1px solid gray;
-    padding: 1.25rem 1.5rem 1.5rem;
-    width: min(880px, 94vw);
+.ranking-container {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 1.75rem 2rem 3rem;
 }
 
 .ranking-titulo {
-    font-family: var(--fonte-leitura);
-    font-size: 1.2rem;
-    margin-bottom: 0.3rem;
+    font-size: var(--t-titulo);
+    line-height: 1.15;
+    margin: 0 0 0.4rem;
+    font-weight: 600;
 }
 
 .ranking-subtitulo {
-    font-family: var(--fonte-leitura);
-    font-size: 0.8rem;
-    color: #52514e;
+    font-size: var(--t-aux);
+    color: var(--tinta-fraca);
+    max-width: 46rem;
+    margin: 0;
 }
 
 .ranking-filtros {
     display: flex;
-    gap: 1.2rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
-    font-size: 0.82rem;
-    margin: 0.6rem 0 1rem;
+    font-size: var(--t-aux);
+    color: var(--tinta-fraca);
+    margin: 1.25rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--pet);
 }
 
 .ranking-filtros select {
-    font: inherit;
-    padding: 0.1rem 0.3rem;
+    font-family: var(--fonte-texto);
+    font-size: var(--t-aux);
+    color: var(--tinta);
+    padding: 0.15rem 0.35rem;
+    border: 1px solid var(--regua-forte);
+    background: var(--papel);
+}
+
+.ranking-filtros select:focus-visible {
+    outline: 2px solid var(--dado);
+    outline-offset: 1px;
 }
 
 .ranking-aviso {
-    color: #52514e;
-    font-size: 0.9rem;
-    padding: 1.5rem 0;
+    color: var(--tinta-fraca);
+    font-size: var(--t-corpo);
+    padding: 2rem 0;
 }
 
 .ranking-erro {
-    color: #842029;
+    color: var(--dado);
 }
 
-/* No celular a tabela nao cabe nos 390px: a rolagem fica nela, nao na pagina
-   inteira, para o resto do conteudo continuar alinhado. */
 .ranking-rolagem {
     overflow-x: auto;
 }
@@ -57,20 +65,22 @@
 .ranking-tabela {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.82rem;
+    font-size: var(--t-aux);
 }
 
 .ranking-tabela th,
 .ranking-tabela td {
-    border-bottom: 1px solid #ddd;
-    padding: 0.35rem 0.4rem;
+    border-bottom: 1px solid var(--regua);
+    padding: 0.5rem 0.5rem;
     text-align: right;
     vertical-align: middle;
 }
 
 .ranking-tabela thead th {
-    text-align: right;
-    font-weight: 600;
+    border-bottom: 1px solid var(--regua-forte);
+    color: var(--tinta-fraca);
+    font-weight: 400;
+    font-size: var(--t-cod);
     white-space: nowrap;
 }
 
@@ -80,57 +90,51 @@
 }
 
 .ranking-tabela tbody th {
-    font-weight: normal;
+    font-weight: 400;
+}
+
+.ranking-tabela td {
+    font-family: var(--fonte-dado);
+    font-size: var(--t-cod);
 }
 
 .ranking-codigo {
     display: block;
-    font-size: 0.7rem;
-    color: #5c636a;
+    margin-top: 0.1rem;
+    font-family: var(--fonte-dado);
+    font-size: var(--t-cod);
+    color: var(--tinta-fraca);
 }
 
 .barra-reprovacao {
     position: relative;
-    min-width: 120px;
-    height: 1.1rem;
-    background: #e6e6e3;
-    border-radius: 3px;
-    overflow: hidden;
+    min-width: 8rem;
+    height: 1rem;
+    background: var(--regua);
 }
 
 .barra-preenchida {
     position: absolute;
     inset: 0 auto 0 0;
-    background: #eb6834;
+    background: var(--dado);
 }
 
 .barra-reprovacao span {
     position: relative;
     display: block;
     text-align: right;
-    padding-right: 0.3rem;
-    line-height: 1.1rem;
-    font-size: 0.75rem;
+    padding-right: 0.35rem;
+    line-height: 1rem;
+    font-family: var(--fonte-dado);
+    font-size: var(--t-cod);
 }
 
 @media only screen and (max-width: 991px) {
-    .ranking-cartao {
-        border-radius: 0;
-        border-left: 0;
-        border-right: 0;
-        padding: 1rem;
+    .ranking-container {
+        padding: 1rem 1rem 2.5rem;
     }
 
     .barra-reprovacao {
-        min-width: 64px;
-    }
-
-    .ranking-tabela {
-        font-size: 0.76rem;
-    }
-
-    .ranking-tabela th,
-    .ranking-tabela td {
-        padding: 0.3rem 0.25rem;
+        min-width: 4.5rem;
     }
 }

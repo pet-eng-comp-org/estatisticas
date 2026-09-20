@@ -1,91 +1,77 @@
-.menu{
-    height: 10vh;
-    width: 100%;
+/*
+ * A faixa do PET e a assinatura institucional do site; o verde e o mesmo de
+ * sempre, com o tom fechado para conversar com a tinta em vez de pairar como
+ * um pastel solto.
+ */
+.menu {
     display: flex;
-    justify-content: space-between;
-    overflow: hidden;
-    color: black;
-    background-color: #92AD8B;
-}
-
-/* O titulo do site e o h1 da pagina; o tamanho continua o de antes, quando
-   era um span. */
-.menu-h1 {
-    font-family: var(--fonte-leitura);
-    margin: 0;
-    font-size: 1rem;
-    font-weight: normal;
-}
-
-.menu-title{
-    display: flex;
-    justify-content: flex-start;
-    width: 50%;
-    height: 100%;
     align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 0.85rem 2rem;
+    background-color: var(--pet);
+    border-bottom: 3px solid #5B7854;
+}
+
+.menu-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
 }
 
 .pet-logo {
-    padding: 2%;
+    flex-shrink: 0;
+    display: flex;
+}
+
+.pet-logo img {
+    width: 30px;
+    height: auto;
+}
+
+.menu-h1 {
+    margin: 0;
+    font-size: var(--t-aux);
+    font-weight: 600;
+    color: #14210F;
+    letter-spacing: 0.01em;
 }
 
 .menu-links {
     display: flex;
     align-items: center;
-    margin-right: 2%;
-    font-weight: bold;
+    gap: 1.25rem;
 }
 
 .menutext {
-    /* O reset do Bootstrap tirava o sublinhado dos links; sem ele, o menu
-       inteiro vinha sublinhado. */
-    color: black;
+    color: #14210F;
     text-decoration: none;
-    padding-right: 20px;
+    font-size: var(--t-aux);
+    font-weight: 600;
+    padding-bottom: 2px;
+    border-bottom: 2px solid transparent;
 }
 
-.menutext:hover {
-    transform: scale(1.05);
-    text-shadow: white 0px 0px 5px ;
+.menutext:hover,
+.menutext:focus-visible {
+    border-bottom-color: #14210F;
 }
 
-/* No celular o titulo quebrava em varias linhas por cima do logo e empurrava
-   os links para fora da tela -- o "Nome" sumia. Na vertical o titulo encolhe
-   e os links ganham uma linha propria, com rolagem se nao couberem. */
 @media only screen and (max-width: 991px) {
     .menu {
-        height: auto;
         flex-direction: column;
         align-items: stretch;
-        padding-bottom: 0.4rem;
-    }
-
-    .menu-title {
-        width: 100%;
-        font-size: 0.8rem;
-        line-height: 1.2;
-        padding-right: 0.6rem;
-    }
-
-    .pet-logo {
-        padding: 0.5rem;
-        flex-shrink: 0;
-    }
-
-    .pet-logo img {
-        width: 28px;
-        height: auto;
+        gap: 0.6rem;
+        padding: 0.7rem 1rem;
     }
 
     .menu-links {
-        margin-right: 0;
-        padding: 0 0.5rem;
-        justify-content: flex-start;
+        gap: 1rem;
         overflow-x: auto;
     }
 
     .menutext {
-        padding-right: 1rem;
         white-space: nowrap;
     }
 }

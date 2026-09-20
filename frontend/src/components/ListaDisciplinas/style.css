@@ -1,137 +1,128 @@
 /*
- * A lista deixou de ser um indice de links: cada disciplina carrega a taxa de
- * reprovacao, que e a pergunta que traz o aluno ao site. A barra e a unica
- * coisa colorida aqui -- o resto fica quieto para ela ser lida de longe.
+ * A lista e a parte do site que mais se parece com um boletim: uma linha por
+ * disciplina, regua separando, e o numero alinhado a direita. A barra e a
+ * unica coisa colorida da tela.
  */
 
 .grupo {
-  margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
 }
 
-/* Faixa com regua, nao cartao: a hierarquia vem do peso e do espaco, e nao de
-   repetir a mesma borda arredondada em volta de tudo. */
 .grupo-titulo {
-  margin: 0 0 0.5rem;
-  padding-bottom: 0.3rem;
-  border-bottom: 2px solid #92AD8B;
-  color: #EDEDE8;
-  font-family: var(--fonte-leitura);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+    margin: 0 0 0.15rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--pet);
+    font-size: var(--t-aux);
+    font-weight: 600;
+    color: var(--tinta-fraca);
 }
 
 .lista {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .lista-item {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  padding: 0.32rem 0;
-  border-bottom: 1px solid #3F3F3C;
-}
-
-.lista-item:last-child {
-  border-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--regua);
 }
 
 .disciplina-botao {
-  flex: 1 1 auto;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
 }
 
 .disciplina-nome {
-  display: block;
-  font-family: var(--fonte-leitura);
-  font-size: 0.92rem;
-  color: #EDEDE8;
+    display: block;
+    font-size: var(--t-corpo);
+    line-height: 1.3;
 }
 
 .disciplina-botao:hover .disciplina-nome,
 .disciplina-botao:focus .disciplina-nome {
-  color: #ffffff;
-  text-decoration: underline;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 }
 
 .disciplina-botao:focus-visible {
-  outline: 2px solid #92AD8B;
-  outline-offset: 3px;
+    outline: 2px solid var(--dado);
+    outline-offset: 3px;
 }
 
 .codigo-disciplina {
-  display: block;
-  font-size: 0.68rem;
-  color: #A8A8A2;
-  letter-spacing: 0.03em;
+    display: block;
+    margin-top: 0.1rem;
+    font-family: var(--fonte-dado);
+    font-size: var(--t-cod);
+    color: var(--tinta-fraca);
 }
 
 .selo-curriculo {
-  margin-left: 0.4em;
-  padding: 0 0.35em;
-  border: 1px solid currentColor;
-  border-radius: 0.6em;
-  font-size: 0.66rem;
+    margin-left: 0.5em;
+    padding: 0 0.4em;
+    border: 1px solid var(--regua-forte);
+    font-size: 0.68rem;
 }
 
-/* A barra tem largura fixa para as disciplinas ficarem comparaveis entre si
-   sem precisar ler o numero. */
+/* Largura fixa: as barras viram uma coluna, e da para comparar disciplinas
+   de relance sem ler numero nenhum. */
 .taxa {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  width: 7.5rem;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 7rem;
 }
 
 .taxa-vazia {
-  visibility: hidden;
+    visibility: hidden;
 }
 
 .taxa-trilho {
-  flex: 1 1 auto;
-  height: 0.5rem;
-  background: #4A4A46;
-  overflow: hidden;
+    flex: 1 1 auto;
+    height: 0.4rem;
+    background: var(--regua);
 }
 
 .taxa-preenchida {
-  display: block;
-  height: 100%;
-  background: #eb6834;
+    display: block;
+    height: 100%;
+    background: var(--dado);
 }
 
 .taxa-numero {
-  flex: 0 0 auto;
-  width: 2.4rem;
-  text-align: right;
-  font-size: 0.72rem;
-  color: #C9C9C3;
+    flex: 0 0 auto;
+    width: 2.3rem;
+    text-align: right;
+    font-family: var(--fonte-dado);
+    font-size: var(--t-cod);
+    color: var(--tinta-fraca);
 }
 
 .lista-aviso {
-  color: #C9C9C3;
-  font-family: var(--fonte-leitura);
-  font-size: 0.9rem;
-  padding: 1rem 0;
-  margin: 0;
+    color: var(--tinta-fraca);
+    font-size: var(--t-corpo);
+    padding: 1rem 0;
+    margin: 0;
 }
 
 .lista-erro {
-  color: #F0A08C;
+    color: var(--dado);
 }
 
 @media only screen and (max-width: 991px) {
-  .taxa {
-    width: 5.5rem;
-  }
+    .taxa {
+        width: 5.5rem;
+    }
 }

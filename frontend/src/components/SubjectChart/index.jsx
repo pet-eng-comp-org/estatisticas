@@ -21,13 +21,20 @@ import api from "../../services/api";
 
 import "./styles.css";
 
-// Paleta conferida com o validador de contraste e de visao de cores: as cores
+// Paleta conferida no validador de contraste e de visao de cores: as cores
 // adjacentes se distinguem tambem em deuteranopia, protanopia e tritanopia.
+// O tijolo e a mesma cor da barra da lista -- reprovacao tem uma cor so no
+// site inteiro.
+//
+// As duas medias nao sao categorias independentes: sao a mesma medida para
+// dois grupos. Por isso uma e linha de referencia, em tinta neutra, e a outra
+// e a do grupo que interessa ao leitor, na cor do site -- distinguidas
+// tambem pelo tracejado, nao so pela cor.
 const COR_APROVADO = "#2a78d6";
-const COR_REPROVADO_NOTA = "#eb6834";
+const COR_REPROVADO_NOTA = "#B03A1F";
 const COR_REPROVADO_FALTA = "#4a3aa7";
-const COR_MEDIA_CT = "#008300";
-const COR_MEDIA_DI = "#e87ba4";
+const COR_MEDIA_CT = "#5A5852";
+const COR_MEDIA_DI = "#B03A1F";
 
 const umaCasa = (n) => (n === null || Number.isNaN(n) ? null : Number(n.toFixed(1)));
 
@@ -143,31 +150,31 @@ const SubjectChart = ({ selectedSubject, selectedSubjectCode, aoFechar }) => {
           <>
             <h3 className="grafico-subtitulo">Resultado da turma (% de alunos)</h3>
             <ResponsiveContainer width="100%" height={260}>
-              <ComposedChart data={dados} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid stroke="#e6e6e3" vertical={false} />
-                <XAxis dataKey="periodo" tick={{ fontSize: 11 }} />
+              <ComposedChart data={dados} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barCategoryGap="28%">
+                <CartesianGrid stroke="#E4E1D8" vertical={false} />
+                <XAxis dataKey="periodo" tick={{ fontSize: 11, fill: "#5A5852" }} />
                 <YAxis
                   domain={[0, 100]}
                   ticks={[0, 25, 50, 75, 100]}
                   unit="%"
-                  tick={{ fontSize: 11 }}
+                  tick={{ fontSize: 11, fill: "#5A5852" }}
                   width={48}
                 />
                 <Tooltip formatter={(v, nome) => [`${v.toFixed(1)}%`, nome]} />
                 <Legend />
-                <Bar dataKey="aprovados" name="Aprovados" stackId="r" fill={COR_APROVADO} stroke="#f5f5f5" strokeWidth={1} />
-                <Bar dataKey="reprovadosNota" name="Reprovados por nota" stackId="r" fill={COR_REPROVADO_NOTA} stroke="#f5f5f5" strokeWidth={1} />
-                <Bar dataKey="reprovadosFalta" name="Reprovados por falta" stackId="r" fill={COR_REPROVADO_FALTA} stroke="#f5f5f5" strokeWidth={1} />
-                {dados.length > 12 && <Brush dataKey="periodo" height={18} stroke="#adadad" />}
+                <Bar dataKey="aprovados" name="Aprovados" stackId="r" fill={COR_APROVADO} stroke="#FAF9F6" strokeWidth={1} />
+                <Bar dataKey="reprovadosNota" name="Reprovados por nota" stackId="r" fill={COR_REPROVADO_NOTA} stroke="#FAF9F6" strokeWidth={1} />
+                <Bar dataKey="reprovadosFalta" name="Reprovados por falta" stackId="r" fill={COR_REPROVADO_FALTA} stroke="#FAF9F6" strokeWidth={1} />
+                {dados.length > 12 && <Brush dataKey="periodo" height={18} stroke="#B9B4A6" />}
               </ComposedChart>
             </ResponsiveContainer>
 
             <h3 className="grafico-subtitulo">Média das notas (0 a 10)</h3>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={dados} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid stroke="#e6e6e3" vertical={false} />
-                <XAxis dataKey="periodo" tick={{ fontSize: 11 }} />
-                <YAxis domain={[0, 10]} tick={{ fontSize: 11 }} width={48} />
+                <CartesianGrid stroke="#E4E1D8" vertical={false} />
+                <XAxis dataKey="periodo" tick={{ fontSize: 11, fill: "#5A5852" }} />
+                <YAxis domain={[0, 10]} tick={{ fontSize: 11, fill: "#5A5852" }} width={48} />
                 <Tooltip />
                 <Legend />
                 <Line dataKey="mediaCt" name="Todos os cursos" stroke={COR_MEDIA_CT} strokeWidth={2} dot={{ r: 3 }} connectNulls />
