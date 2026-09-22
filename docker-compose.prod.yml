@@ -18,8 +18,8 @@ x-logging: &logging
 
 services:
   backend:
-    # ghcr.io/pet-eng-comp-org/siteestatisticas-backend:sha-8f88f3db5afbbb4b96d0ddbee21c0cd7b9e12712
-    image: ghcr.io/pet-eng-comp-org/siteestatisticas-backend@sha256:ee3909c78c27f1ca7eedfd01dfeff6891198e5a375f038d59ecdaf1588387967
+    # ghcr.io/pet-eng-comp-org/siteestatisticas-backend:sha-827b8028793f410acfc20a68e0f2bd7bf9b71515
+    image: ghcr.io/pet-eng-comp-org/siteestatisticas-backend@sha256:54bf86409da0bb2407cbe8797c89a1907372801ce30314c08f0fe5ab9879d031
     logging: *logging
     restart: always
     environment:
@@ -41,8 +41,8 @@ services:
       - traefik.docker.network=traefik
 
   frontend:
-    # ghcr.io/pet-eng-comp-org/siteestatisticas-frontend:sha-c0e43e5a13ad9a5274df8e31cba7289dd8f5bee6
-    image: ghcr.io/pet-eng-comp-org/siteestatisticas-frontend@sha256:b9247361b992acb562f26b84f5b88001a78188672289cfdbef0f44f35b401966
+    # ghcr.io/pet-eng-comp-org/siteestatisticas-frontend:sha-827b8028793f410acfc20a68e0f2bd7bf9b71515
+    image: ghcr.io/pet-eng-comp-org/siteestatisticas-frontend@sha256:be925faa284940d5255a38f67515d07ab0f6489a8f0ed73f97a2301a8f96b8c0
     logging: *logging
     restart: always
     depends_on:
