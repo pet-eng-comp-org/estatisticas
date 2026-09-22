@@ -12,7 +12,7 @@ import "./style.css";
  * responde antes do clique; sem dado suficiente, nao inventa um numero.
  */
 const Taxa = ({ dado }) => {
-  if (!dado) return <span className="taxa taxa-vazia" aria-hidden="true" />;
+  if (!dado) return null;
 
   const porcento = Math.round(dado.reprovacao * 100);
   return (
@@ -20,7 +20,7 @@ const Taxa = ({ dado }) => {
       className="taxa"
       title={`${porcento}% de reprovação em ${dado.alunos} matrículas desde 2018`}
     >
-      <span className="taxa-trilho">
+      <span className="taxa-trilho" aria-hidden="true">
         <span className="taxa-preenchida" style={{ width: `${porcento}%` }} />
       </span>
       <span className="taxa-numero">{porcento}%</span>
@@ -55,29 +55,43 @@ const ListaDisciplinas = ({
     <div>
       {grupos.map((grupo, indice) => (
         <section className="grupo" key={indice}>
-          <h2 className="grupo-titulo">{grupo.titulo}</h2>
-          <ul className="lista">
+          <h2 className="grupo-titulo" id={`grupo-${indice}`}>{grupo.titulo}</h2>
+          {/* Tabela, nao lista: cada linha tem as mesmas duas colunas, e o
+              cabecalho diz ao leitor de tela do que e o percentual. */}
+          <table className="lista" aria-labelledby={`grupo-${indice}`}>
+            <thead className="sr-only">
+              <tr>
+                <th scope="col">Disciplina</th>
+                <th scope="col">Reprovação</th>
+              </tr>
+            </thead>
+            <tbody>
               {grupo.disciplinas.map((disciplina) => (
-                <li key={disciplina.codigo} className="lista-item">
-                  {/* Botao, nao link: a acao troca o grafico ao lado e nao
-                      navega para lugar nenhum. */}
-                  <button
-                    type="button"
-                    className="disciplina-botao"
-                    onClick={() => aoSelecionar(disciplina.nome, disciplina.codigo)}
-                  >
-                    <span className="disciplina-nome">{disciplina.nome}</span>
-                    <span className="codigo-disciplina">
-                      {disciplina.codigo}
-                      {marcarCurriculo && disciplina.curriculo === 2022 && (
-                        <span className="selo-curriculo">2022</span>
-                      )}
-                    </span>
-                  </button>
-                  <Taxa dado={taxas[disciplina.codigo]} />
-                </li>
+                <tr key={disciplina.codigo} className="lista-item">
+                  <th scope="row" className="lista-disciplina">
+                    {/* Botao, nao link: a acao troca o grafico ao lado e nao
+                        navega para lugar nenhum. */}
+                    <button
+                      type="button"
+                      className="disciplina-botao"
+                      onClick={() => aoSelecionar(disciplina.nome, disciplina.codigo)}
+                    >
+                      <span className="disciplina-nome">{disciplina.nome}</span>
+                      <span className="codigo-disciplina">
+                        {disciplina.codigo}
+                        {marcarCurriculo && disciplina.curriculo === 2022 && (
+                          <span className="selo-curriculo">2022</span>
+                        )}
+                      </span>
+                    </button>
+                  </th>
+                  <td className="lista-taxa">
+                    <Taxa dado={taxas[disciplina.codigo]} />
+                  </td>
+                </tr>
               ))}
-          </ul>
+            </tbody>
+          </table>
         </section>
       ))}
     </div>

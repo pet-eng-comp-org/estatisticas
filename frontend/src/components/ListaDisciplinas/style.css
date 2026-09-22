@@ -18,22 +18,32 @@
 }
 
 .lista {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.lista-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+.lista-item > th,
+.lista-item > td {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--regua);
+    vertical-align: middle;
+}
+
+.lista-disciplina {
+    font-weight: inherit;
+    text-align: left;
+}
+
+/* Em celula de tabela a largura inclui o padding: 7rem de barra + 1rem de
+   respiro do nome. */
+.lista-item > .lista-taxa {
+    width: 8rem;
+    padding-left: 1rem;
 }
 
 .disciplina-botao {
-    flex: 1 1 auto;
-    min-width: 0;
+    display: block;
+    width: 100%;
     padding: 0;
     border: 0;
     background: none;
@@ -78,15 +88,9 @@
 /* Largura fixa: as barras viram uma coluna, e da para comparar disciplinas
    de relance sem ler numero nenhum. */
 .taxa {
-    flex: 0 0 auto;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    width: 7rem;
-}
-
-.taxa-vazia {
-    visibility: hidden;
 }
 
 .taxa-trilho {
@@ -122,7 +126,7 @@
 }
 
 @media only screen and (max-width: 991px) {
-    .taxa {
-        width: 5.5rem;
+    .lista-item > .lista-taxa {
+        width: 6.5rem;
     }
 }
