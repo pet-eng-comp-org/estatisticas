@@ -68,5 +68,7 @@ volumes:
     name: estatisticas_dados
 
 networks:
+  # A rede e da stack do Traefik: apagar esta stack nao pode tentar remove-la.
   traefik:
     name: traefik
+    external: true
