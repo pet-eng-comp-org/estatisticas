@@ -1,14 +1,9 @@
 name: Publica imagens no GHCR
 
-# Constroi backend e frontend a cada push no master.
+# Constroi backend e frontend a cada push no master e implanta o que mudou.
 #
-# ATENCAO: este workflow NAO publica a tag "latest", de proposito. O repositorio
-# estava parado desde 2023 quando o build automatico foi criado, e a imagem em
-# producao pode ser mais nova que o codigo daqui. Publicar "latest" sobrescreveria
-# uma referencia possivelmente em uso.
-#
-# Depois de confirmar que o codigo do repositorio corresponde ao que roda,
-# adicione "type=raw,value=latest" nas tags abaixo.
+# Nao ha tag "latest": producao aponta para digest no docker-compose.prod.yml,
+# e uma tag movel so serviria para alguem puxar a imagem errada.
 
 on:
   push:
@@ -64,3 +59,80 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=${{ matrix.servico }}
           cache-to: type=gha,mode=max,scope=${{ matrix.servico }}
+
+  # Publicar nao e implantar: quem implanta e o commit abaixo. O CI escreve o
+  # digest recem-publicado no docker-compose.prod.yml e commita no master; o
+  # Portainer acompanha este arquivo e aplica em ate 5 minutos.
+  #
+  # So troca o digest do servico cuja pasta mudou. Build nunca sai com o mesmo
+  # digest, e trocar os dois sempre reiniciaria o backend por causa de uma
+  # mudanca so no frontend.
+  #
+  # Esse commit e o registro do deploy: `git revert` nele volta a versao
+  # anterior. O push feito com GITHUB_TOKEN nao dispara este workflow de novo.
+  implanta:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    concurrency: implanta
+
+    permissions:
+      contents: write
+      packages: read
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Escreve o digest novo no compose de producao
+        env:
+          ANTES: ${{ github.event.before }}
+          EVENTO: ${{ github.event_name }}
+        run: |
+          # Disparo manual, ou push sem commit anterior conhecido: implanta os dois.
+          if [ "$EVENTO" != push ] || ! git cat-file -e "$ANTES^{commit}" 2>/dev/null; then
+            mudou="backend frontend"
+          else
+            mudou=$(git diff --name-only "$ANTES" "$GITHUB_SHA" | cut -d/ -f1 | grep -xE 'backend|frontend' | sort -u)
+          fi
+
+          for servico in $mudou; do
+            img="ghcr.io/${GITHUB_REPOSITORY_OWNER}/siteestatisticas-${servico}"
+            digest=$(docker buildx imagetools inspect "${img}:sha-${GITHUB_SHA}" --format '{{json .Manifest}}' | jq -r .digest)
+            # Digest vazio apagaria a imagem do compose e derrubaria a stack.
+            if ! echo "$digest" | grep -qxE 'sha256:[0-9a-f]{64}'; then
+              echo "Digest invalido para ${img}: '${digest}'"; exit 1
+            fi
+            IMG="$img" DIGEST="$digest" python3 - <<'PY'
+          import os, re
+          arq = "docker-compose.prod.yml"
+          img, digest, sha = os.environ["IMG"], os.environ["DIGEST"], os.environ["GITHUB_SHA"]
+          s = open(arq, encoding="utf-8").read()
+          # a linha que vale e a do digest; o comentario acima dela guarda a tag legivel
+          s = re.sub(re.escape(img) + r"@sha256:[a-f0-9]+", img + "@" + digest, s)
+          s = re.sub(re.escape(img) + r":sha-[0-9a-f]+", img + ":sha-" + sha, s)
+          open(arq, "w", encoding="utf-8").write(s)
+          PY
+          done
+
+          if git diff --quiet -- docker-compose.prod.yml; then
+            echo "Nada a implantar: backend/ e frontend/ nao mudaram."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "deploy: $(echo $mudou) no commit ${GITHUB_SHA:0:8}
+
+          Codigo: ${GITHUB_SHA}
+
+          Para reverter esta implantacao: git revert deste commit." -- docker-compose.prod.yml
+          git push -q origin HEAD:master
