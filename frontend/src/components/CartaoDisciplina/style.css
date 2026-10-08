@@ -1,0 +1,109 @@
+/* 300 x 210, como no mockup; tudo posicionado a partir do topo do cartao. */
+.cartao-disciplina {
+  position: relative;
+  display: block;
+  width: 300px;
+  height: 210px;
+  text-decoration: none;
+  color: var(--vinho);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.cartao-disciplina:hover {
+  border-color: var(--rosa);
+  box-shadow: 0 4px 14px rgba(128, 12, 51, 0.08);
+}
+
+.cartao-disciplina > span {
+  position: absolute;
+  left: 21px;
+}
+
+.cartao-disciplina-nome {
+  top: 17px;
+  right: 14px;
+  font-size: 17px;
+  line-height: 21px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cartao-disciplina-meta {
+  top: 43px;
+  font-size: 12px;
+  line-height: 15px;
+  color: var(--cinza);
+}
+
+.cartao-disciplina-linha {
+  right: 49px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.cartao-disciplina-linha-1 {
+  top: 78px;
+}
+
+.cartao-disciplina-linha-2 {
+  top: 129px;
+}
+
+.cartao-disciplina-rotulo {
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 700;
+  color: var(--cinza);
+}
+
+.cartao-disciplina-valor {
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 700;
+  color: var(--rosa);
+}
+
+.cartao-disciplina-valor-verde {
+  color: var(--verde);
+}
+
+.cartao-disciplina-barra {
+  width: 256px;
+}
+
+.cartao-disciplina-barra-1 {
+  top: 105px;
+}
+
+.cartao-disciplina-barra-2 {
+  top: 156px;
+}
+
+.cartao-disciplina-rodape {
+  top: 178px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 700;
+  color: var(--cinza);
+}
+
+@media (max-width: 720px) {
+  .cartao-disciplina {
+    width: 100%;
+  }
+
+  .cartao-disciplina-barra {
+    width: auto;
+    right: 21px;
+  }
+
+  .cartao-disciplina-linha {
+    right: 21px;
+  }
+}

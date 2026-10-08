@@ -1,0 +1,168 @@
+.cabecalho {
+  background: var(--branco);
+  border-bottom: 1px solid var(--borda);
+}
+
+.cabecalho-moldura {
+  max-width: 1440px;
+  margin: 0 auto;
+  height: 85px;
+  padding: 0 36px 0 34px;
+  display: flex;
+  align-items: center;
+}
+
+.cabecalho-marca {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.cabecalho-marca svg {
+  flex-shrink: 0;
+}
+
+.cabecalho-nomes {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+}
+
+.cabecalho-titulo {
+  font-size: 24px;
+  line-height: 29px;
+  font-weight: 700;
+  color: var(--vinho);
+  text-transform: uppercase;
+}
+
+.cabecalho-curso {
+  font-size: 14px;
+  line-height: 17px;
+  font-weight: 700;
+  color: var(--rosa);
+  margin-top: 3px;
+}
+
+.cabecalho-secoes {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-top: 7px;
+}
+
+.cabecalho-link {
+  font-size: 15px;
+  line-height: 18px;
+  font-weight: 700;
+  color: var(--cinza);
+  text-decoration: none;
+  padding: 6px 0;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.cabecalho-link + .cabecalho-link {
+  margin-left: 15px;
+}
+
+/* Espacamento do mockup, que nao e uniforme. */
+.cabecalho-link:nth-child(2) {
+  margin-left: 39px;
+}
+
+.cabecalho-link:nth-child(3) {
+  margin-left: 23px;
+}
+
+.cabecalho-link:hover {
+  color: var(--vinho);
+}
+
+.cabecalho-link.ativo {
+  color: var(--vinho);
+}
+
+.cabecalho-curriculo {
+  display: flex;
+  gap: 8px;
+  margin-left: 59px;
+  flex-shrink: 0;
+}
+
+.cabecalho-ano {
+  height: 38px;
+  min-width: 88px;
+  padding: 0 25px;
+  border: 0;
+  border-radius: 19px;
+  background: var(--rosa-claro);
+  color: var(--rosa);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cabecalho-ano[aria-pressed='true'] {
+  min-width: 98px;
+  background: var(--vinho);
+  color: var(--branco);
+}
+
+/* Abaixo disso o titulo e o menu nao cabem na mesma linha: o menu desce e
+   rola de lado. */
+@media (max-width: 1180px) {
+  .cabecalho-moldura {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 16px var(--margem) 0;
+    row-gap: 10px;
+  }
+
+  .cabecalho-curriculo {
+    margin-left: auto;
+  }
+
+  .cabecalho-secoes {
+    order: 3;
+    width: calc(100% + 2 * var(--margem));
+    margin: 0 calc(-1 * var(--margem));
+    padding: 4px var(--margem) 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .cabecalho-link:first-child {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .cabecalho-marca {
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .cabecalho-titulo {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  .cabecalho-curso {
+    font-size: 12px;
+    line-height: 15px;
+    margin-top: 0;
+  }
+
+  .cabecalho-ano {
+    min-width: 0;
+    height: 34px;
+    padding: 0 12px;
+  }
+
+  .cabecalho-ano[aria-pressed='true'] {
+    min-width: 0;
+  }
+}

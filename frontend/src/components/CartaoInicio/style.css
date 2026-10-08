@@ -1,0 +1,97 @@
+/* Medidas do mockup: 300 x 108, simbolo em 18/18, nome a 76 da borda. O
+   nome fica centrado numa faixa fixa (uma ou duas linhas) e o codigo logo
+   abaixo, sempre na mesma altura, como no desenho. */
+.cartao-inicio {
+  position: relative;
+  display: block;
+  width: 300px;
+  height: 108px;
+  text-decoration: none;
+  color: var(--vinho);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.cartao-inicio:hover {
+  border-color: var(--rosa);
+  box-shadow: 0 4px 14px rgba(128, 12, 51, 0.08);
+}
+
+.cartao-inicio-simbolo {
+  position: absolute;
+  left: 17px;
+  top: 17px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  background: var(--rosa-claro);
+  color: var(--rosa);
+}
+
+.cartao-inicio-verde .cartao-inicio-simbolo {
+  background: var(--verde-claro);
+  color: var(--verde);
+}
+
+.cartao-inicio-neutro .cartao-inicio-simbolo {
+  background: var(--trilho);
+  color: var(--cinza);
+}
+
+.cartao-inicio-nome {
+  position: absolute;
+  left: 75px;
+  right: 12px;
+  top: 28.5px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  line-height: 19px;
+  font-weight: 700;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cartao-inicio-meta {
+  position: absolute;
+  left: 75px;
+  top: 48px;
+  font-size: 12px;
+  line-height: 15px;
+  color: var(--cinza);
+}
+
+.cartao-inicio-medida {
+  position: absolute;
+  left: 19px;
+  top: 76px;
+  font-size: 12px;
+  line-height: 15px;
+  font-weight: 700;
+  color: var(--cinza);
+}
+
+.cartao-inicio-barra {
+  position: absolute;
+  left: 149px;
+  top: 80px;
+  width: 125px;
+  height: 7px;
+}
+
+@media (max-width: 720px) {
+  .cartao-inicio {
+    width: 100%;
+  }
+
+  .cartao-inicio-barra {
+    width: auto;
+    right: 24px;
+  }
+}
