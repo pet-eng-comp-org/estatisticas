@@ -8,6 +8,7 @@ import ItemsController from './controllers/ItemsController';
 import UsersController from './controllers/UsersController';
 import DisciplinesController from './controllers/DisciplinesController';
 import RankingController from './controllers/RankingController';
+import { EQUIVALENCIAS, NOMES_2008 } from './database/equivalencias';
 
 const routes = express.Router();
 const verify = require('./utils/verifyToken');
@@ -56,6 +57,8 @@ routes.post('/items',
 routes.get('/ranking', rankingController.index);
 
 routes.get('/viewGrid', disciplinesController.index);
+// Pares [2022, 2008] do PPC: e o que a tela de comparar curriculos cruza.
+routes.get('/equivalencias', (req, res) => res.json({ pares: EQUIVALENCIAS, nomes2008: NOMES_2008 }));
 routes.get('/viewSortedGrid', disciplinesController.group)
 
 //FIXME: Essa rota possui problemas graves e não está funcionando corretamente
