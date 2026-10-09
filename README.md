@@ -30,7 +30,7 @@ O banco tem nota e matrícula de aluno: não vai para o git (`dados/` está no
 - **Desenho da grade**: `src/lib/curriculos/matriz.ts`, copiado da
   "Representação Gráfica da Matriz Curricular - 2022 (Revisão 2024)": posição
   de cada disciplina, área (cor) e pré-requisitos que viram etiqueta.
-- **Grade 2008**: veio do banco do site anterior.
+- **Grade 2008**: veio do banco do site anterior e confere, período a período e pré-requisito a pré-requisito, com a última emissão oficial da versão 2008 (05/07/2017, "Grade Curricular - 2017" na página do PPC). Não tem representação gráfica oficial, então a tela Grade mostra só a de 2022.
 - **Carga horária** e **equivalências 2022 ⇄ 2008**: documentos oficiais,
   com o link em cada arquivo de `src/lib/curriculos/`.
 - **Dificuldade (1 a 5)**: `src/lib/notas/dificuldade.ts`. Combina
