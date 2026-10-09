@@ -5,14 +5,9 @@ import { banco, schema, versaoDosDados } from "../db";
 import { estatistica, porSemestre, resumir, type Estatistica, type Semestre } from "./agregacao";
 import { calcularDificuldade } from "./dificuldade";
 
-// O desempenho de 2012 não ajuda quem vai se matricular agora: os números
-// dos cartões olham as turmas desde este ano.
-export const DESDE = "2018";
+import { DESDE, MINIMO_ALUNOS, MINIMO_POR_SEMESTRE, OPTATIVA } from "../formato";
 
-// Com menos alunos que isso a taxa oscila demais para dizer alguma coisa.
-export const MINIMO_ALUNOS = 10;
-
-export const OPTATIVA = 99;
+export { DESDE, MINIMO_ALUNOS, OPTATIVA };
 
 export type Curriculo = 2008 | 2022;
 
@@ -28,7 +23,7 @@ export type Disciplina = {
 
 export type NumerosDisciplina = Pick<
   Estatistica,
-  "alunos" | "aprovados" | "aprovacao" | "reprovacao" | "media" | "desvio" | "semestres"
+  "alunos" | "aprovados" | "aprovacao" | "reprovacao" | "media" | "desvio" | "semestres" | "comNota"
 > & { dificuldade: number | null };
 
 export type DisciplinaComNumeros = Disciplina & { numeros: NumerosDisciplina | null };
@@ -76,12 +71,11 @@ function calcular(): Calculo {
     .where(gte(schema.notas.semestre, DESDE))
     .all();
 
-  const resumos = Array.from(resumir(linhas).values()).filter(
-    (r) => r.alunos >= MINIMO_ALUNOS && disciplinas.get(r.codigo)?.curriculo,
-  );
-  // As duas gerações entram na mesma régua: a dificuldade de uma disciplina
-  // de 2008 e a de uma de 2022 podem ser comparadas.
-  const dificuldades = calcularDificuldade(resumos);
+  const resumos = Array.from(resumir(linhas).values()).filter((r) => r.alunos >= MINIMO_ALUNOS);
+  // A dificuldade compara as disciplinas das duas grades na mesma régua (uma
+  // de 2008 e uma de 2022 podem ser comparadas). As de fora da grade (de
+  // outros cursos) têm números, mas não entram na régua.
+  const dificuldades = calcularDificuldade(resumos.filter((r) => disciplinas.get(r.codigo)?.curriculo));
 
   const numeros = new Map<string, NumerosDisciplina>();
   for (const r of resumos) {
@@ -94,6 +88,7 @@ function calcular(): Calculo {
       media: e.media,
       desvio: e.desvio,
       semestres: e.semestres,
+      comNota: e.comNota,
       dificuldade: dificuldades.get(r.codigo) ?? null,
     });
   }
@@ -144,23 +139,31 @@ export function resumoGeral(curriculo: Curriculo): ResumoGeral {
   const lista = disciplinasDoCurriculo(curriculo).filter((d) => d.numeros);
   let alunos = 0;
   let aprovados = 0;
-  let somaMedias = 0;
+  let somaNotas = 0;
+  let comNota = 0;
   for (const { numeros: n } of lista) {
     alunos += n!.alunos;
     aprovados += n!.aprovados;
-    // Pondera pelos alunos: uma disciplina de 15 alunos não pesa tanto quanto
-    // Cálculo I.
-    somaMedias += (n!.media ?? 0) * n!.alunos;
+    // Pondera por quem teve nota lançada: uma disciplina de 15 alunos não pesa
+    // tanto quanto Cálculo I, e reprovado por falta sem nota não puxa a média.
+    if (n!.media !== null) {
+      somaNotas += n!.media * n!.comNota;
+      comNota += n!.comNota;
+    }
   }
   return {
     disciplinas: lista.length,
     alunos,
     aprovacao: alunos ? aprovados / alunos : null,
-    media: alunos ? somaMedias / alunos : null,
+    media: comNota ? somaNotas / comNota : null,
   };
 }
 
-/** Semestre a semestre, desde a primeira turma, para o gráfico. */
+/**
+ * Semestre a semestre, desde a primeira turma, para o gráfico. Semestre com
+ * menos de MINIMO_POR_SEMESTRE alunos fica de fora: a média de uma turma
+ * minúscula praticamente revela a nota de cada aluno.
+ */
 export function historico(codigo: string): Semestre[] {
   const linhas = banco()
     .db
@@ -174,5 +177,5 @@ export function historico(codigo: string): Semestre[] {
     .from(schema.notas)
     .where(and(eq(schema.notas.codigo, codigo), isNotNull(schema.notas.semestre)))
     .all();
-  return porSemestre(linhas);
+  return porSemestre(linhas).filter((s) => s.alunos >= MINIMO_POR_SEMESTRE);
 }

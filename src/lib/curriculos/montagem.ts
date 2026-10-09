@@ -4,7 +4,9 @@
 
 import { CARGA_HORARIA_2008, CARGA_HORARIA_2022 } from "./carga-horaria";
 import { GRADE_ECOMP_2022 } from "./grade-2022";
-import type * as schema from "../db/schema";
+import { and, eq, notInArray } from "drizzle-orm";
+import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import * as schema from "../db/schema";
 
 export type DisciplinaAntiga = {
   codigo_disciplina: string;
@@ -46,16 +48,41 @@ export function montarDisciplinas(antigas: DisciplinaAntiga[]): Linha[] {
     });
   }
 
-  for (const d of GRADE_ECOMP_2022) {
-    linhas.set(d.codigo_disciplina, {
-      codigo: d.codigo_disciplina,
-      nome: d.nome,
-      curriculo: 2022,
-      periodo: d.periodo_ecomp,
-      preRequisitos: listaDeCodigos(d.pre_requisitos_ecomp),
-      cargaHoraria: CARGA_HORARIA_2022[d.codigo_disciplina] ?? null,
-    });
-  }
-
+  for (const l of linhasDe2022()) linhas.set(l.codigo, l);
   return Array.from(linhas.values());
+}
+
+function linhasDe2022(): Linha[] {
+  return GRADE_ECOMP_2022.map((d) => ({
+    codigo: d.codigo_disciplina,
+    nome: d.nome,
+    curriculo: 2022,
+    periodo: d.periodo_ecomp,
+    preRequisitos: listaDeCodigos(d.pre_requisitos_ecomp),
+    cargaHoraria: CARGA_HORARIA_2022[d.codigo_disciplina] ?? null,
+  }));
+}
+
+/**
+ * Leva para o banco o que da grade mora no código: a grade 2022 inteira e a
+ * carga horária de 2008. Roda a cada subida do container, então uma revisão
+ * da grade chega a produção com um deploy, sem mexer nas notas. Disciplina
+ * que saiu da grade 2022 (optativa que trocou de código) fica no banco só com
+ * o nome, fora da grade.
+ */
+export function sincronizarGrade(db: BetterSQLite3Database<typeof schema>) {
+  const linhas = linhasDe2022();
+  db.transaction((tx) => {
+    for (const l of linhas) {
+      const { codigo, ...resto } = l;
+      tx.insert(schema.disciplinas).values(l).onConflictDoUpdate({ target: schema.disciplinas.codigo, set: resto }).run();
+    }
+    tx.update(schema.disciplinas)
+      .set({ curriculo: null, periodo: null, preRequisitos: "" })
+      .where(and(eq(schema.disciplinas.curriculo, 2022), notInArray(schema.disciplinas.codigo, linhas.map((l) => l.codigo))))
+      .run();
+    for (const [codigo, horas] of Object.entries(CARGA_HORARIA_2008)) {
+      tx.update(schema.disciplinas).set({ cargaHoraria: horas }).where(eq(schema.disciplinas.codigo, codigo)).run();
+    }
+  });
 }

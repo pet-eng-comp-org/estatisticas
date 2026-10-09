@@ -1,9 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Cabeçalhos de segurança de toda página (regra 39). A CSP usa nonce por
- * requisição: só roda script que o próprio Next marcou. Estilo inline fica
- * liberado porque o enunciado das questões usa atributo style (sanitizado).
+ * Cabeçalhos de segurança de toda página. A CSP usa nonce por requisição: só
+ * roda script que o próprio Next marcou. Estilo inline fica liberado porque o
+ * Recharts e os cartões (larguras das barras, cores das áreas da grade) usam
+ * atributo style; nenhum conteúdo vem de usuário.
  */
 export function proxy(req: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");

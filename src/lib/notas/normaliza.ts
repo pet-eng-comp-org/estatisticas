@@ -5,16 +5,13 @@
 // codigo de tres digitos e a coluna de media passa vazia quando a situacao
 // nao tem nota. Tudo isso fica concentrado aqui.
 
+import { chaveBusca } from '../formato';
+
 export type Situacao = string;
 
 /** Minusculas, sem acento e sem espaco sobrando. Usado so para comparar. */
 export function chave(valor: string | null | undefined): string {
-    return String(valor || '')
-        .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, ' ');
+    return chaveBusca(String(valor || '')).trim().replace(/\s+/g, ' ');
 }
 
 // Cada situacao conhecida e a forma como ela deve ser gravada.

@@ -2,7 +2,7 @@
 // Fica fora do script para os testes poderem chamar com um banco de teste.
 
 import { parse } from "csv-parse/sync";
-import { and, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type { BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
 import { z } from "zod";
 import * as schema from "../db/schema";
@@ -81,20 +81,31 @@ export type Resultado =
  * com dado já gravado daquelas disciplinas e semestres, a importação para e
  * pede `substituir`: apaga e regrava só o que o arquivo cobre.
  */
+/** Pares (disciplina, semestre) distintos de uma lista de notas. */
+function paresDe(notas: NotaNova[]): Array<{ codigo: string; semestre: string }> {
+  const vistos = new Map<string, { codigo: string; semestre: string }>();
+  for (const n of notas) vistos.set(`${n.codigo}|${n.semestre}`, { codigo: n.codigo, semestre: n.semestre });
+  return Array.from(vistos.values());
+}
+
+// O que o arquivo cobre é cada par (disciplina, semestre) que ele traz, não o
+// cruzamento de todas as disciplinas com todos os semestres: um arquivo com
+// Programação I em 2022/1 e Cálculo I em 2023/1 não cobre Cálculo I em 2022/1.
+const doPar = (p: { codigo: string; semestre: string }) =>
+  and(eq(schema.notas.codigo, p.codigo), eq(schema.notas.semestre, p.semestre));
+
 export function gravar(db: Banco, notas: NotaNova[], substituir: boolean): Resultado {
   const semestres = Array.from(new Set(notas.map((n) => n.semestre)));
-  const codigos = Array.from(new Set(notas.map((n) => n.codigo)));
+  const pares = paresDe(notas);
   const semMatricula = notas.filter((n) => !n.matricula);
 
   if (semMatricula.length > 0 && !substituir) {
-    const anos = Array.from(new Set(semMatricula.map((n) => n.semestre)));
-    const disciplinas = Array.from(new Set(semMatricula.map((n) => n.codigo)));
-    const [{ n }] = db
-      .select({ n: sql<number>`count(*)` })
-      .from(schema.notas)
-      .where(and(inArray(schema.notas.semestre, anos), inArray(schema.notas.codigo, disciplinas)))
-      .all();
-    if (n > 0) return { ok: false, conflito: true, semestres, existentes: n };
+    let existentes = 0;
+    for (const p of paresDe(semMatricula)) {
+      const [{ n }] = db.select({ n: sql<number>`count(*)` }).from(schema.notas).where(doPar(p)).all();
+      existentes += n;
+    }
+    if (existentes > 0) return { ok: false, conflito: true, semestres, existentes };
   }
 
   return db.transaction((tx) => {
@@ -102,10 +113,7 @@ export function gravar(db: Banco, notas: NotaNova[], substituir: boolean): Resul
     if (substituir) {
       // Só o que o arquivo cobre: um relatório só das disciplinas do DI não
       // pode apagar as de Matemática daquele semestre.
-      removidos = tx
-        .delete(schema.notas)
-        .where(and(inArray(schema.notas.semestre, semestres), inArray(schema.notas.codigo, codigos)))
-        .run().changes;
+      for (const p of pares) removidos += tx.delete(schema.notas).where(doPar(p)).run().changes;
     }
 
     // Matrículas já gravadas, para pular reimportação sem uma consulta por linha.

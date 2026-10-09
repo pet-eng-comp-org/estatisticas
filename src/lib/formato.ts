@@ -1,6 +1,19 @@
-// Formatação e rótulos usados no servidor e no navegador.
+// Formatação, rótulos e constantes usados no servidor e no navegador.
 
+// Na grade, período 99 é a convenção para optativa.
 export const OPTATIVA = 99;
+
+// O desempenho de 2012 não ajuda quem vai se matricular agora: os números dos
+// cartões olham as turmas desde este ano.
+export const DESDE = "2018";
+
+// Com menos alunos que isso desde DESDE, a taxa oscila demais para dizer
+// alguma coisa e a disciplina fica sem números.
+export const MINIMO_ALUNOS = 10;
+
+// Semestre com menos alunos que isso não aparece no gráfico: a média de uma
+// turma de dois é praticamente a nota de cada um.
+export const MINIMO_POR_SEMESTRE = 5;
 
 const decimal = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const inteiro = new Intl.NumberFormat("pt-BR");

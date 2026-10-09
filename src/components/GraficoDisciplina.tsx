@@ -62,11 +62,23 @@ const textoLegenda = (valor: string) => <span className="text-cinza">{valor}</sp
 const DicaMedia = ({ active, payload, label }: Dica) =>
   active && payload?.length ? <Caixa titulo={label} itens={payload} formato={virgula} /> : null;
 
-export default function GraficoDisciplina({ nome, semestres }: { nome: string; semestres: Semestre[] }) {
+export default function GraficoDisciplina({
+  nome,
+  semestres,
+  minimo,
+}: {
+  nome: string;
+  semestres: Semestre[];
+  minimo: number;
+}) {
   const [tabela, setTabela] = useState(false);
 
   if (semestres.length === 0) {
-    return <p className="aviso">Esta disciplina ainda não tem notas registradas.</p>;
+    return (
+      <p className="aviso">
+        Esta disciplina não tem semestre com pelo menos {minimo} alunos registrados.
+      </p>
+    );
   }
 
   const dados = semestres.map((s) => ({
@@ -150,6 +162,11 @@ export default function GraficoDisciplina({ nome, semestres }: { nome: string; s
           Engenharia de Computação, então os dois grupos são o mesmo.
         </p>
       )}
+
+      <p className="mt-3 text-[13px] leading-[19px] text-cinza">
+        Semestres com menos de {minimo} alunos não aparecem: numa turma tão pequena, a média mostraria a nota de
+        cada um.
+      </p>
 
       <button type="button" aria-expanded={tabela} onClick={() => setTabela((v) => !v)} className="pilula mt-6">
         {tabela ? "Ocultar tabela" : "Ver os números em tabela"}

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { CartaoResumo } from "@/components/Cartoes";
 import GraficoDisciplina from "@/components/GraficoDisciplina";
 import Voltar from "@/components/Voltar";
 import { EQUIVALENCIAS, NOMES_2008 } from "@/lib/curriculos/equivalencias";
-import { DESDE, disciplina, historico, liberadasPor, nomes } from "@/lib/notas/consultas";
-import { departamento, formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
+import { DESDE, MINIMO_ALUNOS, disciplina, historico, liberadasPor, nomes } from "@/lib/notas/consultas";
+import { departamento, formata, MINIMO_POR_SEMESTRE, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
 
 // Os números mudam com a importação: a página é montada a cada visita.
 export const dynamic = "force-dynamic";
@@ -52,6 +53,9 @@ function Ligacoes({ titulo, codigos, nome, vazio }: { titulo: string; codigos: s
 export default async function PaginaDisciplina({ params }: Props) {
   const { codigo } = await params;
   const d = disciplina(codigo);
+  // Código que não está no banco nem entre as disciplinas de 2008 do PPC:
+  // erro de digitação ou link velho, não uma página vazia.
+  if (!d && !NOMES_2008[codigo]) notFound();
   const semestres = historico(codigo);
   const todosOsNomes = nomes();
   const nome = (c: string) => todosOsNomes[c] ?? NOMES_2008[c] ?? c;
@@ -90,7 +94,7 @@ export default async function PaginaDisciplina({ params }: Props) {
           cor="rosa"
           valor={formata.decimal(n?.dificuldade)}
           rotulo="Dificuldade"
-          descricao="De 1 a 5; veja a conta no fim da página"
+          descricao={d?.curriculo ? "De 1 a 5; veja a conta no fim da página" : "Só para disciplinas da grade de Engenharia de Computação"}
         />
         <CartaoResumo
           cor="verde"
@@ -108,7 +112,7 @@ export default async function PaginaDisciplina({ params }: Props) {
           cor="escuro"
           valor={formata.inteiro(n?.alunos)}
           rotulo={`Alunos desde ${DESDE}`}
-          descricao={n ? `${n.semestres} semestres com turma` : "Menos de 10 alunos no período"}
+          descricao={n ? `${n.semestres} semestres com turma` : `Menos de ${MINIMO_ALUNOS} alunos desde ${DESDE}`}
         />
       </section>
 
@@ -131,7 +135,7 @@ export default async function PaginaDisciplina({ params }: Props) {
       )}
 
       <section className="cartao mt-5 rounded-[18px] px-[30px] pt-7 pb-[30px] max-celular:px-3.5 max-celular:py-5">
-        <GraficoDisciplina nome={d?.nome ?? codigo} semestres={semestres} />
+        <GraficoDisciplina nome={d?.nome ?? codigo} semestres={semestres} minimo={MINIMO_POR_SEMESTRE} />
       </section>
 
       <section className="mt-5 max-w-[760px] text-sm leading-[21px] text-cinza" id="dificuldade">

@@ -4,7 +4,8 @@ import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import { beforeEach, describe, expect, it } from "vitest";
 import * as schema from "@/lib/db/schema";
 import { gravar, lerRelatorio } from "@/lib/notas/importacao";
-import { listaDeCodigos, montarDisciplinas } from "@/lib/curriculos/montagem";
+import { listaDeCodigos, montarDisciplinas, sincronizarGrade } from "@/lib/curriculos/montagem";
+import { eq } from "drizzle-orm";
 
 let db: ReturnType<typeof drizzle<typeof schema>>;
 beforeEach(() => {
@@ -55,6 +56,26 @@ describe("importação do relatório", () => {
     expect(contar()).toBe(3);
   });
 
+  it("substituir apaga só os pares (disciplina, semestre) do arquivo, não o cruzamento", () => {
+    gravar(
+      db,
+      lerRelatorio(
+        csv(
+          "INF15927,PROG I,Eng,8,Aprovado,2022,201,F,",
+          "MAT15925,CALC I,Eng,5,Aprovado,2022,201,F,",
+          "INF15927,PROG I,Eng,7,Aprovado,2023,201,F,",
+          "MAT15925,CALC I,Eng,6,Aprovado,2023,201,F,",
+        ),
+      ).notas,
+      false,
+    );
+    const arquivo = lerRelatorio(
+      csv("INF15927,PROG I,Eng,9,Aprovado,2022,201,F,", "MAT15925,CALC I,Eng,9,Aprovado,2023,201,F,"),
+    ).notas;
+    expect(gravar(db, arquivo, true)).toMatchObject({ ok: true, removidos: 2, inseridos: 2 });
+    expect(contar()).toBe(4);
+  });
+
   it("dá nome a disciplina que ainda não existe no banco", () => {
     gravar(db, lerRelatorio(csv("INF99999,DISCIPLINA NOVA,Eng,8,Aprovado,2025,201,F,")).notas, false);
     expect(db.select().from(schema.disciplinas).all()).toEqual([
@@ -85,5 +106,23 @@ describe("montagem das disciplinas", () => {
     expect(por.INF16168).toMatchObject({ curriculo: null, periodo: null });
     expect(por.MAT15925).toMatchObject({ curriculo: 2022, periodo: 1, nome: "Cálculo I", cargaHoraria: 90 });
     expect(linhas.filter((l) => l.curriculo === 2022)).toHaveLength(132);
+  });
+});
+
+describe("sincronização da grade", () => {
+  it("corrige a grade 2022 do banco pelo código e tira da grade o que saiu dela", () => {
+    db.insert(schema.disciplinas)
+      .values([
+        { codigo: "INF16198", nome: "TCC I", curriculo: 2022, periodo: 9, preRequisitos: "" },
+        { codigo: "INF16168", nome: "Desenvolvimento Orientado a Modelos", curriculo: 2022, periodo: 99 },
+        { codigo: "MAT09570", nome: "Cálculo I", curriculo: 2008, periodo: 1 },
+      ])
+      .run();
+    sincronizarGrade(db);
+    const por = (c: string) => db.select().from(schema.disciplinas).where(eq(schema.disciplinas.codigo, c)).get();
+    expect(por("INF16198")).toMatchObject({ nome: "Trabalho de Conclusão de Curso I", preRequisitos: "INF16165", cargaHoraria: 60 });
+    expect(por("INF16168")).toMatchObject({ curriculo: null, periodo: null });
+    expect(por("MAT09570")).toMatchObject({ curriculo: 2008, cargaHoraria: 90 });
+    expect(db.select().from(schema.disciplinas).where(eq(schema.disciplinas.curriculo, 2022)).all()).toHaveLength(132);
   });
 });

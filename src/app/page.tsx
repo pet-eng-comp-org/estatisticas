@@ -4,7 +4,7 @@ import { CartaoResumo } from "@/components/Cartoes";
 import PeriodoInicial from "@/components/PeriodoInicial";
 import { curriculoEscolhido } from "@/lib/curriculos/escolha";
 import { disciplinasDoCurriculo, resumoGeral } from "@/lib/notas/consultas";
-import { formata } from "@/lib/formato";
+import { DESDE, formata, MINIMO_ALUNOS } from "@/lib/formato";
 
 export default async function Inicio() {
   const curriculo = await curriculoEscolhido();
@@ -44,19 +44,19 @@ export default async function Inicio() {
           cor="rosa"
           valor={formata.inteiro(resumo.disciplinas)}
           rotulo="Disciplinas avaliadas"
-          descricao="Disciplinas com pelo menos 10 alunos desde 2018"
+          descricao={`Disciplinas com pelo menos ${MINIMO_ALUNOS} alunos desde ${DESDE}`}
         />
         <CartaoResumo
           cor="verde"
           valor={formata.decimal(resumo.media)}
           rotulo="Média geral"
-          descricao="Média das notas finais (0 a 10) desde 2018, ponderada pelo número de alunos"
+          descricao={`Média das notas finais (0 a 10) desde ${DESDE}, ponderada pelo número de alunos com nota`}
         />
         <CartaoResumo
           cor="verde"
           valor={formata.porcento(resumo.aprovacao)}
           rotulo="Aprovação média"
-          descricao="Alunos aprovados sobre o total das turmas desde 2018"
+          descricao={`Alunos aprovados sobre o total das turmas desde ${DESDE}`}
         />
         <CartaoResumo
           cor="escuro"

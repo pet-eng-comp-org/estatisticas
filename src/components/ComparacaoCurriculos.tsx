@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
-import { chaveBusca, formata, OPTATIVA, rotuloPeriodo } from "@/lib/formato";
+import { chaveBusca, DESDE, formata, OPTATIVA, rotuloPeriodo } from "@/lib/formato";
 import BarraBusca from "./BarraBusca";
 import { Seta } from "./Icones";
 
@@ -35,7 +35,7 @@ function Ponta({ d, ano }: { d: Lado; ano: string }) {
       <span className="mt-2.5 text-xs font-bold text-cinza">
         {n
           ? `Dificuldade ${formata.decimal(n.dificuldade)} · média ${formata.decimal(n.media)} · ${formata.inteiro(n.alunos)} alunos`
-          : "Sem turmas suficientes desde 2018"}
+          : `Sem turmas suficientes desde ${DESDE}`}
       </span>
     </Link>
   );

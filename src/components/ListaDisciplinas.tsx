@@ -27,7 +27,9 @@ export default function ListaDisciplinas({ disciplinas }: { disciplinas: Discipl
     if (valor) novos.set(nome, valor);
     else novos.delete(nome);
     const destino = novos.size ? `${caminho}?${novos}` : caminho;
-    if (substituir) router.replace(destino, { scroll: false });
+    // A busca filtra aqui mesmo: trocar só o endereço, sem pedir a página de
+    // novo ao servidor a cada letra (o Next mantém o useSearchParams em dia).
+    if (substituir) window.history.replaceState(null, "", destino);
     else router.push(destino, { scroll: false });
   };
 

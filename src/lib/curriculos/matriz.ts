@@ -1,3 +1,5 @@
+import { chaveBusca } from "../formato";
+
 // Desenho da grade: área de cada disciplina, posição na coluna e quais
 // pré-requisitos viram etiqueta em vez de seta.
 //
@@ -111,14 +113,13 @@ export const OPTATIVAS_2022: Array<{ periodo: number; linha: number }> = [
 // Carga de cada espaço de optativa na matriz oficial.
 export const HORAS_OPTATIVA = 60;
 
-const sem = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 /** Área de uma disciplina fora do desenho oficial (2008 e optativas). */
 export function areaDe(d: { codigo: string; nome: string; obrigatoria: boolean }): Area {
   const lugar = MATRIZ_2022[d.codigo];
   if (lugar) return lugar.area;
   if (!d.obrigatoria) return "optativa";
-  const nome = sem(d.nome);
+  const nome = chaveBusca(d.nome);
   const prefixo = d.codigo.slice(0, 3);
   if (/projeto de graduacao|trabalho de conclusao|estagio/.test(nome)) return "estagio";
   if (prefixo === "MAT" || prefixo === "STA") return "matematica";

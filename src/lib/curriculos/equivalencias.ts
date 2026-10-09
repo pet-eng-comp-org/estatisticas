@@ -62,7 +62,9 @@ export const EQUIVALENCIAS: Array<[string, string]> = [
     ['INF16173', 'INF09272'],
     ['INF16014', 'INF09282'],
     ['ELE15985', 'ELE08484'],
-    ['INF16168', 'INF09371'],
+    // No PPC é INF16168; a revisão de 2025 da grade trocou o código da mesma
+    // disciplina (Desenvolvimento Orientado a Modelos) para INF17418.
+    ['INF17418', 'INF09371'],
     ['ELE15949', 'ELE08498'],
     ['INF16175', 'INF10431'],
     ['INF16160', 'INF09337'],
