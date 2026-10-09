@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 # Scripts de operação num arquivo cada: rodam na imagem final sem tsx. O
 # better-sqlite3 é binário nativo e vem do standalone.
-RUN npx esbuild scripts/preparar-banco.ts scripts/importar-notas.ts scripts/importar-banco-antigo.ts \
+RUN npx esbuild scripts/preparar-banco.ts scripts/importar-notas.ts scripts/importar-banco-antigo.ts scripts/avisar-buscadores.ts \
       --bundle --platform=node --format=esm --target=node24 --outdir=dist \
       --external:better-sqlite3 \
       "--banner:js=import{createRequire}from'module';const require=createRequire(import.meta.url);"

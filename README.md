@@ -56,6 +56,9 @@ O banco tem nota e matrícula de aluno: não vai para o git (`dados/` está no
    `--substituir`, que apaga e regrava só as disciplinas e os semestres que o
    arquivo cobre.
 4. O site mostra os números novos sozinho, sem reiniciar.
+5. Opcional: `node operacao/avisar-buscadores.js` avisa o Bing (e por ele
+   DuckDuckGo, Yahoo e Ecosia) de que as páginas mudaram (IndexNow). O Google
+   lê o sitemap sozinho pelo Search Console.
 
 ## Deploy
 

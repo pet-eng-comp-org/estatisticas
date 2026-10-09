@@ -15,7 +15,8 @@
     "db:gerar": "drizzle-kit generate",
     "db:preparar": "tsx scripts/preparar-banco.ts",
     "importar-banco-antigo": "tsx scripts/importar-banco-antigo.ts",
-    "importar-notas": "tsx scripts/importar-notas.ts"
+    "importar-notas": "tsx scripts/importar-notas.ts",
+    "avisar-buscadores": "tsx scripts/avisar-buscadores.ts"
   },
   "dependencies": {
     "better-sqlite3": "^12.4.1",
