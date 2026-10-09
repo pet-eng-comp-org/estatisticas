@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { estatistica, porSemestre, resumir } from "@/lib/notas/agregacao";
+import { estatistica, mediana, porSemestre, resumir } from "@/lib/notas/agregacao";
 import { semestreDe } from "@/lib/notas/normaliza";
 
 const nota = (semestre: string, situacao: string, media: number | null, curso = "Engenharia de Computação") => ({
@@ -37,6 +37,16 @@ describe("agregação das notas", () => {
     const [s] = porSemestre([nota("2020/1", "Aprovado", 9), nota("2020/1", "Aprovado", 5, "Engenharia Elétrica")]);
     expect(s.media).toBe(7);
     expect(s.mediaComputacao).toBe(9);
+  });
+
+  it("mediana: nota do meio, ou a média das duas do meio, sem deixar zeros puxarem", () => {
+    expect(mediana([])).toBeNull();
+    expect(mediana([7, 0, 9])).toBe(7);
+    expect(mediana([0, 0, 6, 8])).toBe(3);
+    const r = resumir([0, 0, 7, 7, 8].map((m) => nota("2024/1", m >= 5 ? "Aprovado" : "Reprovado por Nota", m))).get("INF15927")!;
+    expect(r.mediana).toBe(7);
+    expect(estatistica(r).media).toBeCloseTo(4.4, 6);
+    expect(porSemestre([nota("2024/1", "Aprovado", 6), nota("2024/1", "Aprovado", 8)])[0].mediana).toBe(7);
   });
 
   it("lê os dois formatos de período do relatório", () => {

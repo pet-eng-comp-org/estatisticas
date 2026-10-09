@@ -90,6 +90,7 @@ export default function GraficoDisciplina({
     reprovadosNota: (s.reprovadosNota / s.alunos) * 100,
     reprovadosFalta: (s.reprovadosFalta / s.alunos) * 100,
     mediaTodos: umaCasa(s.media),
+    medianaTodos: umaCasa(s.mediana),
     mediaComputacao: umaCasa(s.mediaComputacao),
   }));
 
@@ -184,6 +185,7 @@ export default function GraficoDisciplina({
                 <th scope="col">Rep. nota</th>
                 <th scope="col">Rep. falta</th>
                 <th scope="col">Média (todos)</th>
+                <th scope="col">Mediana (todos)</th>
                 <th scope="col">Média (computação)</th>
               </tr>
             </thead>
@@ -201,6 +203,7 @@ export default function GraficoDisciplina({
                   <td>{porcento(d.reprovadosNota)}</td>
                   <td>{porcento(d.reprovadosFalta)}</td>
                   <td>{virgula(d.mediaTodos)}</td>
+                  <td>{virgula(d.medianaTodos)}</td>
                   <td>{virgula(d.mediaComputacao)}</td>
                 </tr>
               ))}
