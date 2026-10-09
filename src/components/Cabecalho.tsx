@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useOptimistic, useTransition } from "react";
 
 import { escolherCurriculo } from "@/app/acoes";
+import { EQUIVALENCIAS } from "@/lib/curriculos/equivalencias";
 import { Logo } from "./Icones";
 
 const SECOES = [
@@ -13,6 +14,29 @@ const SECOES = [
   { caminho: "/disciplinas", rotulo: "Disciplinas", espaco: "ml-[23px]" },
   { caminho: "/comparar", rotulo: "Comparar currículos", espaco: "ml-[15px]" },
 ];
+
+/**
+ * Na página de uma disciplina, trocar o currículo leva à equivalente do outro
+ * (pelo PPC): quem está em Cálculo I de 2008 e clica em 2022 quer ver o
+ * Cálculo I de 2022. Sem equivalente, ou se a disciplina já é do currículo
+ * escolhido, fica onde está.
+ */
+function equivalente(caminho: string, ano: "2008" | "2022"): string | null {
+  const codigo = /^\/disciplinas\/([A-Z]{3}\d{5})$/.exec(caminho)?.[1];
+  if (!codigo) return null;
+  const par = EQUIVALENCIAS.find(([nova, antiga]) => (ano === "2022" ? antiga : nova) === codigo);
+  if (!par) return null;
+  return `/disciplinas/${ano === "2022" ? par[0] : par[1]}`;
+}
+
+/** Currículo da disciplina aberta, quando dá para saber pelas equivalências. */
+function curriculoDaPagina(caminho: string): "2008" | "2022" | null {
+  const codigo = /^\/disciplinas\/([A-Z]{3}\d{5})$/.exec(caminho)?.[1];
+  if (!codigo) return null;
+  if (EQUIVALENCIAS.some(([nova]) => nova === codigo)) return "2022";
+  if (EQUIVALENCIAS.some(([, antiga]) => antiga === codigo)) return "2008";
+  return null;
+}
 
 const ativa = (atual: string, caminho: string) =>
   caminho === "/" ? atual === "/" : atual === caminho || atual.startsWith(`${caminho}/`);
@@ -24,8 +48,13 @@ const ativa = (atual: string, caminho: string) =>
  */
 export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
   const atual = usePathname();
+  const router = useRouter();
   const [, iniciar] = useTransition();
   const [escolhido, setEscolhido] = useOptimistic(String(curriculo));
+  // Na página de uma disciplina, o botão marca o currículo dela, não a
+  // preferência guardada: senão uma disciplina de 2008 aparecia com 2022
+  // marcado, e clicar em 2022 parecia não fazer nada.
+  const marcado = curriculoDaPagina(atual) ?? escolhido;
 
   return (
     <header className="border-b border-borda bg-white">
@@ -63,12 +92,14 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
             <button
               key={ano}
               type="button"
-              aria-pressed={escolhido === ano}
+              aria-pressed={marcado === ano}
               title={ano === "2022" ? "Currículo em vigor desde 2022" : "Currículo anterior, de 2008"}
               onClick={() =>
                 iniciar(async () => {
                   setEscolhido(ano);
                   await escolherCurriculo(ano);
+                  const destino = equivalente(atual, ano);
+                  if (destino) router.push(destino);
                 })
               }
               className="h-[38px] min-w-[88px] cursor-pointer rounded-full bg-rosa-claro px-[25px] text-sm font-bold text-rosa aria-pressed:min-w-[98px] aria-pressed:bg-vinho aria-pressed:text-white max-celular:h-[34px] max-celular:min-w-0 max-celular:px-3 max-celular:aria-pressed:min-w-0"

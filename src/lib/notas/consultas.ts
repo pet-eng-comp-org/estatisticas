@@ -23,7 +23,7 @@ export type Disciplina = {
 
 export type NumerosDisciplina = Pick<
   Estatistica,
-  "alunos" | "aprovados" | "aprovacao" | "reprovacao" | "media" | "desvio" | "semestres" | "comNota"
+  "alunos" | "aprovados" | "aprovacao" | "reprovacao" | "media" | "mediana" | "desvio" | "semestres" | "comNota"
 > & { dificuldade: number | null };
 
 export type DisciplinaComNumeros = Disciplina & { numeros: NumerosDisciplina | null };
@@ -86,6 +86,7 @@ function calcular(): Calculo {
       aprovacao: e.aprovacao,
       reprovacao: e.reprovacao,
       media: e.media,
+      mediana: e.mediana,
       desvio: e.desvio,
       semestres: e.semestres,
       comNota: e.comNota,

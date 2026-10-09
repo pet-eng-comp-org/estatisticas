@@ -6,14 +6,13 @@ import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
 import { AREAS, HORAS_OPTATIVA, MATRIZ_2022, OPTATIVAS_2022, areaDe, type Area } from "@/lib/curriculos/matriz";
 import { formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
+import { desenhar, rotasDeReferencia, rotear, type Ligacao } from "@/lib/grade/rotas";
+import { SETAS_2022 } from "@/lib/curriculos/setas-2022";
 
 type Cartao = { tipo: "disciplina"; d: DisciplinaComNumeros; area: Area } | { tipo: "optativa"; chave: string };
 type Coluna = { periodo: number; linhas: (Cartao | null)[] };
 type Posicao = { esquerda: number; direita: number; topo: number; meio: number; coluna: number; linha: number };
-type Aresta = { de: string; para: string; d: string };
 
-// Medidas do mockup: colunas de 270 px a cada 319, cartões de 88 px a cada 120.
-const PASSO_LINHA = 120;
 
 /** Posições da matriz oficial (2022), com os espaços de optativa. */
 function montarOficial(disciplinas: DisciplinaComNumeros[]): Coluna[] {
@@ -41,63 +40,9 @@ function montarOficial(disciplinas: DisciplinaComNumeros[]): Coluna[] {
   );
 }
 
-/**
- * Sem desenho oficial (currículo 2008): o primeiro período em ordem
- * alfabética e os seguintes pela posição média dos pré-requisitos na coluna
- * anterior (método do baricentro), para as setas cruzarem pouco.
- */
-function montarCalculada(disciplinas: DisciplinaComNumeros[]): Coluna[] {
-  const porPeriodo = new Map<number, DisciplinaComNumeros[]>();
-  for (const d of disciplinas) {
-    if (!porPeriodo.has(d.periodo!)) porPeriodo.set(d.periodo!, []);
-    porPeriodo.get(d.periodo!)!.push(d);
-  }
-  const linha: Record<string, number> = {};
-  return Array.from(porPeriodo)
-    .sort(([a], [b]) => a - b)
-    .map(([periodo, ds], i) => {
-      const peso = (d: DisciplinaComNumeros) => {
-        const ps = d.preRequisitos.filter((c) => c in linha).map((c) => linha[c]);
-        return ps.length ? ps.reduce((s, p) => s + p, 0) / ps.length : 1000;
-      };
-      const ordem = [...ds].sort((a, b) =>
-        i === 0 ? a.nome.localeCompare(b.nome, "pt-BR") : peso(a) - peso(b) || a.nome.localeCompare(b.nome, "pt-BR"),
-      );
-      ordem.forEach((d, j) => (linha[d.codigo] = j));
-      return { periodo, linhas: ordem.map((d) => ({ tipo: "disciplina" as const, d, area: areaDe(d) })) };
-    });
-}
-
-/**
- * Caminho em ângulo reto: sai pela direita do cartão e entra pela esquerda do
- * destino. Na mesma linha, com as casas do meio vazias, é uma reta. Entre
- * colunas vizinhas, desce ou sobe no corredor entre elas. Pulando colunas,
- * passa pelo vão entre as linhas acima do destino, para não cruzar cartão.
- */
-function caminho(o: Posicao, d: Posicao, livre: (coluna: number, linha: number) => boolean) {
-  const ponta = d.esquerda - 2;
-  if (o.linha === d.linha) {
-    let reta = true;
-    for (let c = o.coluna + 1; c < d.coluna; c++) reta &&= livre(c, o.linha);
-    if (reta) return `M${o.direita} ${o.meio}H${ponta}`;
-  }
-  const corredor = o.direita + 24.5;
-  if (d.coluna === o.coluna + 1) return `M${o.direita} ${o.meio}H${corredor}V${d.meio}H${ponta}`;
-  return `M${o.direita} ${o.meio}H${corredor}V${d.topo - 16}H${d.esquerda - 24.5}V${d.meio}H${ponta}`;
-}
-
-export default function QuadroGrade({
-  curriculo,
-  disciplinas,
-}: {
-  curriculo: 2008 | 2022;
-  disciplinas: DisciplinaComNumeros[];
-}) {
-  const oficial = curriculo === 2022;
-  const colunas = useMemo(
-    () => (oficial ? montarOficial(disciplinas) : montarCalculada(disciplinas)),
-    [oficial, disciplinas],
-  );
+/** Grade do currículo 2022, no desenho da matriz oficial do DI. */
+export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaComNumeros[] }) {
+  const colunas = useMemo(() => montarOficial(disciplinas), [disciplinas]);
   const siglas = (c: string) => MATRIZ_2022[c]?.sigla ?? c;
 
   // Posição de cada cartão dentro da área rolável, medida depois do layout:
@@ -133,32 +78,66 @@ export default function QuadroGrade({
     return () => observador.disconnect();
   }, [colunas]);
 
-  const arestas = useMemo(() => {
+  // Todas as ligações entram no traçado, mesmo as escondidas: assim os
+  // trilhos não mudam de lugar quando uma aparece com o mouse.
+  const rotas = useMemo(() => {
     const livre = (c: number, l: number) => !colunas[c]?.linhas[l];
-    const lista: (Aresta & { principal: boolean })[] = [];
+    const ligacoes: Ligacao[] = [];
     for (const coluna of colunas) {
       for (const cartao of coluna.linhas) {
         if (cartao?.tipo !== "disciplina") continue;
         const { d } = cartao;
         const etiquetas = MATRIZ_2022[d.codigo]?.etiquetas ?? [];
         for (const pre of d.preRequisitos) {
-          if (oficial && etiquetas.includes(pre)) continue;
+          if (etiquetas.includes(pre)) continue;
           const o = posicoes[pre];
           const p = posicoes[d.codigo];
           if (!o || !p || o.coluna >= p.coluna) continue;
-          // Na matriz oficial todas ficam à mostra: as posições foram escolhidas
-          // para isso. Na calculada, só as curtas; as outras aparecem com o
-          // mouse ou o foco, senão vira um emaranhado.
-          const principal = oficial || (p.coluna === o.coluna + 1 && Math.abs(p.topo - o.topo) <= PASSO_LINHA + 1);
-          lista.push({ de: pre, para: d.codigo, principal, d: caminho(o, p, livre) });
+          ligacoes.push({ de: pre, para: d.codigo });
         }
       }
     }
-    return lista;
-  }, [colunas, posicoes, oficial]);
+    // O percurso de cada seta é o da matriz oficial. O que ela
+    // não tiver (seta nova de uma revisão da grade) usa o traçado próprio.
+    const copiadas = rotasDeReferencia(SETAS_2022, ligacoes, posicoes);
+    const feitas = new Set(copiadas.map((r) => `${r.de}>${r.para}`));
+    const resto = rotear(
+      ligacoes.filter((l) => !feitas.has(`${l.de}>${l.para}`)),
+      posicoes,
+      livre,
+    );
+    return [...copiadas, ...resto];
+  }, [colunas, posicoes]);
 
-  const ligada = (a: Aresta) => destaque !== null && (a.de === destaque || a.para === destaque);
-  const visiveis = arestas.filter((a) => a.principal || ligada(a));
+  const ligada = (a: Ligacao) => destaque !== null && (a.de === destaque || a.para === destaque);
+  const visiveis = rotas;
+  // Os saltinhos dependem de quais linhas estão à mostra.
+  const caminhos = desenhar(visiveis);
+
+  // Co-requisitos: pré-requisito um do outro no mesmo período (os dois
+  // Projetos Integrados II). A matriz oficial liga os dois com uma seta de
+  // duas pontas, na vertical; o traçado do rotas.ts só cuida de colunas
+  // diferentes.
+  const corequisitos = useMemo(() => {
+    const pares: { de: string; para: string; d: string }[] = [];
+    const vistos = new Set<string>();
+    for (const coluna of colunas)
+      for (const c of coluna.linhas) {
+        if (c?.tipo !== "disciplina") continue;
+        for (const pre of c.d.preRequisitos) {
+          const a = posicoes[pre];
+          const b = posicoes[c.d.codigo];
+          const chave = [pre, c.d.codigo].sort().join("~");
+          if (!a || !b || a.coluna !== b.coluna || vistos.has(chave)) continue;
+          vistos.add(chave);
+          const [cima, baixo] = a.topo < b.topo ? [a, b] : [b, a];
+          const x = (cima.esquerda + cima.direita) / 2;
+          const fundo = cima.meio + (cima.meio - cima.topo);
+          pares.push({ de: pre, para: c.d.codigo, d: `M${x} ${fundo + 3}V${baixo.topo - 3}` });
+        }
+      }
+    return pares;
+  }, [colunas, posicoes]);
 
   // Carga por área, para a legenda, como na matriz oficial.
   const horasPorArea = new Map<Area, number>();
@@ -172,12 +151,12 @@ export default function QuadroGrade({
 
   return (
     <section
-      aria-label={`Grade do currículo ${curriculo}`}
+      aria-label="Grade do currículo 2022"
       className="mt-[25px] overflow-hidden rounded-[18px] border border-borda bg-white"
     >
       <div
         ref={areaRef}
-        className="relative flex gap-[49px] overflow-x-auto px-[29px] pt-[27px] pb-8 [scrollbar-color:var(--color-borda)_transparent] max-celular:px-4 max-celular:pt-5"
+        className="relative flex gap-16 overflow-x-auto px-[29px] pt-[27px] pb-8 [scrollbar-color:var(--color-borda)_transparent] max-celular:px-4 max-celular:pt-5"
       >
         <svg
           aria-hidden="true"
@@ -191,7 +170,7 @@ export default function QuadroGrade({
               ["ponta", "#C6C6C6"],
               ["ponta-ligada", "#BF2D5D"],
             ].map(([id, cor]) => (
-              <marker key={id} id={id} viewBox="0 0 12 22" refX="11" refY="11" markerWidth="12" markerHeight="22" markerUnits="userSpaceOnUse" orient="auto">
+              <marker key={id} id={id} viewBox="0 0 12 22" refX="11" refY="11" markerWidth="12" markerHeight="22" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
                 <path d="M1.5 1.5 11 11l-9.5 9.5" fill="none" stroke={cor} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </marker>
             ))}
@@ -200,12 +179,25 @@ export default function QuadroGrade({
           {[...visiveis.filter((a) => !ligada(a)), ...visiveis.filter(ligada)].map((a) => (
             <path
               key={`${a.de}-${a.para}`}
-              d={a.d}
+              d={caminhos.get(`${a.de}>${a.para}`)}
               fill="none"
-              strokeWidth={3}
+              strokeWidth={2.5}
               className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
               markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
             />
+          ))}
+          {corequisitos.map((a) => (
+            <path
+              key={`co-${a.de}-${a.para}`}
+              d={a.d}
+              fill="none"
+              strokeWidth={2.5}
+              className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
+              markerStart={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
+              markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
+            >
+              <title>Co-requisitos: cursados no mesmo período</title>
+            </path>
           ))}
         </svg>
 
@@ -235,7 +227,7 @@ export default function QuadroGrade({
                         area={cartao.area}
                         coluna={i}
                         linha={linha}
-                        etiquetas={oficial ? (MATRIZ_2022[cartao.d.codigo]?.etiquetas ?? []) : []}
+                        etiquetas={MATRIZ_2022[cartao.d.codigo]?.etiquetas ?? []}
                         sigla={siglas}
                         aoDestacar={setDestaque}
                       />

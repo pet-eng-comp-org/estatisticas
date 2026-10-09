@@ -4,8 +4,9 @@
 // Embarcados I equivale a duas) e uma antiga pode servir a mais de uma nova
 // (Calculo III A cobre Calculo III e Calculo IV).
 //
-// Fonte: PPC de Engenharia da Computacao, versao 2022.
-// https://graduacao.ufes.br/sites/prograd.ufes.br/files/field/anexo/ppc_engenharia_da_computacao.pdf
+// Fonte: PPC de Engenharia de Computacao, versao 2022, revisado em fev/2025
+// (as 80 equivalencias sao as mesmas da primeira edicao).
+// https://informatica.ufes.br/sites/informatica.ufes.br/files/field/anexo/ppc-engcomp-2022-rev-fev-2025.pdf
 
 // [codigo 2022, codigo 2008]
 export const EQUIVALENCIAS: Array<[string, string]> = [
@@ -62,8 +63,9 @@ export const EQUIVALENCIAS: Array<[string, string]> = [
     ['INF16173', 'INF09272'],
     ['INF16014', 'INF09282'],
     ['ELE15985', 'ELE08484'],
-    // No PPC é INF16168; a revisão de 2025 da grade trocou o código da mesma
-    // disciplina (Desenvolvimento Orientado a Modelos) para INF17418.
+    // No PPC (também no revisado de 2025) é INF16168; a grade emitida em
+    // 11/02/2025 trocou o código da mesma disciplina (Desenvolvimento
+    // Orientado a Modelos) para INF17418.
     ['INF17418', 'INF09371'],
     ['ELE15949', 'ELE08498'],
     ['INF16175', 'INF10431'],

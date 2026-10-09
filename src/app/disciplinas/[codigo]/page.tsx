@@ -88,7 +88,7 @@ export default async function PaginaDisciplina({ params }: Props) {
 
       <section
         aria-label="Resumo"
-        className="mt-7 grid grid-cols-4 gap-5 max-[1100px]:grid-cols-2 max-celular:gap-3"
+        className="mt-7 grid grid-cols-5 gap-5 max-[1240px]:grid-cols-3 max-[760px]:grid-cols-2 max-celular:gap-3"
       >
         <CartaoResumo
           cor="rosa"
@@ -109,12 +109,27 @@ export default async function PaginaDisciplina({ params }: Props) {
           descricao={`Média das notas finais (0 a 10) desde ${DESDE}`}
         />
         <CartaoResumo
+          cor="verde"
+          valor={formata.decimal(n?.mediana)}
+          rotulo="Mediana das notas"
+          descricao="Metade dos alunos tirou essa nota ou mais; a outra metade, essa nota ou menos"
+        />
+        <CartaoResumo
           cor="escuro"
           valor={formata.inteiro(n?.alunos)}
           rotulo={`Alunos desde ${DESDE}`}
           descricao={n ? `${n.semestres} semestres com turma` : `Menos de ${MINIMO_ALUNOS} alunos desde ${DESDE}`}
         />
       </section>
+      {/* Pedido da Bia: nas disciplinas difíceis muita nota extrema (zero de
+          quem desistiu) puxa a média para baixo; a mediana mostra a nota do
+          aluno do meio. Texto à vista, não só no title: no celular não há
+          como passar o mouse. */}
+      <p className="mt-3 max-w-[900px] text-[13px] leading-[19px] text-cinza">
+        <b className="text-vinho">Mediana:</b> metade dos alunos tirou essa nota ou mais, e a outra metade essa nota ou
+        menos. Diferente da média, ela não é puxada por notas muito baixas ou muito altas, comuns nas disciplinas
+        difíceis.
+      </p>
 
       {d?.curriculo && (
         <div className="mt-5 grid grid-cols-3 gap-5 max-[1100px]:grid-cols-1">

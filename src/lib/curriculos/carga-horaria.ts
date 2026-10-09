@@ -3,8 +3,12 @@
 //
 // - 2022: "Curriculo de Cursos (Modelo UFES)", versao 2022 emitida em
 //   11/02/2025, coluna CHS (ver grade-2022.ts).
-// - 2008: "Curriculo de Cursos", versao 2008, emitido em 08/03/2012, soma das
-//   colunas T, E e L. https://informatica.ufes.br/sites/informatica.ufes.br/files/field/anexo/curriculo-engcomp-2008.pdf
+// - 2008: "Curriculo de Cursos", versao 2008, emitido em 05/07/2017 (a
+//   "Grade Curricular - 2017" da pagina do PPC no site do DI), soma das
+//   colunas T, E e L. E a ultima emissao da versao 2008, depois da revisao
+//   que valeu para as turmas de 2015 em diante; as de 2012 e 2015 tem as
+//   mesmas cargas, so faltava a de Empreendedorismo.
+//   https://informatica.ufes.br/sites/informatica.ufes.br/files/field/anexo/curriculo-engcomp-2017.pdf
 
 
 export const CARGA_HORARIA_2022: Record<string, number> = {
@@ -215,7 +219,6 @@ export const CARGA_HORARIA_2008: Record<string, number> = {
     FIS09040: 45,
     FIS09057: 30,
     FIS09098: 90,
-    FIS09099: 90,
     INF01915: 60,
     INF02601: 60,
     INF09268: 60,
@@ -330,6 +333,7 @@ export const CARGA_HORARIA_2008: Record<string, number> = {
     INF09434: 60,
     INF09435: 60,
     INF09436: 60,
+    INF10431: 45,
     MAT09570: 90,
     MAT09574: 90,
     MAT09582: 90,
