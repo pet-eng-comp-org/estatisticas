@@ -36,8 +36,13 @@ export const metadata: Metadata = {
   },
   description: DESCRICAO,
   // Propriedade do site no Google Search Console (09/10/2026). Não é
-  // segredo: o Google lê esta etiqueta na página para confirmar o dono.
-  verification: { google: "atvBGvOQ6I9uqCCTpne9kKYV3IMQQ_lB6mwupJrFzik" },
+  // segredo: o Google lê estas etiquetas na página para confirmar o dono.
+  // A primeira é da conta que criou a propriedade no navegador; a segunda,
+  // da conta de serviço search-console@vm-pet.iam.gserviceaccount.com, que
+  // lê o Search Console pela API. Tirar uma delas desfaz a verificação dela.
+  verification: {
+    google: ["atvBGvOQ6I9uqCCTpne9kKYV3IMQQ_lB6mwupJrFzik", "Xj3dDfuyfpqIGgQSeo-kH4gIG-ZnSl1JbY_zQiwxCG4"],
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
