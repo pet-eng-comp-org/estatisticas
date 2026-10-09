@@ -8,6 +8,7 @@ import { AREAS, HORAS_OPTATIVA, MATRIZ_2022, OPTATIVAS_2022, areaDe, type Area }
 import { formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
 import { desenhar, rotasDeReferencia, rotear, type Ligacao } from "@/lib/grade/rotas";
 import { SETAS_2022 } from "@/lib/curriculos/setas-2022";
+import BarraRolagem from "./BarraRolagem";
 
 type Cartao = { tipo: "disciplina"; d: DisciplinaComNumeros; area: Area } | { tipo: "optativa"; chave: string };
 type Coluna = { periodo: number; linhas: (Cartao | null)[] };
@@ -152,7 +153,7 @@ export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaCo
   return (
     <section
       aria-label="Grade do currículo 2022"
-      className="mt-[25px] overflow-hidden rounded-[18px] border border-borda bg-white"
+      className="mt-[25px] overflow-clip rounded-[18px] border border-borda bg-white"
     >
       <div
         ref={areaRef}
@@ -241,6 +242,7 @@ export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaCo
           );
         })}
       </div>
+      <BarraRolagem alvo={areaRef} />
 
       <ul aria-label="Áreas" className="flex flex-wrap gap-x-5 gap-y-2.5 border-t border-borda px-[29px] py-5 max-celular:px-4">
         {(Object.keys(AREAS) as Area[])

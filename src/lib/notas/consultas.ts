@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, gte, isNotNull } from "drizzle-orm";
+import { and, eq, gte, isNotNull, max, min } from "drizzle-orm";
 import { banco, schema, versaoDosDados } from "../db";
 import { estatistica, porSemestre, resumir, type Estatistica, type Semestre } from "./agregacao";
 import { calcularDificuldade } from "./dificuldade";
@@ -32,6 +32,7 @@ type Calculo = {
   versao: number;
   disciplinas: Map<string, Disciplina>;
   numeros: Map<string, NumerosDisciplina>;
+  periodo: { primeiro: string; ultimo: string } | null;
 };
 
 let calculo: Calculo | null = null;
@@ -94,7 +95,14 @@ function calcular(): Calculo {
     });
   }
 
-  calculo = { versao, disciplinas, numeros };
+  const [extremos] = db
+    .select({ primeiro: min(schema.notas.semestre), ultimo: max(schema.notas.semestre) })
+    .from(schema.notas)
+    .all();
+  const periodo =
+    extremos?.primeiro && extremos.ultimo ? { primeiro: extremos.primeiro, ultimo: extremos.ultimo } : null;
+
+  calculo = { versao, disciplinas, numeros, periodo };
   return calculo;
 }
 
@@ -102,6 +110,11 @@ const comNumeros = (c: Calculo, d: Disciplina): DisciplinaComNumeros => ({
   ...d,
   numeros: c.numeros.get(d.codigo) ?? null,
 });
+
+/** Primeiro e último semestre com notas no banco ("2009/1"), para o rodapé. */
+export function periodoDosDados(): { primeiro: string; ultimo: string } | null {
+  return calcular().periodo;
+}
 
 /** Disciplinas de um currículo, em ordem de período e nome. */
 export function disciplinasDoCurriculo(curriculo: Curriculo): DisciplinaComNumeros[] {
