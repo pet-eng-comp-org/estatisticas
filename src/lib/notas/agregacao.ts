@@ -22,6 +22,10 @@ export type Resumo = {
   comNota: number;
   somaNotas: number;
   somaQuadrados: number;
+  // Metade dos alunos com nota tirou isso ou mais, a outra metade isso ou
+  // menos. Ao contrário da média, não é puxada por notas extremas, comuns nas
+  // disciplinas difíceis (muito zero de quem desistiu).
+  mediana: number | null;
   semestres: number;
 };
 
@@ -38,8 +42,16 @@ export type Estatistica = Resumo & {
  * dizem nada sobre a turma. Reprovado por falta costuma vir sem nota; conta na
  * reprovação, mas não puxa a média como se fosse zero.
  */
+/** Mediana de uma lista de notas; null se vazia. Não altera a lista. */
+export function mediana(notas: number[]): number | null {
+  if (notas.length === 0) return null;
+  const o = [...notas].sort((a, b) => a - b);
+  const m = Math.floor(o.length / 2);
+  return o.length % 2 ? o[m] : (o[m - 1] + o[m]) / 2;
+}
+
 export function resumir(linhas: Iterable<LinhaNota>): Map<string, Resumo> {
-  const porCodigo = new Map<string, Resumo & { sems: Set<string> }>();
+  const porCodigo = new Map<string, Resumo & { sems: Set<string>; notas: number[] }>();
   for (const l of linhas) {
     if (!contaNaTurma(l.situacao)) continue;
     let r = porCodigo.get(l.codigo);
@@ -53,8 +65,10 @@ export function resumir(linhas: Iterable<LinhaNota>): Map<string, Resumo> {
         comNota: 0,
         somaNotas: 0,
         somaQuadrados: 0,
+        mediana: null,
         semestres: 0,
         sems: new Set(),
+        notas: [],
       };
       porCodigo.set(l.codigo, r);
     }
@@ -69,10 +83,12 @@ export function resumir(linhas: Iterable<LinhaNota>): Map<string, Resumo> {
       r.comNota++;
       r.somaNotas += nota;
       r.somaQuadrados += nota * nota;
+      r.notas.push(nota);
     }
   }
   const saida = new Map<string, Resumo>();
-  for (const [codigo, { sems, ...r }] of porCodigo) saida.set(codigo, { ...r, semestres: sems.size });
+  for (const [codigo, { sems, notas, ...r }] of porCodigo)
+    saida.set(codigo, { ...r, mediana: mediana(notas), semestres: sems.size });
   return saida;
 }
 
@@ -98,12 +114,13 @@ export type Semestre = {
   // null quando ninguém teve nota lançada: zero seria um ponto real no
   // gráfico, num semestre em que não houve nota nenhuma.
   media: number | null;
+  mediana: number | null;
   // Só alunos de Engenharia e Ciência da Computação de Goiabeiras.
   mediaComputacao: number | null;
 };
 
 export function porSemestre(linhas: Iterable<LinhaNota>): Semestre[] {
-  const mapa = new Map<string, Semestre & { soma: number; n: number; somaC: number; nC: number }>();
+  const mapa = new Map<string, Semestre & { soma: number; n: number; somaC: number; nC: number; notas: number[] }>();
   for (const l of linhas) {
     if (!contaNaTurma(l.situacao)) continue;
     let s = mapa.get(l.semestre);
@@ -115,7 +132,9 @@ export function porSemestre(linhas: Iterable<LinhaNota>): Semestre[] {
         reprovadosNota: 0,
         reprovadosFalta: 0,
         media: null,
+        mediana: null,
         mediaComputacao: null,
+        notas: [],
         soma: 0,
         n: 0,
         somaC: 0,
@@ -132,6 +151,7 @@ export function porSemestre(linhas: Iterable<LinhaNota>): Semestre[] {
     if (nota !== null) {
       s.soma += nota;
       s.n++;
+      s.notas.push(nota);
       if (cursoEhDI(l.curso)) {
         s.somaC += nota;
         s.nC++;
@@ -139,9 +159,10 @@ export function porSemestre(linhas: Iterable<LinhaNota>): Semestre[] {
     }
   }
   return Array.from(mapa.values())
-    .map(({ soma, n, somaC, nC, ...s }) => ({
+    .map(({ soma, n, somaC, nC, notas, ...s }) => ({
       ...s,
       media: n > 0 ? soma / n : null,
+      mediana: mediana(notas),
       mediaComputacao: nC > 0 ? somaC / nC : null,
     }))
     .sort((a, b) => a.semestre.localeCompare(b.semestre));

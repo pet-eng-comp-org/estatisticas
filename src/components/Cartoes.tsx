@@ -10,6 +10,9 @@ import { Estrela, Ponto } from "./Icones";
  * linhas) e o resto do cartão não se mexe com o tamanho dele.
  */
 
+// A escala da dificuldade vai de 1 a 5: a barra vazia é 1, não 0.
+const fracaoDificuldade = (d: number | null) => (d === null ? 0 : (d - 1) / 4);
+
 const largura = (fracao: number | null | undefined) => `${Math.round(Math.max(0, Math.min(1, fracao ?? 0)) * 100)}%`;
 
 /** Número grande da tela inicial e da página da disciplina. */
@@ -78,7 +81,7 @@ export function CartaoInicio({ d }: { d: DisciplinaComNumeros }) {
         aria-hidden="true"
         className="barra absolute top-20 left-[149px] h-[7px] w-[125px] max-celular:right-6 max-celular:w-auto"
       >
-        <span style={{ width: largura(dificuldade === null ? 0 : dificuldade / 5) }} />
+        <span style={{ width: largura(fracaoDificuldade(dificuldade)) }} />
       </span>
     </Link>
   );
@@ -108,7 +111,7 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
         <span className="text-base leading-[19px] font-bold text-rosa">{formata.decimal(dificuldade)}</span>
       </span>
       <span aria-hidden="true" className="barra mt-2 w-64 max-celular:mr-[7px] max-celular:w-auto">
-        <span style={{ width: largura(dificuldade === null ? 0 : dificuldade / 5) }} />
+        <span style={{ width: largura(fracaoDificuldade(dificuldade)) }} />
       </span>
 
       <span className="mt-4 mr-[35px] flex items-baseline justify-between max-celular:mr-[7px]">
