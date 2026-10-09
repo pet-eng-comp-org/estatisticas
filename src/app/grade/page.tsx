@@ -19,24 +19,30 @@ export default async function Grade() {
   // A grade mostra só as obrigatórias; as optativas estão em Disciplinas.
   const disciplinas = disciplinasDoCurriculo(2022).filter((d) => d.periodo !== OPTATIVA);
   return (
-    <main className="pagina">
-      <h1 className="titulo-pagina">Grade curricular</h1>
-      <p className="subtitulo-pagina">Visualize os períodos e os principais pré-requisitos do currículo 2022.</p>
-      {curriculo === 2008 && (
-        <p className="cartao mt-5 px-5 py-4 text-sm leading-[21px] text-cinza">
-          <b className="text-vinho">O currículo 2008 não tem grade desenhada.</b> Ele não tem representação gráfica
-          oficial e mudou ao longo dos anos, então esta página mostra a grade de 2022. As disciplinas de 2008 estão em{" "}
-          <Link href="/disciplinas" className="font-bold text-rosa">
-            Disciplinas
-          </Link>
-          , e a correspondência com as de 2022 em{" "}
-          <Link href="/comparar" className="font-bold text-rosa">
-            Comparar currículos
-          </Link>
-          .
-        </p>
-      )}
-      <QuadroGrade disciplinas={disciplinas} />
+    // O quadro usa a largura da tela inteira (em monitor grande cabem mais
+    // períodos sem rolar); título e aviso ficam alinhados com ele. Se a tela
+    // for maior que a grade, o conjunto fica centrado.
+    <main className="flex w-full flex-auto flex-col px-14 pb-[72px] max-[1100px]:px-8 max-celular:px-4">
+      <div className="mx-auto w-fit max-w-full">
+        <h1 className="titulo-pagina">Grade curricular</h1>
+        <p className="subtitulo-pagina">Visualize os períodos e os principais pré-requisitos do currículo 2022.</p>
+        {curriculo === 2008 && (
+          <p className="cartao mt-5 max-w-[1328px] px-5 py-4 text-sm leading-[21px] text-cinza">
+            <b className="text-vinho">O currículo 2008 não tem grade desenhada.</b> Ele não tem representação gráfica
+            oficial e mudou ao longo dos anos, então esta página mostra a grade de 2022. As disciplinas de 2008 estão
+            em{" "}
+            <Link href="/disciplinas" className="font-bold text-rosa">
+              Disciplinas
+            </Link>
+            , e a correspondência com as de 2022 em{" "}
+            <Link href="/comparar" className="font-bold text-rosa">
+              Comparar currículos
+            </Link>
+            .
+          </p>
+        )}
+        <QuadroGrade disciplinas={disciplinas} />
+      </div>
     </main>
   );
 }
