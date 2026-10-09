@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 import Cabecalho from "@/components/Cabecalho";
+import Rodape from "@/components/Rodape";
 import { URL_SITE } from "@/lib/site";
 import { curriculoEscolhido } from "@/lib/curriculos/escolha";
 import "./globals.css";
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-dvh flex-col font-sans">
         <Cabecalho curriculo={curriculo} />
         {children}
+        <Rodape />
       </body>
     </html>
   );
