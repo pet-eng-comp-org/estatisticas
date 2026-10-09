@@ -1,14 +1,11 @@
 # PRODUCAO — este arquivo e a stack `estatisticas` na VM do PET.
 #
 # O Portainer puxa este caminho deste repositorio e aplica sozinho quando ele
-# muda. Ou seja: **mexer aqui implanta**. As linhas `image:` quem escreve e o
-# CI, a cada push no master (job `implanta` em publica-imagens.yml).
+# muda. Ou seja: **mexer aqui implanta**. A linha `image:` quem escreve e o
+# CI, a cada push no master (job `implanta` em .github/workflows/ci.yml).
 #
-# `${TOKEN_SECRET}` e referencia: o valor vive nas variaveis da stack, dentro
-# do Portainer, e nunca entra no git.
-#
-# Para rodar na sua maquina, use docker-compose.yml, que e outro arquivo e tem
-# outra finalidade.
+# Um container so: o site em Next le o banco SQLite do volume. Nao ha mais API
+# publica separada (apiestatisticas.pet.inf.ufes.br) nem variavel secreta.
 
 x-logging: &logging
   driver: json-file
@@ -17,48 +14,25 @@ x-logging: &logging
     max-file: "3"
 
 services:
-  backend:
-    # ghcr.io/pet-eng-comp-org/siteestatisticas-backend:sha-827b8028793f410acfc20a68e0f2bd7bf9b71515
-    image: ghcr.io/pet-eng-comp-org/siteestatisticas-backend@sha256:54bf86409da0bb2407cbe8797c89a1907372801ce30314c08f0fe5ab9879d031
+  site:
+    # ghcr.io/pet-eng-comp-org/siteestatisticas:sha-90a0c6ff9c7752e2f806c9cb8eb64f81b8dc385a
+    image: ghcr.io/pet-eng-comp-org/siteestatisticas@sha256:e691d68f4a861203705d91958172ed54961da3cbc75a263d48cf69bd399bdabd
     logging: *logging
     restart: always
-    environment:
-      TOKEN_SECRET: ${TOKEN_SECRET}
-      BACKEND_PORT: 80
-      # O banco vive no volume, nao na imagem: importacao sobrevive a redeploy.
-      DATABASE_PATH: /app/data/database.sqlite
+    # Mesmo volume do site anterior. Na primeira subida o banco novo
+    # (estatisticas.db) e criado a partir do antigo (database.sqlite), que so e
+    # lido: voltar de versao continua funcionando.
     volumes:
-      - estatisticas_dados:/app/data
+      - estatisticas_dados:/dados
     networks:
       - traefik
     labels:
       - traefik.enable=true
-      - traefik.http.routers.estatisticasbackend.entrypoints=web, websecure
-      - traefik.http.routers.estatisticasbackend.tls=true
-      - traefik.http.routers.estatisticasbackend.tls.certresolver=le
-      - traefik.http.routers.estatisticasbackend.rule=Host(`apiestatisticas.pet.inf.ufes.br`)
-      - traefik.http.services.estatisticasbackend.loadbalancer.server.port=80
-      - traefik.docker.network=traefik
-
-  frontend:
-    # ghcr.io/pet-eng-comp-org/siteestatisticas-frontend:sha-827b8028793f410acfc20a68e0f2bd7bf9b71515
-    image: ghcr.io/pet-eng-comp-org/siteestatisticas-frontend@sha256:be925faa284940d5255a38f67515d07ab0f6489a8f0ed73f97a2301a8f96b8c0
-    logging: *logging
-    restart: always
-    depends_on:
-      - backend
-    environment:
-      # Lida no boot do container para gerar o config.js.
-      REACT_APP_API_URL: https://apiestatisticas.pet.inf.ufes.br/
-    networks:
-      - traefik
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.estatisticasfrontend.entrypoints=web, websecure
-      - traefik.http.routers.estatisticasfrontend.tls=true
-      - traefik.http.routers.estatisticasfrontend.tls.certresolver=le
-      - traefik.http.routers.estatisticasfrontend.rule=Host(`estatistica.pet.inf.ufes.br`)
-      - traefik.http.services.estatisticasfrontend.loadbalancer.server.port=80
+      - traefik.http.routers.estatisticas.entrypoints=web, websecure
+      - traefik.http.routers.estatisticas.tls=true
+      - traefik.http.routers.estatisticas.tls.certresolver=le
+      - traefik.http.routers.estatisticas.rule=Host(`estatistica.pet.inf.ufes.br`)
+      - traefik.http.services.estatisticas.loadbalancer.server.port=3000
       - traefik.docker.network=traefik
 
 volumes:

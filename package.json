@@ -1,0 +1,52 @@
+{
+  "name": "site-estatisticas",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "npm run typecheck && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "db:gerar": "drizzle-kit generate",
+    "db:preparar": "tsx scripts/preparar-banco.ts",
+    "importar-banco-antigo": "tsx scripts/importar-banco-antigo.ts",
+    "importar-notas": "tsx scripts/importar-notas.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "csv-parse": "^7.0.3",
+    "drizzle-orm": "^0.45.3",
+    "next": "16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "recharts": "^3.2.1",
+    "server-only": "^0.0.1",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "drizzle-kit": "^0.31.5",
+    "esbuild": "^0.28.2",
+    "eslint": "^9",
+    "eslint-config-next": "^16.4.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.20.6",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^5.0.2"
+  },
+  "overrides": {
+    "@esbuild-kit/core-utils": {
+      "esbuild": "^0.25.12"
+    }
+  }
+}
