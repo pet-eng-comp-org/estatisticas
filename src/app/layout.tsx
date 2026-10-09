@@ -35,6 +35,9 @@ export const metadata: Metadata = {
     template: "%s — Estatísticas de disciplinas",
   },
   description: DESCRICAO,
+  // Propriedade do site no Google Search Console (09/10/2026). Não é
+  // segredo: o Google lê esta etiqueta na página para confirmar o dono.
+  verification: { google: "atvBGvOQ6I9uqCCTpne9kKYV3IMQQ_lB6mwupJrFzik" },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
