@@ -149,6 +149,31 @@ export default function QuadroGrade({
   // Os saltinhos dependem de quais linhas estão à mostra.
   const caminhos = desenhar(visiveis);
 
+  // Co-requisitos: pré-requisito um do outro no mesmo período (os dois
+  // Projetos Integrados II). A matriz oficial liga os dois com uma seta de
+  // duas pontas, na vertical; o traçado do rotas.ts só cuida de colunas
+  // diferentes.
+  const corequisitos = useMemo(() => {
+    const pares: { de: string; para: string; d: string }[] = [];
+    const vistos = new Set<string>();
+    for (const coluna of colunas)
+      for (const c of coluna.linhas) {
+        if (c?.tipo !== "disciplina") continue;
+        for (const pre of c.d.preRequisitos) {
+          const a = posicoes[pre];
+          const b = posicoes[c.d.codigo];
+          const chave = [pre, c.d.codigo].sort().join("~");
+          if (!a || !b || a.coluna !== b.coluna || vistos.has(chave)) continue;
+          vistos.add(chave);
+          const [cima, baixo] = a.topo < b.topo ? [a, b] : [b, a];
+          const x = (cima.esquerda + cima.direita) / 2;
+          const fundo = cima.meio + (cima.meio - cima.topo);
+          pares.push({ de: pre, para: c.d.codigo, d: `M${x} ${fundo + 3}V${baixo.topo - 3}` });
+        }
+      }
+    return pares;
+  }, [colunas, posicoes]);
+
   // Carga por área, para a legenda, como na matriz oficial.
   const horasPorArea = new Map<Area, number>();
   for (const col of colunas)
@@ -180,7 +205,7 @@ export default function QuadroGrade({
               ["ponta", "#C6C6C6"],
               ["ponta-ligada", "#BF2D5D"],
             ].map(([id, cor]) => (
-              <marker key={id} id={id} viewBox="0 0 12 22" refX="11" refY="11" markerWidth="12" markerHeight="22" markerUnits="userSpaceOnUse" orient="auto">
+              <marker key={id} id={id} viewBox="0 0 12 22" refX="11" refY="11" markerWidth="12" markerHeight="22" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
                 <path d="M1.5 1.5 11 11l-9.5 9.5" fill="none" stroke={cor} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </marker>
             ))}
@@ -195,6 +220,19 @@ export default function QuadroGrade({
               className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
               markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
             />
+          ))}
+          {corequisitos.map((a) => (
+            <path
+              key={`co-${a.de}-${a.para}`}
+              d={a.d}
+              fill="none"
+              strokeWidth={2.5}
+              className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
+              markerStart={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
+              markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
+            >
+              <title>Co-requisitos: cursados no mesmo período</title>
+            </path>
           ))}
         </svg>
 
