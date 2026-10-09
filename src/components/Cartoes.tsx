@@ -94,32 +94,32 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
   return (
     <Link
       href={`/disciplinas/${d.codigo}`}
-      className="cartao relative block h-[210px] w-[300px] text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)] max-celular:w-full"
+      className="cartao flex min-h-[210px] w-[300px] flex-col pt-[17px] pr-3.5 pb-[14px] pl-[21px] text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)] max-celular:w-full"
     >
-      <span title={d.nome} className="absolute top-[17px] right-3.5 left-[21px] truncate text-[17px] leading-[21px] font-bold">
-        {d.nome}
-      </span>
-      <span className="absolute top-[43px] left-[21px] text-xs leading-[15px] text-cinza">
+      {/* O nome quebra de linha em vez de ser cortado (pedido da Bia); com
+          duas linhas, o cartão cresce e o resto desce junto. */}
+      <span className="text-[17px] leading-[21px] font-bold">{d.nome}</span>
+      <span className="mt-[5px] text-xs leading-[15px] text-cinza">
         {d.codigo} · {rotuloPeriodo(d.periodo)}
       </span>
 
-      <span className="absolute top-[78px] right-[49px] left-[21px] flex items-baseline justify-between max-celular:right-[21px]">
+      <span className="mt-5 mr-[35px] flex items-baseline justify-between max-celular:mr-[7px]">
         <span className="text-[13px] leading-4 font-bold text-cinza">Dificuldade</span>
         <span className="text-base leading-[19px] font-bold text-rosa">{formata.decimal(dificuldade)}</span>
       </span>
-      <span aria-hidden="true" className="barra absolute top-[105px] left-[21px] w-64 max-celular:right-[21px] max-celular:w-auto">
+      <span aria-hidden="true" className="barra mt-2 w-64 max-celular:mr-[7px] max-celular:w-auto">
         <span style={{ width: largura(dificuldade === null ? 0 : dificuldade / 5) }} />
       </span>
 
-      <span className="absolute top-[129px] right-[49px] left-[21px] flex items-baseline justify-between max-celular:right-[21px]">
+      <span className="mt-4 mr-[35px] flex items-baseline justify-between max-celular:mr-[7px]">
         <span className="text-[13px] leading-4 font-bold text-cinza">Aprovação</span>
         <span className="text-base leading-[19px] font-bold text-verde">{formata.porcento(n?.aprovacao)}</span>
       </span>
-      <span aria-hidden="true" className="barra barra-verde absolute top-[156px] left-[21px] w-64 max-celular:right-[21px] max-celular:w-auto">
+      <span aria-hidden="true" className="barra barra-verde mt-2 w-64 max-celular:mr-[7px] max-celular:w-auto">
         <span style={{ width: largura(n?.aprovacao) }} />
       </span>
 
-      <span className="absolute top-[178px] left-[21px] flex items-center gap-1 text-[13px] leading-4 font-bold text-cinza">
+      <span className="mt-[14px] flex items-center gap-1 text-[13px] leading-4 font-bold text-cinza">
         <Estrela />
         Sem avaliações ainda
       </span>
