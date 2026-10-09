@@ -35,6 +35,8 @@ COPY --from=build --chown=node:node /app/.next/standalone ./
 COPY --from=build --chown=node:node /app/.next/static ./.next/static
 COPY --from=build --chown=node:node /app/public ./public
 COPY --from=build --chown=node:node /app/drizzle ./drizzle
+# A imagem de prévia (opengraph-image.tsx) lê a Inter em TTF do disco.
+COPY --from=build --chown=node:node /app/src/app/fontes/*.ttf ./src/app/fontes/
 COPY --from=build --chown=node:node /app/dist ./operacao
 COPY --chmod=755 entrypoint.sh /entrypoint.sh
 EXPOSE 3000
