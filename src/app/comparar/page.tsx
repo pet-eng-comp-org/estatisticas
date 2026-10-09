@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { previa } from "@/lib/site";
 
 import ComparacaoCurriculos, { type LinhaComparacao } from "@/components/ComparacaoCurriculos";
 import { EQUIVALENCIAS, NOMES_2008 } from "@/lib/curriculos/equivalencias";
@@ -7,7 +8,14 @@ import { disciplina, disciplinasDoCurriculo } from "@/lib/notas/consultas";
 // Os números mudam com a importação: a página é montada a cada visita.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Comparar currículos" };
+const DESCRICAO =
+  "Cada disciplina do currículo 2022 de Engenharia de Computação da UFES ao lado da equivalente de 2008, segundo o PPC, com a mudança na aprovação.";
+
+export const metadata: Metadata = {
+  title: "Comparar currículos",
+  description: DESCRICAO,
+  openGraph: previa("Comparar currículos", DESCRICAO),
+};
 
 /**
  * Não há mockup desta tela. Cada disciplina do currículo 2022 ao lado da

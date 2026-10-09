@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { previa } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -16,7 +17,20 @@ type Props = { params: Promise<{ codigo: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { codigo } = await params;
-  return { title: disciplina(codigo)?.nome ?? codigo };
+  const d = disciplina(codigo);
+  const nome = d?.nome ?? NOMES_2008[codigo] ?? codigo;
+  const n = d?.numeros;
+  // A descrição é o que aparece no resultado da busca e na prévia do link:
+  // os números da disciplina, não um texto genérico do site.
+  const partes = [
+    `${nome} (${codigo})`,
+    d?.curriculo ? `${rotuloPeriodo(d.periodo)} do currículo ${d.curriculo} de Engenharia de Computação da UFES` : "UFES",
+  ];
+  const numeros = n
+    ? `Aprovação de ${formata.porcento(n.aprovacao)}, média ${formata.decimal(n.media)}, mediana ${formata.decimal(n.mediana)} e dificuldade ${formata.decimal(n.dificuldade)} de 5, com ${formata.inteiro(n.alunos)} alunos desde ${DESDE}.`
+    : "Histórico de aprovação e notas por semestre.";
+  const descricao = `${partes.join(", ")}. ${numeros}`;
+  return { title: nome, description: descricao, openGraph: previa(nome, descricao) };
 }
 
 /** Disciplinas como pílulas que levam à página de cada uma. */

@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
+import { previa } from "@/lib/site";
 import Link from "next/link";
 
 import QuadroGrade from "@/components/QuadroGrade";
 import { curriculoEscolhido } from "@/lib/curriculos/escolha";
 import { disciplinasDoCurriculo, OPTATIVA } from "@/lib/notas/consultas";
 
-export const metadata: Metadata = { title: "Grade curricular" };
+const DESCRICAO =
+  "Grade curricular de Engenharia de Computação da UFES (currículo 2022): os dez períodos, os pré-requisitos e a carga horária, no desenho da matriz oficial do Departamento de Informática.";
+
+export const metadata: Metadata = {
+  title: "Grade curricular",
+  description: DESCRICAO,
+  openGraph: previa("Grade curricular", DESCRICAO),
+};
 
 /**
  * Só o currículo 2022 tem grade: ele tem a representação gráfica oficial do
