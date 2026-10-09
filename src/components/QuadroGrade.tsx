@@ -6,7 +6,8 @@ import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
 import { AREAS, HORAS_OPTATIVA, MATRIZ_2022, OPTATIVAS_2022, areaDe, type Area } from "@/lib/curriculos/matriz";
 import { formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
-import { desenhar, rotear, type Ligacao } from "@/lib/grade/rotas";
+import { desenhar, rotasDeReferencia, rotear, type Ligacao } from "@/lib/grade/rotas";
+import { SETAS_2022 } from "@/lib/curriculos/setas-2022";
 
 type Cartao = { tipo: "disciplina"; d: DisciplinaComNumeros; area: Area } | { tipo: "optativa"; chave: string };
 type Coluna = { periodo: number; linhas: (Cartao | null)[] };
@@ -141,7 +142,16 @@ export default function QuadroGrade({
       }
     }
     const principal = new Set(ligacoes.filter((l) => l.principal).map((l) => `${l.de}>${l.para}`));
-    return rotear(ligacoes, posicoes, livre).map((r) => ({ ...r, principal: principal.has(`${r.de}>${r.para}`) }));
+    // Currículo 2022: o percurso de cada seta é o da matriz oficial. O que ela
+    // não tiver (uma revisão futura) e o currículo 2008 usam o traçado próprio.
+    const copiadas = oficial ? rotasDeReferencia(SETAS_2022, ligacoes, posicoes) : [];
+    const feitas = new Set(copiadas.map((r) => `${r.de}>${r.para}`));
+    const resto = rotear(
+      ligacoes.filter((l) => !feitas.has(`${l.de}>${l.para}`)),
+      posicoes,
+      livre,
+    );
+    return [...copiadas, ...resto].map((r) => ({ ...r, principal: principal.has(`${r.de}>${r.para}`) }));
   }, [colunas, posicoes, oficial]);
 
   const ligada = (a: Ligacao) => destaque !== null && (a.de === destaque || a.para === destaque);

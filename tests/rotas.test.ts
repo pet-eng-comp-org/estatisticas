@@ -48,3 +48,26 @@ describe("traçado das setas da grade", () => {
     expect(r.segmentos).toHaveLength(1);
   });
 });
+
+import { rotasDeReferencia } from "@/lib/grade/rotas";
+import { SETAS_2022 } from "@/lib/curriculos/setas-2022";
+import { MATRIZ_2022 } from "@/lib/curriculos/matriz";
+import { GRADE_ECOMP_2022 } from "@/lib/curriculos/grade-2022";
+
+describe("percursos da matriz oficial", () => {
+  it("as 43 setas entre colunas viram linhas retas que encostam nos cartões", () => {
+    const periodo = new Map(GRADE_ECOMP_2022.map((d) => [d.codigo_disciplina, d.periodo_ecomp]));
+    const caixas: Record<string, Caixa> = {};
+    for (const [codigo, lugar] of Object.entries(MATRIZ_2022)) caixas[codigo] = caixa(periodo.get(codigo)! - 1, lugar.linha);
+    const ligacoes = SETAS_2022.map(([de, para]) => ({ de, para })).filter((l) => caixas[l.de].coluna !== caixas[l.para].coluna);
+    const rotas = rotasDeReferencia(SETAS_2022, ligacoes, caixas);
+    expect(rotas).toHaveLength(43);
+    for (const r of rotas) {
+      for (const s of r.segmentos) expect(s.x1 === s.x2 || s.y1 === s.y2).toBe(true);
+      const ultimo = r.segmentos.at(-1)!;
+      const d = caixas[r.para];
+      const encosta = ultimo.x2 === d.esquerda - 2 || ultimo.y2 === d.topo - 2 || ultimo.y2 === d.topo + 88 + 2;
+      expect(encosta, `${r.de}>${r.para}`).toBe(true);
+    }
+  });
+});
