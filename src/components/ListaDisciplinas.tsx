@@ -78,18 +78,18 @@ export default function ListaDisciplinas({ disciplinas }: { disciplinas: Discipl
             aria-pressed={tipo === "OB"}
             title="Só disciplinas obrigatórias"
             onClick={() => muda("tipo", tipo === "OB" ? null : "OB")}
-            className="pilula w-[100px] px-0"
+            className="pilula min-w-[100px] px-[18px]"
           >
-            OB
+            Obrigatórias
           </button>
           <button
             type="button"
             aria-pressed={tipo === "OP"}
             title="Só disciplinas optativas"
             onClick={() => muda("tipo", tipo === "OP" ? null : "OP")}
-            className="pilula w-[67px] px-0"
+            className="pilula min-w-[67px] px-[18px]"
           >
-            OP
+            Optativas
           </button>
           {/* Fora do mockup: pedido da Bia depois de ver o site no ar. */}
           <label className="pilula pilula-seletor min-w-[170px] gap-1">
