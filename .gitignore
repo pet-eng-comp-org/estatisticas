@@ -1,5 +1,10 @@
-.env
-backend/src/database/*.sqlite
-backend/dist/
-frontend/build/
 node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.env
+.env.*
+!.env.exemplo
+/dados/
+/test-results/

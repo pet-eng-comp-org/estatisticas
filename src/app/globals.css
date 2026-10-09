@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/*
+ * Visual do mockup da Bia (Figma, outubro de 2026): fundo rosado, cartões
+ * brancos com borda fina, vinho para títulos e rosa para ação. As medidas vêm
+ * do Figma exportado em 1x, num quadro de 1440 px, e foram conferidas pixel a
+ * pixel; por isso tantos valores exatos entre colchetes nos componentes.
+ */
+@theme {
+  --color-vinho: #800c33;
+  --color-rosa: #bf2d5d;
+  --color-rosa-vivo: #ff6b9d;
+  --color-rosa-claro: #fff0f5;
+  --color-rosa-hover: #ffe3ee;
+  --color-rosa-fundo: #fff9fb;
+  --color-rosa-cartao: #fff8fb;
+  --color-trilho: #f1e7eb;
+  --color-verde: #43ab4d;
+  --color-verde-escuro: #2e7d36;
+  --color-verde-vivo: #a6ffae;
+  --color-verde-claro: #f1fff3;
+  --color-verde-cartao: #f6fff7;
+  --color-verde-trilho: #eaf5ec;
+  --color-cinza: #7a7074;
+  --color-borda: #e9dde2;
+  --color-seta: #c6c6c6;
+
+  --font-sans: var(--fonte-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --breakpoint-celular: 45rem;
+}
+
+body {
+  @apply bg-rosa-fundo text-vinho antialiased;
+}
+
+:focus-visible {
+  @apply outline-3 outline-offset-2 outline-rosa-vivo;
+}
+
+/* Cartão branco de borda fina, o elemento básico do mockup. */
+@utility cartao {
+  @apply rounded-2xl border border-borda bg-white;
+}
+
+/* Pílula de filtro: rosa claro e texto rosa; ligada, fica cheia. */
+@utility pilula {
+  @apply inline-flex h-[38px] cursor-pointer items-center justify-center gap-1.5 rounded-full border-0 bg-rosa-claro px-[22px] pb-1 text-sm leading-[17px] font-bold whitespace-nowrap text-rosa no-underline hover:bg-rosa-hover aria-pressed:bg-rosa aria-pressed:text-white;
+}
+
+/* Seletor com cara de pílula: o select nativo fica por cima, invisível, para o
+   teclado e o leitor de tela continuarem funcionando. */
+@utility pilula-seletor {
+  @apply relative focus-within:outline-3 focus-within:outline-offset-2 focus-within:outline-rosa-vivo;
+  & select {
+    @apply absolute inset-0 w-full cursor-pointer opacity-0;
+  }
+}
+
+/* Barra de progresso de pontas redondas. */
+@utility barra {
+  @apply block h-2 overflow-hidden rounded bg-trilho;
+  & > span {
+    @apply block h-full rounded bg-rosa-vivo;
+  }
+}
+
+@utility barra-verde {
+  @apply bg-verde-trilho;
+  & > span {
+    @apply bg-verde;
+  }
+}
+
+@utility aviso {
+  @apply py-6 text-[15px] text-cinza;
+}
+
+@utility titulo-pagina {
+  @apply mt-[25px] text-[34px] leading-[41px] font-bold text-vinho max-celular:mt-6 max-celular:text-[28px] max-celular:leading-[34px];
+}
+
+@utility subtitulo-pagina {
+  @apply mt-1.5 text-base leading-[22px] text-cinza;
+}
+
+/* Conteúdo das páginas: 1328 px, como no mockup, com margem que encolhe. */
+@utility pagina {
+  @apply mx-auto w-full max-w-[calc(1328px+112px)] flex-auto px-14 pb-[72px] max-[1100px]:px-8 max-celular:px-4;
+}

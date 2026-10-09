@@ -1,0 +1,110 @@
+name: Testa e implanta
+
+# Todo push e pull request: lint, tipos e testes. No master, se tudo passar:
+# publica a imagem no GHCR e grava o digest dela em docker-compose.prod.yml
+# (commit "deploy:"); o Portainer acompanha esse arquivo e aplica em ate 5
+# minutos. Voltar versao: `git revert` do commit "deploy:".
+#
+# workflow_dispatch numa branch publica a imagem sem implantar: e assim que a
+# primeira imagem de um molde novo vai para o GHCR antes de o compose apontar
+# para ela.
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  IMAGEM: ghcr.io/pet-eng-comp-org/siteestatisticas
+
+jobs:
+  testa:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+  # Em pull request a imagem e construida mas nao publicada: o Dockerfile e
+  # testado antes do merge.
+  publica:
+    needs: testa
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.IMAGEM }}:sha-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Publicar nao e implantar: implantar e este commit no compose. O push feito
+  # com GITHUB_TOKEN nao dispara os workflows de novo.
+  implanta:
+    needs: publica
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency: implanta
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: master
+          fetch-depth: 0
+      - name: Grava o digest no compose
+        env:
+          DIGEST: ${{ needs.publica.outputs.digest }}
+        run: |
+          set -euo pipefail
+          # Digest vazio apagaria a imagem do compose e derrubaria o site.
+          [[ "$DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]] || { echo "digest invalido: '$DIGEST'"; exit 1; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for tentativa in 1 2 3; do
+            git fetch -q origin master && git reset -q --hard origin/master
+            # Ha commit de codigo mais novo que este? A execucao dele implanta.
+            # Filtra pelo ASSUNTO (um "deploy:" no corpo de um commit humano nao
+            # conta) e o awk le tudo: com pipefail, sair cedo mataria o git log.
+            mais_novo=$(git log --format='%H%x09%s' "${GITHUB_SHA}..origin/master" | awk -F'\t' '!f && $2 !~ /^deploy:/ {print $1; f=1}')
+            if [ -n "$mais_novo" ]; then echo "ha commit mais novo (${mais_novo:0:7}): ele implanta"; exit 0; fi
+            sed -i -E "s#^( +)\# ${IMAGEM}:sha-[0-9a-zA-Z]+#\1\# ${IMAGEM}:sha-${GITHUB_SHA}#; s#^( +image: )${IMAGEM}@sha256:[0-9a-f]{64}#\1${IMAGEM}@${DIGEST}#" docker-compose.prod.yml
+            # Linha que nao casou (imagem renomeada, dono novo) nao passa em verde.
+            grep -q "${IMAGEM}@${DIGEST}" docker-compose.prod.yml || { echo "linha image: nao foi trocada"; exit 1; }
+            if git diff --quiet; then echo "compose ja aponta para esta imagem"; exit 0; fi
+            git commit -qm "deploy: site no commit ${GITHUB_SHA:0:8}" -m "Para reverter esta implantacao: git revert deste commit." -- docker-compose.prod.yml
+            if git push -q origin HEAD:master; then exit 0; fi
+            sleep 5
+          done
+          echo "o push do commit de deploy falhou 3 vezes"; exit 1
