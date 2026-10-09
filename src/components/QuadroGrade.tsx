@@ -13,10 +13,6 @@ type Cartao = { tipo: "disciplina"; d: DisciplinaComNumeros; area: Area } | { ti
 type Coluna = { periodo: number; linhas: (Cartao | null)[] };
 type Posicao = { esquerda: number; direita: number; topo: number; meio: number; coluna: number; linha: number };
 
-// Medidas do mockup: colunas de 270 px e cartões de 88 px a cada 120. O
-// corredor entre as colunas é mais largo que os 49 px do mockup: cada
-// disciplina de origem precisa de trilho próprio nele (ver lib/grade/rotas).
-const PASSO_LINHA = 120;
 
 /** Posições da matriz oficial (2022), com os espaços de optativa. */
 function montarOficial(disciplinas: DisciplinaComNumeros[]): Coluna[] {
@@ -44,45 +40,9 @@ function montarOficial(disciplinas: DisciplinaComNumeros[]): Coluna[] {
   );
 }
 
-/**
- * Sem desenho oficial (currículo 2008): o primeiro período em ordem
- * alfabética e os seguintes pela posição média dos pré-requisitos na coluna
- * anterior (método do baricentro), para as setas cruzarem pouco.
- */
-function montarCalculada(disciplinas: DisciplinaComNumeros[]): Coluna[] {
-  const porPeriodo = new Map<number, DisciplinaComNumeros[]>();
-  for (const d of disciplinas) {
-    if (!porPeriodo.has(d.periodo!)) porPeriodo.set(d.periodo!, []);
-    porPeriodo.get(d.periodo!)!.push(d);
-  }
-  const linha: Record<string, number> = {};
-  return Array.from(porPeriodo)
-    .sort(([a], [b]) => a - b)
-    .map(([periodo, ds], i) => {
-      const peso = (d: DisciplinaComNumeros) => {
-        const ps = d.preRequisitos.filter((c) => c in linha).map((c) => linha[c]);
-        return ps.length ? ps.reduce((s, p) => s + p, 0) / ps.length : 1000;
-      };
-      const ordem = [...ds].sort((a, b) =>
-        i === 0 ? a.nome.localeCompare(b.nome, "pt-BR") : peso(a) - peso(b) || a.nome.localeCompare(b.nome, "pt-BR"),
-      );
-      ordem.forEach((d, j) => (linha[d.codigo] = j));
-      return { periodo, linhas: ordem.map((d) => ({ tipo: "disciplina" as const, d, area: areaDe(d) })) };
-    });
-}
-
-export default function QuadroGrade({
-  curriculo,
-  disciplinas,
-}: {
-  curriculo: 2008 | 2022;
-  disciplinas: DisciplinaComNumeros[];
-}) {
-  const oficial = curriculo === 2022;
-  const colunas = useMemo(
-    () => (oficial ? montarOficial(disciplinas) : montarCalculada(disciplinas)),
-    [oficial, disciplinas],
-  );
+/** Grade do currículo 2022, no desenho da matriz oficial do DI. */
+export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaComNumeros[] }) {
+  const colunas = useMemo(() => montarOficial(disciplinas), [disciplinas]);
   const siglas = (c: string) => MATRIZ_2022[c]?.sigla ?? c;
 
   // Posição de cada cartão dentro da área rolável, medida depois do layout:
@@ -122,40 +82,35 @@ export default function QuadroGrade({
   // trilhos não mudam de lugar quando uma aparece com o mouse.
   const rotas = useMemo(() => {
     const livre = (c: number, l: number) => !colunas[c]?.linhas[l];
-    const ligacoes: (Ligacao & { principal: boolean })[] = [];
+    const ligacoes: Ligacao[] = [];
     for (const coluna of colunas) {
       for (const cartao of coluna.linhas) {
         if (cartao?.tipo !== "disciplina") continue;
         const { d } = cartao;
         const etiquetas = MATRIZ_2022[d.codigo]?.etiquetas ?? [];
         for (const pre of d.preRequisitos) {
-          if (oficial && etiquetas.includes(pre)) continue;
+          if (etiquetas.includes(pre)) continue;
           const o = posicoes[pre];
           const p = posicoes[d.codigo];
           if (!o || !p || o.coluna >= p.coluna) continue;
-          // Na matriz oficial todas ficam à mostra: as posições foram escolhidas
-          // para isso. Na calculada, só as curtas; as outras aparecem com o
-          // mouse ou o foco, senão vira um emaranhado.
-          const principal = oficial || (p.coluna === o.coluna + 1 && Math.abs(p.topo - o.topo) <= PASSO_LINHA + 1);
-          ligacoes.push({ de: pre, para: d.codigo, principal });
+          ligacoes.push({ de: pre, para: d.codigo });
         }
       }
     }
-    const principal = new Set(ligacoes.filter((l) => l.principal).map((l) => `${l.de}>${l.para}`));
-    // Currículo 2022: o percurso de cada seta é o da matriz oficial. O que ela
-    // não tiver (uma revisão futura) e o currículo 2008 usam o traçado próprio.
-    const copiadas = oficial ? rotasDeReferencia(SETAS_2022, ligacoes, posicoes) : [];
+    // O percurso de cada seta é o da matriz oficial. O que ela
+    // não tiver (seta nova de uma revisão da grade) usa o traçado próprio.
+    const copiadas = rotasDeReferencia(SETAS_2022, ligacoes, posicoes);
     const feitas = new Set(copiadas.map((r) => `${r.de}>${r.para}`));
     const resto = rotear(
       ligacoes.filter((l) => !feitas.has(`${l.de}>${l.para}`)),
       posicoes,
       livre,
     );
-    return [...copiadas, ...resto].map((r) => ({ ...r, principal: principal.has(`${r.de}>${r.para}`) }));
-  }, [colunas, posicoes, oficial]);
+    return [...copiadas, ...resto];
+  }, [colunas, posicoes]);
 
   const ligada = (a: Ligacao) => destaque !== null && (a.de === destaque || a.para === destaque);
-  const visiveis = rotas.filter((a) => a.principal || ligada(a));
+  const visiveis = rotas;
   // Os saltinhos dependem de quais linhas estão à mostra.
   const caminhos = desenhar(visiveis);
 
@@ -196,7 +151,7 @@ export default function QuadroGrade({
 
   return (
     <section
-      aria-label={`Grade do currículo ${curriculo}`}
+      aria-label="Grade do currículo 2022"
       className="mt-[25px] overflow-hidden rounded-[18px] border border-borda bg-white"
     >
       <div
@@ -272,7 +227,7 @@ export default function QuadroGrade({
                         area={cartao.area}
                         coluna={i}
                         linha={linha}
-                        etiquetas={oficial ? (MATRIZ_2022[cartao.d.codigo]?.etiquetas ?? []) : []}
+                        etiquetas={MATRIZ_2022[cartao.d.codigo]?.etiquetas ?? []}
                         sigla={siglas}
                         aoDestacar={setDestaque}
                       />
