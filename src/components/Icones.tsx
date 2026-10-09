@@ -108,3 +108,19 @@ export const LogoPet = ({ largura = 132, titulo = "PET Engenharia de Computaçã
     <path d="M837.8,445.9h-19.1v-19.1h9.6v4.8h-4.8v9.6h9.6v-14.4h19.1v19.1h-9.6v-4.8h4.8v-9.6h-9.6 V445.9z" />
   </svg>
 );
+
+/**
+ * Selo da Ufes, tirado em vetor do resumo oficial de aplicações da marca
+ * (Secom, 2024). O manual só permite a marca nas cores dela, toda branca em
+ * fundo escuro ou toda preta em fundo claro: nunca em outra cor. Ao lado da
+ * marca do PET, na mesma altura e à direita dela: é o padrão do manual para
+ * unidades com marca própria (pág. 47), e a instituição de nível mais alto
+ * fica à direita.
+ */
+export const LogoUfes = ({ altura = 58, branca = false }: { altura?: number; branca?: boolean }) => (
+  <svg width={Math.round((altura * 103.04) / 53)} height={altura} viewBox="1626.37 105.19 103.04 53" role="img" aria-label="Ufes">
+    <path fill={branca ? "#FFFFFF" : "#231F20"} d="M 1656.14 136.35 L 1656.14 153.6 L 1647.02 155.2 L 1647.02 154.82 C 1652.72 152.23 1655.54 146.84 1655.69 136.35 Z M 1711.02 119.93 C 1711.02 115.68 1721.43 113.78 1721.89 118.34 L 1729.03 117.2 L 1729.41 117.2 L 1729.41 126.7 L 1729.03 126.7 C 1724.77 120.09 1711.02 125.03 1711.02 119.93 M 1664.5 138.86 L 1674.38 137.26 L 1674.38 130.19 L 1664.5 131.79 L 1664.5 126.16 L 1679.93 123.58 L 1679.93 149.42 L 1664.5 152.16 Z M 1688.22 141.06 L 1688.22 134.83 L 1698.02 133.31 L 1698.02 126.24 L 1688.22 127.76 L 1688.22 122.14 L 1703.04 119.7 C 1702.89 120.62 1702.81 121.53 1702.81 122.44 C 1702.81 135.59 1721.96 127.68 1721.96 133.69 C 1721.96 138.48 1712.77 139.54 1710.71 137.34 Z M 1647.48 121.76 L 1647.48 136.8 C 1647.48 144.63 1646.34 148.82 1641.32 149.57 C 1636.31 150.33 1635.02 146.76 1635.02 138.78 L 1635.02 123.88 Z M 1647.48 121.76" />
+    <path fill={branca ? "#FFFFFF" : "#00ADEF"} d="M 1704.79 143.42 C 1707.82 145.32 1712.54 145.7 1716.95 145.02 C 1722.19 144.18 1726.98 141.98 1729.11 137.64 L 1729.41 137.64 L 1729.41 158.19 L 1704.41 158.19 L 1704.41 143.42 Z M 1704.79 143.42" />
+    <path fill={branca ? "#FFFFFF" : "#234379"} d="M 1626.37 105.19 L 1626.37 125.41 L 1704.25 112.26 L 1704.25 115.75 L 1704.63 115.75 C 1706.84 112.26 1711.02 110.05 1716.79 109.14 C 1722.64 108.15 1727.59 109.82 1729.11 114.46 L 1729.41 114.46 L 1729.41 105.19 Z M 1626.37 105.19" />
+  </svg>
+);
