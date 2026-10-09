@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
 import { formata, rotuloPeriodo, rotuloTipo, simbolo, tom } from "@/lib/formato";
-import { Estrela, Ponto } from "./Icones";
+import { Estrela, Ponto, Simbolo } from "./Icones";
 
 /*
  * Cartões do mockup. As posições são absolutas e em pixels porque foram
@@ -64,9 +64,9 @@ export function CartaoInicio({ d }: { d: DisciplinaComNumeros }) {
     >
       <span
         aria-hidden="true"
-        className={`absolute top-[17px] left-[17px] flex size-11 items-center justify-center rounded-[10px] pb-1.5 text-[15px] font-bold ${cores}`}
+        className={`absolute top-[17px] left-[17px] flex size-11 items-center justify-center rounded-[10px] ${cores}`}
       >
-        {simbolo(d)}
+        <Simbolo tipo={simbolo(d)} />
       </span>
       <span className="absolute top-[28.5px] right-3 left-[75px] line-clamp-2 -translate-y-1/2 text-base leading-[19px] font-bold">
         {d.nome}

@@ -55,17 +55,19 @@ export function tom(dificuldade: number | null | undefined): "rosa" | "verde" | 
   return dificuldade >= 3 ? "rosa" : "verde";
 }
 
-/** Símbolo do cartão da tela inicial, pela área da disciplina. */
-export function simbolo(d: { codigo: string; nome: string }) {
+export type TipoSimbolo = "somatorio" | "codigo" | "logica" | "ponto" | "fisica" | "eletrica";
+
+/** Símbolo do cartão da tela inicial, pela área da disciplina (ver Icones). */
+export function simbolo(d: { codigo: string; nome: string }): TipoSimbolo {
   const nome = chaveBusca(d.nome);
-  if (nome.includes("logica")) return "⊢";
-  if (nome.startsWith("introducao")) return "●";
+  if (nome.includes("logica")) return "logica";
+  if (nome.startsWith("introducao")) return "ponto";
   const prefixo = d.codigo.slice(0, 3);
-  if (prefixo === "MAT" || prefixo === "STA") return "∑";
-  if (prefixo === "INF") return "</>";
-  if (prefixo === "FIS") return "F";
-  if (prefixo === "ELE") return "Ω";
-  return "●";
+  if (prefixo === "MAT" || prefixo === "STA") return "somatorio";
+  if (prefixo === "INF") return "codigo";
+  if (prefixo === "FIS") return "fisica";
+  if (prefixo === "ELE") return "eletrica";
+  return "ponto";
 }
 
 const DEPARTAMENTOS: Record<string, string> = {
