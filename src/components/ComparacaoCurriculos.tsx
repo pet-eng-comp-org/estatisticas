@@ -73,6 +73,29 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
   }
   const semPar = filtradas.filter((l) => l.antigas.length === 0);
 
+  // Disciplina de 2008 que o PPC liga a mais de uma de 2022 (Cálculo III A
+  // a Cálculo III e IV; os dois Sistemas Embarcados de 2008 aos dois de 2022).
+  // Sem uma nota, a repetição parece erro do site.
+  const novasDaAntiga = new Map<string, string[]>();
+  for (const l of linhas)
+    for (const a of l.antigas) novasDaAntiga.set(a.codigo, [...(novasDaAntiga.get(a.codigo) ?? []), l.nova.nome]);
+  const nota = (nova: DisciplinaComNumeros, antigas: Lado[]) => {
+    const partes: string[] = [];
+    if (antigas.length > 1) {
+      partes.push(`O PPC liga ${antigas.length === 2 ? "as duas" : `as ${antigas.length}`} disciplinas de 2008 a ${nova.nome} (2022).`);
+    }
+    const outras = antigas.map((a) => (novasDaAntiga.get(a.codigo) ?? []).filter((n) => n !== nova.nome));
+    const iguais = antigas.length > 1 && outras.every((o) => o.length && o.join() === outras[0].join());
+    const lista = (nomes: string[]) => nomes.map((n) => `${n} (2022)`).join(" e ");
+    if (iguais) partes.push(`${antigas.length === 2 ? "As duas" : "Todas"} também são equivalentes de ${lista(outras[0])}.`);
+    else
+      antigas.forEach((a, i) => {
+        if (outras[i].length) partes.push(`${a.nome} (2008) também é equivalente de ${lista(outras[i])}.`);
+      });
+    if (!partes.length) return "";
+    return `${partes.join(" ")} É assim que está na seção de equivalências do PPC${antigas.length > 1 ? ", que não diz se é preciso ter cursado todas" : ""}.`;
+  };
+
   const titulo = (p: number) => (p === OPTATIVA ? "Optativas" : rotuloPeriodo(p));
 
   return (
@@ -131,6 +154,11 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
                     )}
                   </div>
                   <Ponta d={nova} ano="2022" />
+                  {nota(nova, antigas) && (
+                    <p className="col-span-full px-3.5 pb-2 text-xs leading-[17px] text-cinza">
+                      {nota(nova, antigas)}
+                    </p>
+                  )}
                 </li>
               );
             })}
