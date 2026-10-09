@@ -6,13 +6,15 @@ import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
 import { AREAS, HORAS_OPTATIVA, MATRIZ_2022, OPTATIVAS_2022, areaDe, type Area } from "@/lib/curriculos/matriz";
 import { formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
+import { desenhar, rotear, type Ligacao } from "@/lib/grade/rotas";
 
 type Cartao = { tipo: "disciplina"; d: DisciplinaComNumeros; area: Area } | { tipo: "optativa"; chave: string };
 type Coluna = { periodo: number; linhas: (Cartao | null)[] };
 type Posicao = { esquerda: number; direita: number; topo: number; meio: number; coluna: number; linha: number };
-type Aresta = { de: string; para: string; d: string };
 
-// Medidas do mockup: colunas de 270 px a cada 319, cartões de 88 px a cada 120.
+// Medidas do mockup: colunas de 270 px e cartões de 88 px a cada 120. O
+// corredor entre as colunas é mais largo que os 49 px do mockup: cada
+// disciplina de origem precisa de trilho próprio nele (ver lib/grade/rotas).
 const PASSO_LINHA = 120;
 
 /** Posições da matriz oficial (2022), com os espaços de optativa. */
@@ -68,24 +70,6 @@ function montarCalculada(disciplinas: DisciplinaComNumeros[]): Coluna[] {
     });
 }
 
-/**
- * Caminho em ângulo reto: sai pela direita do cartão e entra pela esquerda do
- * destino. Na mesma linha, com as casas do meio vazias, é uma reta. Entre
- * colunas vizinhas, desce ou sobe no corredor entre elas. Pulando colunas,
- * passa pelo vão entre as linhas acima do destino, para não cruzar cartão.
- */
-function caminho(o: Posicao, d: Posicao, livre: (coluna: number, linha: number) => boolean) {
-  const ponta = d.esquerda - 2;
-  if (o.linha === d.linha) {
-    let reta = true;
-    for (let c = o.coluna + 1; c < d.coluna; c++) reta &&= livre(c, o.linha);
-    if (reta) return `M${o.direita} ${o.meio}H${ponta}`;
-  }
-  const corredor = o.direita + 24.5;
-  if (d.coluna === o.coluna + 1) return `M${o.direita} ${o.meio}H${corredor}V${d.meio}H${ponta}`;
-  return `M${o.direita} ${o.meio}H${corredor}V${d.topo - 16}H${d.esquerda - 24.5}V${d.meio}H${ponta}`;
-}
-
 export default function QuadroGrade({
   curriculo,
   disciplinas,
@@ -133,9 +117,11 @@ export default function QuadroGrade({
     return () => observador.disconnect();
   }, [colunas]);
 
-  const arestas = useMemo(() => {
+  // Todas as ligações entram no traçado, mesmo as escondidas: assim os
+  // trilhos não mudam de lugar quando uma aparece com o mouse.
+  const rotas = useMemo(() => {
     const livre = (c: number, l: number) => !colunas[c]?.linhas[l];
-    const lista: (Aresta & { principal: boolean })[] = [];
+    const ligacoes: (Ligacao & { principal: boolean })[] = [];
     for (const coluna of colunas) {
       for (const cartao of coluna.linhas) {
         if (cartao?.tipo !== "disciplina") continue;
@@ -150,15 +136,18 @@ export default function QuadroGrade({
           // para isso. Na calculada, só as curtas; as outras aparecem com o
           // mouse ou o foco, senão vira um emaranhado.
           const principal = oficial || (p.coluna === o.coluna + 1 && Math.abs(p.topo - o.topo) <= PASSO_LINHA + 1);
-          lista.push({ de: pre, para: d.codigo, principal, d: caminho(o, p, livre) });
+          ligacoes.push({ de: pre, para: d.codigo, principal });
         }
       }
     }
-    return lista;
+    const principal = new Set(ligacoes.filter((l) => l.principal).map((l) => `${l.de}>${l.para}`));
+    return rotear(ligacoes, posicoes, livre).map((r) => ({ ...r, principal: principal.has(`${r.de}>${r.para}`) }));
   }, [colunas, posicoes, oficial]);
 
-  const ligada = (a: Aresta) => destaque !== null && (a.de === destaque || a.para === destaque);
-  const visiveis = arestas.filter((a) => a.principal || ligada(a));
+  const ligada = (a: Ligacao) => destaque !== null && (a.de === destaque || a.para === destaque);
+  const visiveis = rotas.filter((a) => a.principal || ligada(a));
+  // Os saltinhos dependem de quais linhas estão à mostra.
+  const caminhos = desenhar(visiveis);
 
   // Carga por área, para a legenda, como na matriz oficial.
   const horasPorArea = new Map<Area, number>();
@@ -177,7 +166,7 @@ export default function QuadroGrade({
     >
       <div
         ref={areaRef}
-        className="relative flex gap-[49px] overflow-x-auto px-[29px] pt-[27px] pb-8 [scrollbar-color:var(--color-borda)_transparent] max-celular:px-4 max-celular:pt-5"
+        className="relative flex gap-16 overflow-x-auto px-[29px] pt-[27px] pb-8 [scrollbar-color:var(--color-borda)_transparent] max-celular:px-4 max-celular:pt-5"
       >
         <svg
           aria-hidden="true"
@@ -200,9 +189,9 @@ export default function QuadroGrade({
           {[...visiveis.filter((a) => !ligada(a)), ...visiveis.filter(ligada)].map((a) => (
             <path
               key={`${a.de}-${a.para}`}
-              d={a.d}
+              d={caminhos.get(`${a.de}>${a.para}`)}
               fill="none"
-              strokeWidth={3}
+              strokeWidth={2.5}
               className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
               markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
             />
