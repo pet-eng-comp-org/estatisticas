@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  IMAGEM: ghcr.io/pet-eng-comp-org/siteestatisticas
+  IMAGEM: ghcr.io/pet-eng-comp-org/estatisticas
 
 jobs:
   testa:
