@@ -71,17 +71,13 @@ Na subida, o container aplica as migrations e, se o banco novo está vazio e
 o do site anterior (`/dados/database.sqlite`) existe no volume, copia os dados
 dele. O arquivo antigo só é lido.
 
-### Primeira subida desta versão (troca do site anterior)
+### Imagem com nome novo
 
-A imagem `siteestatisticas` ainda não existe, e o compose não pode apontar
-para ela antes:
+O compose só pode apontar para uma imagem que já existe no GHCR. Quando o
+nome da imagem muda (foi `siteestatisticas` até 10/10/2026, agora
+`estatisticas`, o nome do repositório):
 
-1. Rodar o CI por `workflow_dispatch` na branch: ele publica a imagem sem
-   implantar.
-2. Conferir o `docker pull` da imagem na VM e gravar o digest e o `sha-` dela
-   no `docker-compose.prod.yml`, na branch.
-3. Backup do volume `estatisticas_dados`; merge no `master`.
-4. Conferir o site. Se algo der errado, `git revert` do merge volta o compose
-   antigo, que usa o mesmo volume e o `database.sqlite` intacto.
-5. Incluir `estatisticas.db` no backup da VM (o arquivo antigo continua lá
-   como cópia de segurança).
+1. Mudar `IMAGEM` no `ci.yml` numa branch e rodar o CI por
+   `workflow_dispatch` nela: ele publica a imagem sem implantar.
+2. Gravar o digest e o `sha-` dela no `docker-compose.prod.yml`, na mesma
+   branch; merge no `master`.
