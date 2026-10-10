@@ -43,7 +43,7 @@ O banco tem nota e matrícula de aluno: não vai para o git (`dados/` está no
 1. Peça o relatório de notas à coordenação, em CSV, com as colunas de sempre
    (`COD_DISCIPLINA`, `NOME_DISCIPLINA`, `NOME_CURSO_ALUNO`, `MEDIA_FINAL`,
    `SITUACAO`, `ANO`, `PERIODO`, `NOME_DOCENTE` e, se houver, `MATR_ALUNO`).
-2. Faça backup do volume `estatisticas_dados`.
+2. Faça backup do volume `estatisticas_data`.
 3. Copie o arquivo para o container e importe, pelo console do Portainer ou
    com `docker exec -u node`:
 
