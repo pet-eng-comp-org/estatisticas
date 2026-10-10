@@ -14,7 +14,7 @@ x-logging: &logging
     max-file: "3"
 
 services:
-  site:
+  estatisticas:
     container_name: estatisticas
     # ghcr.io/pet-eng-comp-org/siteestatisticas:sha-776a11f7c65acd3bdf60551aa0d199ec778f04c1
     image: ghcr.io/pet-eng-comp-org/siteestatisticas@sha256:1825dac05844d48c479cdc0c2440fe93a11fefeda6c53116007bc83e33588e08
@@ -24,7 +24,7 @@ services:
     # (estatisticas.db) e criado a partir do antigo (database.sqlite), que so e
     # lido: voltar de versao continua funcionando.
     volumes:
-      - estatisticas_dados:/dados
+      - data:/dados
     networks:
       - traefik
     labels:
@@ -38,9 +38,10 @@ services:
 
 volumes:
   # Externo: apagar ou recriar a stack nao leva o banco junto.
-  estatisticas_dados:
+  # Copiado de estatisticas_dados em 10/10/2026 (padrao <stack>_<conteudo>).
+  data:
     external: true
-    name: estatisticas_dados
+    name: estatisticas_data
 
 networks:
   # A rede e da stack do Traefik: apagar esta stack nao pode tentar remove-la.
