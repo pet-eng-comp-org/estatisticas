@@ -18,7 +18,7 @@ export default async function Inicio() {
         <span className="block text-rosa">das disciplinas de Computação UFES</span>
       </h1>
       <p className="mt-[21px] max-w-[640px] text-lg leading-[27px] text-cinza max-celular:text-base max-celular:leading-6">
-        Compare experiências dos alunos, dificuldade, aprovação e organização das disciplinas entre os currículos de
+        Compare dificuldade, aprovação e organização das disciplinas entre os currículos de
         2008 e 2022.
       </p>
       <div className="mt-[27px] flex flex-wrap gap-3.5">
