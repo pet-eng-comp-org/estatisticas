@@ -4,10 +4,11 @@ import type { TipoSimbolo } from "@/lib/formato";
 // Os símbolos do mockup (⌕, ★, ●, setas) não existem no subset da Inter que o
 // site serve; desenhados aqui, saem iguais em qualquer sistema.
 
-export const Lupa = ({ tamanho = 14 }: { tamanho?: number }) => (
-  <svg width={tamanho} height={tamanho} viewBox="0 0 14 14" aria-hidden="true" focusable="false">
-    <circle cx="8.3" cy="5.7" r="4.3" fill="none" stroke="currentColor" strokeWidth="2.4" />
-    <path d="M5.1 8.9 1.6 12.4" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+/** Desenhada com a tinta centrada na caixa (de 0,9 a 15,1 nos dois eixos). */
+export const Lupa = ({ tamanho = 16 }: { tamanho?: number }) => (
+  <svg width={tamanho} height={tamanho} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <circle cx="6.75" cy="6.75" r="4.75" fill="none" stroke="currentColor" strokeWidth="2.2" />
+    <path d="M10.3 10.3 14 14" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
   </svg>
 );
 

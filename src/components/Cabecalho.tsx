@@ -65,7 +65,7 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
       <div className="mx-auto flex h-[85px] max-w-[1440px] items-center pr-9 pl-[34px] max-[1180px]:h-auto max-[1180px]:flex-wrap max-[1180px]:gap-y-2.5 max-[1180px]:px-8 max-[1180px]:pt-4 max-celular:px-4">
         <Link href="/" className="flex shrink-0 items-center gap-4 no-underline max-celular:min-w-0 max-celular:gap-2.5">
           <Logo />
-          <span className="flex flex-col pt-2 max-celular:pt-0">
+          <span className="flex flex-col">
             <span className="text-2xl leading-[29px] font-bold text-vinho uppercase max-celular:text-base max-celular:leading-5">
               Estatísticas de <span className="max-celular:block">disciplinas</span>
             </span>
