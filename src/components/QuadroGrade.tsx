@@ -6,7 +6,7 @@ import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
 import { AREAS, HORAS_OPTATIVA, MATRIZ_2008, MATRIZ_2022, OPTATIVAS_2022, areaDe, type Area } from "@/lib/curriculos/matriz";
 import { formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
-import { desenhar, rotasDeReferencia, rotear, type Ligacao } from "@/lib/grade/rotas";
+import { desenhar, rotasDeReferencia, rotear, type Ligacao, type Obstaculo } from "@/lib/grade/rotas";
 import { SETAS_2022 } from "@/lib/curriculos/setas-2022";
 import BarraRolagem from "./BarraRolagem";
 
@@ -71,6 +71,8 @@ export default function QuadroGrade({
   // as setas são desenhadas por cima, num SVG do mesmo tamanho.
   const areaRef = useRef<HTMLDivElement>(null);
   const [posicoes, setPosicoes] = useState<Record<string, Posicao>>({});
+  // Etiquetas em cima dos cartões: as setas que pulam colunas desviam delas.
+  const [obstaculos, setObstaculos] = useState<Obstaculo[]>([]);
   const [tamanho, setTamanho] = useState({ largura: 0, altura: 0 });
   const [destaque, setDestaque] = useState<string | null>(null);
 
@@ -92,6 +94,17 @@ export default function QuadroGrade({
         };
       });
       setPosicoes(novas);
+      setObstaculos(
+        Array.from(area.querySelectorAll<HTMLElement>("[data-etiquetas]"), (el) => {
+          const r = el.getBoundingClientRect();
+          return {
+            esquerda: r.left - base.left + area.scrollLeft,
+            direita: r.right - base.left + area.scrollLeft,
+            topo: r.top - base.top,
+            base: r.bottom - base.top,
+          };
+        }),
+      );
       setTamanho({ largura: area.scrollWidth, altura: area.scrollHeight });
     };
     mede();
@@ -127,9 +140,10 @@ export default function QuadroGrade({
       ligacoes.filter((l) => !feitas.has(`${l.de}>${l.para}`)),
       posicoes,
       livre,
+      obstaculos,
     );
     return [...copiadas, ...resto];
-  }, [colunas, posicoes, matriz, desenho.setas]);
+  }, [colunas, posicoes, obstaculos, matriz, desenho.setas]);
 
   const ligada = (a: Ligacao) => destaque !== null && (a.de === destaque || a.para === destaque);
   const visiveis = rotas;
@@ -325,7 +339,7 @@ function CartaoGrade({
       </span>
       <span className="absolute top-[47px] left-[41px] text-xs leading-[15px] text-cinza">{rotuloCarga(d)}</span>
       {etiquetas.length > 0 && (
-        <span className="absolute -top-[9px] left-3 flex gap-1" title="Pré-requisitos de períodos distantes">
+        <span data-etiquetas className="absolute -top-[9px] left-3 flex gap-1" title="Pré-requisitos de períodos distantes">
           {etiquetas.map((e) => {
             const a = AREAS[areaDaEtiqueta(e)];
             return (

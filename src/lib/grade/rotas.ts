@@ -18,6 +18,8 @@
 
 export type Caixa = { esquerda: number; direita: number; topo: number; meio: number; coluna: number; linha: number };
 export type Ligacao = { de: string; para: string };
+/** Área que as linhas devem evitar (as etiquetas em cima dos cartões). */
+export type Obstaculo = { esquerda: number; direita: number; topo: number; base: number };
 type Segmento = { x1: number; y1: number; x2: number; y2: number };
 export type Rota = Ligacao & { segmentos: Segmento[] };
 
@@ -28,6 +30,7 @@ const ESPACO_PONTA = 18;
 const PONTA = 2; // a seta termina 2 px antes do cartão
 const PASSO_VAO = 6; // distância entre linhas que dividem o vão entre duas linhas de cartões
 export const RAIO_SALTO = 5;
+const FOLGA_ETIQUETA = 4; // linha mais perto que isso de uma etiqueta conta como em cima dela
 
 const chave = (l: Ligacao) => `${l.de}>${l.para}`;
 
@@ -68,6 +71,7 @@ export function rotear(
   ligacoes: Ligacao[],
   caixas: Record<string, Caixa>,
   livre: (coluna: number, linha: number) => boolean,
+  obstaculos: Obstaculo[] = [],
 ): Rota[] {
   const validas = ligacoes.filter((l) => caixas[l.de] && caixas[l.para] && caixas[l.de].coluna < caixas[l.para].coluna);
 
@@ -111,7 +115,17 @@ export function rotear(
   }
   for (const destinos of porLinha.values()) {
     const faixa = colorir(destinos.map((d) => ({ chave: d, de: alcanceX.get(d)![0], ate: alcanceX.get(d)![1] })));
-    for (const [destino, k] of faixa) alturaVao.set(destino, caixas[destino].topo - 9 - k * PASSO_VAO);
+    for (const [destino, k] of faixa) {
+      // A altura normal (9 px acima do cartão) é a das etiquetas: se alguma
+      // estiver embaixo do trecho horizontal, a linha passa por cima dela, na
+      // metade de cima do vão.
+      const y = caixas[destino].topo - 9 - k * PASSO_VAO;
+      const [de, ate] = alcanceX.get(destino)!;
+      const embaixo = obstaculos.filter(
+        (o) => o.direita > de && o.esquerda < ate && o.topo - FOLGA_ETIQUETA < y && o.base + FOLGA_ETIQUETA > y,
+      );
+      alturaVao.set(destino, embaixo.length ? Math.min(...embaixo.map((o) => o.topo)) - 8 - k * PASSO_VAO : y);
+    }
   }
 
   // Trilhos verticais de cada corredor (o corredor g fica à direita da coluna
