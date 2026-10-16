@@ -1,8 +1,14 @@
 import { DESDE, MINIMO_POR_SEMESTRE } from "@/lib/formato";
 import { periodoDosDados } from "@/lib/notas/consultas";
-import { Instagram, LogoPet, LogoUfes } from "./Icones";
+import { Email, Instagram, LogoPet, LogoUfes } from "./Icones";
 
 const PPC = "https://informatica.ufes.br/pt-br/ppc-engcomp";
+const EMAIL = "petengcomp@inf.ufes.br";
+
+const CONTATOS = [
+  { href: `mailto:${EMAIL}`, rotulo: `E-mail do PET: ${EMAIL}`, Icone: Email },
+  { href: "https://www.instagram.com/petengcomp/", rotulo: "Instagram do PET", Icone: Instagram },
+];
 
 const Externo = ({ href, children }: { href: string; children: React.ReactNode }) => (
   <a href={href} target="_blank" rel="noopener noreferrer" className="font-bold text-white underline decoration-white/40 underline-offset-2 hover:decoration-white">
@@ -36,16 +42,20 @@ export default function Rodape() {
             Universidade Federal do Espírito Santo
           </p>
           {/* O site do PET já está no logo acima. */}
-          <a
-            href="https://www.instagram.com/petengcomp/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram do PET"
-            title="Instagram do PET"
-            className="w-fit text-white transition-opacity hover:opacity-80"
-          >
-            <Instagram />
-          </a>
+          <div className="flex items-center gap-4">
+            {CONTATOS.map(({ href, rotulo, Icone }) => (
+              <a
+                key={href}
+                href={href}
+                {...(href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer" })}
+                aria-label={rotulo}
+                title={rotulo}
+                className="text-white transition-opacity hover:opacity-80"
+              >
+                <Icone />
+              </a>
+            ))}
+          </div>
         </div>
 
         <div>
