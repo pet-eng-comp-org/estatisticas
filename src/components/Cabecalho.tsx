@@ -46,7 +46,9 @@ const ativa = (atual: string, caminho: string) =>
  * no desenho; foi copiado da tela inicial. No celular os itens se espalham
  * pela largura e "Comparar currículos" vira "Comparar", para os quatro caberem
  * em 320px sem precisar rolar. O botão 2008/2022 vale para o site inteiro e
- * fica num cookie.
+ * fica num cookie; é um controle segmentado (um só trilho, com o destaque
+ * deslizando para o ano marcado) para deixar claro que vale um ou outro. No
+ * celular o título quebra em duas linhas para os anos caberem ao lado do logo.
  */
 export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
   const atual = usePathname();
@@ -65,10 +67,14 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
           <Logo />
           <span className="flex flex-col pt-2 max-celular:pt-0">
             <span className="text-2xl leading-[29px] font-bold text-vinho uppercase max-celular:text-base max-celular:leading-5">
-              Estatísticas de disciplinas
+              Estatísticas de <span className="max-celular:block">disciplinas</span>
             </span>
-            <span className="mt-[3px] text-sm leading-[17px] font-bold text-rosa max-celular:mt-0 max-celular:text-xs">
-              Engenharia de Computação Ufes
+            <span className="mt-[3px] text-sm leading-[17px] font-bold text-rosa max-celular:mt-0.5 max-celular:text-xs">
+              <span className="max-celular:hidden">Engenharia</span>
+              <abbr title="Engenharia" className="no-underline celular:hidden">
+                Eng.
+              </abbr>{" "}
+              de Computação Ufes
             </span>
           </span>
         </Link>
@@ -96,7 +102,15 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
           ))}
         </nav>
 
-        <div role="group" aria-label="Currículo" className="ml-[59px] flex shrink-0 gap-2 max-[1180px]:ml-auto">
+        <div
+          role="group"
+          aria-label="Currículo"
+          className="relative ml-[59px] grid shrink-0 grid-cols-2 rounded-full bg-rosa-claro p-1 max-[1180px]:ml-auto"
+        >
+          <span
+            aria-hidden
+            className={`absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-full bg-vinho transition-transform duration-200 motion-reduce:transition-none ${marcado === "2022" ? "translate-x-full" : ""}`}
+          />
           {(["2008", "2022"] as const).map((ano) => (
             <button
               key={ano}
@@ -111,7 +125,7 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
                   if (destino) router.push(destino);
                 })
               }
-              className="h-[38px] min-w-[88px] cursor-pointer rounded-full bg-rosa-claro px-[25px] text-sm font-bold text-rosa aria-pressed:min-w-[98px] aria-pressed:bg-vinho aria-pressed:text-white max-celular:h-[34px] max-celular:min-w-0 max-celular:px-3 max-celular:aria-pressed:min-w-0"
+              className="relative h-[34px] w-[84px] cursor-pointer rounded-full text-sm font-bold text-rosa transition-colors duration-200 not-aria-pressed:hover:text-vinho focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vinho aria-pressed:text-white motion-reduce:transition-none max-celular:h-[30px] max-celular:w-[52px] max-celular:text-[13px]"
             >
               {ano}
             </button>
