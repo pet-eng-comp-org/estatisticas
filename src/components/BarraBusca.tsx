@@ -34,7 +34,7 @@ export default function BarraBusca({
       <label className="sr-only" htmlFor={id}>
         Buscar disciplina por nome ou código
       </label>
-      <span className="pointer-events-none absolute top-[calc(50%-3px)] left-[26px] flex -translate-y-1/2 text-rosa max-celular:top-[26px] max-celular:left-[18px]">
+      <span className="pointer-events-none absolute top-1/2 left-[25px] flex -translate-y-1/2 text-rosa max-celular:top-[26px] max-celular:left-[18px]">
         <Lupa />
       </span>
       <input
