@@ -29,6 +29,11 @@ updates:
       # runtime descreve API que não existe em execução.
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # ESLint 10 fica de fora enquanto os plugins do eslint-config-next
+      # (import, jsx-a11y, react) aceitarem só até a 9. O lint até passa, mas
+      # fora da faixa que eles suportam. Recusado em 16/10/2026 (PR #26).
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: docker
     directory: /
