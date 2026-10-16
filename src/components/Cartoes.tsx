@@ -57,14 +57,14 @@ export function CartaoResumo({
     <div
       // Com a ajuda ao lado do rótulo, o title repetiria o balão dela.
       title={ajuda ? undefined : descricao}
-      className="cartao flex h-[111px] items-center gap-[18px] px-[17px] max-celular:h-auto max-celular:flex-col max-celular:items-start max-celular:gap-2.5 max-celular:px-3.5 max-celular:py-4"
+      className="cartao flex h-[111px] items-center gap-[18px] px-[17px] max-celular:h-auto max-celular:flex-col max-celular:items-start max-celular:gap-2.5 max-celular:px-3 max-celular:py-3.5"
     >
       <span className={`mt-[33px] flex h-[38px] w-12 shrink-0 items-center justify-center self-start rounded-xl max-celular:mt-0 ${icone}`}>
         <Ponto />
       </span>
       <span className="mt-[30px] flex min-w-0 flex-col self-start max-celular:mt-0">
         <span className="mb-0.5 text-3xl leading-8 font-bold text-vinho max-celular:text-[26px]">{valor}</span>{" "}
-        <span className="text-[15px] leading-[18px] font-bold text-cinza">
+        <span className="text-[15px] leading-[18px] font-bold text-cinza max-celular:text-[13px] max-celular:leading-4">
           {ajuda ? <ComAjuda rotulo={rotulo} ajuda={ajuda} /> : rotulo}
         </span>
       </span>

@@ -53,7 +53,7 @@ export default async function Inicio() {
 
       <section
         aria-label={`Resumo do currículo ${curriculo}`}
-        className="mt-[84px] grid grid-cols-[repeat(4,290px)] justify-center gap-5 max-[1360px]:grid-cols-[repeat(auto-fit,minmax(240px,1fr))] max-celular:mt-10 max-celular:grid-cols-2 max-celular:gap-3"
+        className="mt-[84px] grid grid-cols-[repeat(3,290px)] justify-center gap-5 max-[1100px]:grid-cols-[repeat(auto-fit,minmax(200px,1fr))] max-celular:mt-10 max-celular:grid-cols-3 max-celular:gap-2.5"
       >
         <CartaoResumo
           cor="rosa"
@@ -73,12 +73,8 @@ export default async function Inicio() {
           rotulo="Aprovação média"
           descricao={`Alunos aprovados sobre o total das turmas desde ${DESDE}`}
         />
-        <CartaoResumo
-          cor="escuro"
-          valor="0"
-          rotulo="Avaliações"
-          descricao="As avaliações das disciplinas pelos alunos ainda vão abrir"
-        />
+        {/* O cartão "Avaliações" do mockup volta quando as avaliações das
+            disciplinas pelos alunos abrirem; até lá ele só mostraria 0. */}
       </section>
 
       <PeriodoInicial disciplinas={disciplinas} />

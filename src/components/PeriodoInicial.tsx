@@ -8,6 +8,7 @@ import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
 import { chaveBusca, OPTATIVA, rotuloPeriodo } from "@/lib/formato";
 import BarraBusca from "./BarraBusca";
 import { CartaoInicio } from "./Cartoes";
+import { Funil } from "./Icones";
 
 /**
  * Parte de baixo da tela inicial: busca e os cartões. Sem filtro, mostra
@@ -37,6 +38,15 @@ export default function PeriodoInicial({ disciplinas }: { disciplinas: Disciplin
           lista: filtradas.filter((d) => d.periodo === p),
         }))
         .filter((b) => b.lista.length > 0);
+
+  const filtrosAtuais = new URLSearchParams();
+  if (periodo === OPTATIVA) filtrosAtuais.set("tipo", "OP");
+  else {
+    if (periodo !== null) filtrosAtuais.set("periodo", String(periodo));
+    if (soObrigatorias) filtrosAtuais.set("tipo", "OB");
+  }
+  if (termo) filtrosAtuais.set("busca", busca.trim());
+  const maisFiltros = filtrosAtuais.size ? `/disciplinas?${filtrosAtuais}` : "/disciplinas";
 
   return (
     <>
@@ -76,8 +86,11 @@ export default function PeriodoInicial({ disciplinas }: { disciplinas: Disciplin
         >
           Obrigatórias
         </button>
-        <Link href="/disciplinas" className="pilula min-w-[100px]">
-          Filtros
+        {/* Leva o que já foi escolhido aqui para a tela Disciplinas, que tem
+            também Optativas e a ordenação. */}
+        <Link href={maisFiltros} className="pilula min-w-[100px] gap-1.5" title="Optativas e ordenação, na tela Disciplinas">
+          <Funil />
+          Mais filtros
         </Link>
       </BarraBusca>
 
