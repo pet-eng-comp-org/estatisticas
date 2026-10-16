@@ -7,7 +7,7 @@ import { curriculoEscolhido } from "@/lib/curriculos/escolha";
 import { disciplinasDoCurriculo, OPTATIVA } from "@/lib/notas/consultas";
 
 const DESCRICAO =
-  "Grade curricular de Engenharia de Computação da UFES (currículo 2022): os dez períodos, os pré-requisitos e a carga horária, no desenho da matriz oficial do Departamento de Informática.";
+  "Grade curricular de Engenharia de Computação da Ufes (currículo 2022): os dez períodos, os pré-requisitos e a carga horária, no desenho da matriz oficial do Departamento de Informática.";
 
 export const metadata: Metadata = {
   title: "Grade curricular",

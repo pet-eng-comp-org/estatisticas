@@ -4,7 +4,7 @@ import path from "node:path";
 
 // Prévia que aparece ao compartilhar o link (WhatsApp, Instagram, Telegram):
 // as cores e o logo do mockup, com o nome do site.
-export const alt = "Estatísticas de disciplinas — Engenharia de Computação UFES";
+export const alt = "Estatísticas de disciplinas — Engenharia de Computação Ufes";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -51,7 +51,7 @@ export default async function Imagem() {
           Estatísticas de disciplinas
         </div>
         <div style={{ marginTop: 8, fontSize: 40, fontWeight: 700, color: "#BF2D5D" }}>
-          Engenharia de Computação UFES
+          Engenharia de Computação Ufes
         </div>
         <div style={{ marginTop: 28, fontSize: 30, color: "#7A7074" }}>
           Aprovação, notas, dificuldade e a grade curricular de cada disciplina

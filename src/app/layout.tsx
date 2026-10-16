@@ -20,7 +20,7 @@ const inter = localFont({
 });
 
 const DESCRICAO =
-  "Estatísticas das disciplinas de Engenharia de Computação da UFES: aprovação, notas e dificuldade, com a grade curricular de 2022 e a comparação com o currículo 2008. Mantido pelo PET Engenharia de Computação.";
+  "Estatísticas das disciplinas de Engenharia de Computação da Ufes: aprovação, notas e dificuldade, com a grade curricular de 2022 e a comparação com o currículo 2008. Mantido pelo PET Engenharia de Computação.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(URL_SITE),
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description: DESCRICAO,
   },
   title: {
-    default: "Estatísticas de disciplinas — Engenharia de Computação UFES",
+    default: "Estatísticas de disciplinas — Engenharia de Computação Ufes",
     template: "%s — Estatísticas de disciplinas",
   },
   description: DESCRICAO,

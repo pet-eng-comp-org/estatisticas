@@ -1,6 +1,6 @@
 import { DESDE, MINIMO_POR_SEMESTRE } from "@/lib/formato";
 import { periodoDosDados } from "@/lib/notas/consultas";
-import { LogoPet, LogoUfes } from "./Icones";
+import { Instagram, LogoPet, LogoUfes } from "./Icones";
 
 const PPC = "https://informatica.ufes.br/pt-br/ppc-engcomp";
 
@@ -23,10 +23,10 @@ export default function Rodape() {
       <div className="mx-auto grid max-w-[calc(1328px+112px)] grid-cols-[auto_1fr] gap-x-16 gap-y-8 px-14 py-10 text-[13px] leading-5 text-white/80 max-[1100px]:px-8 max-[900px]:grid-cols-1 max-celular:px-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-6">
-            <a href="https://pet.inf.ufes.br" target="_blank" rel="noopener noreferrer" className="text-white transition-opacity hover:opacity-80">
+            <a href="https://pet.inf.ufes.br" target="_blank" rel="noopener noreferrer" title="Site do PET" className="text-white transition-opacity hover:opacity-80">
               <LogoPet />
             </a>
-            <a href="https://www.ufes.br" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
+            <a href="https://www.ufes.br" target="_blank" rel="noopener noreferrer" title="Site da Ufes" className="transition-opacity hover:opacity-80">
               <LogoUfes branca />
             </a>
           </div>
@@ -35,10 +35,17 @@ export default function Rodape() {
             <br />
             Universidade Federal do Espírito Santo
           </p>
-          <p className="flex gap-4">
-            <Externo href="https://pet.inf.ufes.br">Site do PET</Externo>
-            <Externo href="https://www.instagram.com/petengcomp/">Instagram</Externo>
-          </p>
+          {/* O site do PET já está no logo acima. */}
+          <a
+            href="https://www.instagram.com/petengcomp/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram do PET"
+            title="Instagram do PET"
+            className="w-fit text-white transition-opacity hover:opacity-80"
+          >
+            <Instagram />
+          </a>
         </div>
 
         <div>
