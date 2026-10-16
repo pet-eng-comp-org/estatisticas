@@ -6,6 +6,7 @@ import PeriodoInicial from "@/components/PeriodoInicial";
 import { curriculoEscolhido } from "@/lib/curriculos/escolha";
 import { disciplinasDoCurriculo, resumoGeral } from "@/lib/notas/consultas";
 import { DESDE, formata, MINIMO_ALUNOS } from "@/lib/formato";
+import { NOME_SITE, URL_SITE } from "@/lib/site";
 
 export default async function Inicio() {
   const curriculo = await curriculoEscolhido();
@@ -14,8 +15,21 @@ export default async function Inicio() {
 
   return (
     <main className="pagina">
+      {/* Nome que o Google mostra acima do resultado; sem ele, usa o do domínio (UFES). */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: NOME_SITE,
+            alternateName: "Estatísticas de disciplinas da Engenharia de Computação UFES",
+            url: `${URL_SITE}/`,
+          }),
+        }}
+      />
       <h1 className="mt-[38px] text-[42px] leading-[50px] font-bold text-vinho max-celular:mt-7 max-celular:text-[30px] max-celular:leading-9">
-        Conheça as estatísticas
+        Conheça as estatísticas{" "}
         <span className="block text-rosa">das disciplinas de Computação UFES</span>
       </h1>
       <p className="mt-[21px] max-w-[640px] text-lg leading-[27px] text-cinza max-celular:text-base max-celular:leading-6">

@@ -63,7 +63,7 @@ export function CartaoResumo({
         <Ponto />
       </span>
       <span className="mt-[30px] flex min-w-0 flex-col self-start max-celular:mt-0">
-        <span className="mb-0.5 text-3xl leading-8 font-bold text-vinho max-celular:text-[26px]">{valor}</span>
+        <span className="mb-0.5 text-3xl leading-8 font-bold text-vinho max-celular:text-[26px]">{valor}</span>{" "}
         <span className="text-[15px] leading-[18px] font-bold text-cinza">
           {ajuda ? <ComAjuda rotulo={rotulo} ajuda={ajuda} /> : rotulo}
         </span>
