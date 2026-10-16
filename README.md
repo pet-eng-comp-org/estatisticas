@@ -35,8 +35,8 @@ O banco tem nota e matrícula de aluno: não vai para o git (`dados/` está no
   com o link em cada arquivo de `src/lib/curriculos/`.
 - **Dificuldade (1 a 5)**: `src/lib/notas/dificuldade.ts`. Combina
   reprovação, média e desvio padrão das notas desde 2018, comparando as
-  disciplinas entre si; a explicação para o público está no fim da página de
-  cada disciplina.
+  disciplinas entre si; a explicação para o público fica no balão da
+  interrogação ao lado de "Dificuldade" (`src/components/AjudaDificuldade.tsx`).
 
 ## Importar um relatório novo
 

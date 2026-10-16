@@ -3,20 +3,24 @@
 import { useId, useLayoutEffect, useRef, useState } from "react";
 
 import { DESDE } from "@/lib/formato";
+import { PESOS } from "@/lib/notas/dificuldade";
 
-const LARGURA = 280;
+const LARGURA = 320;
 const MARGEM = 16;
+
+const porcento = (peso: number) => `${Math.round(peso * 100)}%`;
 
 /**
  * Interrogação ao lado de "Dificuldade" que explica o número (sugestão do
- * Rodrigo). Abre ao passar o mouse e ao clicar; no celular, que não tem
+ * Rodrigo). É a única explicação da conta no site: a seção que ficava no fim
+ * da página da disciplina saiu. Abre ao passar o mouse e ao clicar; no celular, que não tem
  * "passar o mouse", só o toque abre. Esc, clique fora ou outro clique fecham.
  *
  * O balão fica em posição fixa, calculada a partir do botão e presa dentro
  * da tela: no celular o botão pode estar perto da borda e um balão de 280 px
  * alinhado a ele sairia pelo lado.
  */
-export default function AjudaDificuldade({ conta = false }: { conta?: boolean }) {
+export default function AjudaDificuldade() {
   const id = useId();
   const botao = useRef<HTMLButtonElement>(null);
   const caixa = useRef<HTMLSpanElement>(null);
@@ -100,16 +104,16 @@ export default function AjudaDificuldade({ conta = false }: { conta?: boolean })
         // O before cobre o vão até o botão: o mouse passa por ele sem fechar.
         className="fixed z-50 rounded-xl border border-borda bg-white px-4 py-3 text-left text-[13px] leading-[19px] font-normal text-cinza shadow-[0_4px_14px_rgba(128,12,51,0.12)] before:absolute before:inset-x-0 before:-top-2 before:h-2 before:content-['']"
       >
-        Vai de 1 a 5 e compara as disciplinas do curso entre si: quanto mais perto de 5, mais difícil em relação às
-        outras. A conta usa a reprovação, a média das notas e o quanto as notas variam nas turmas desde {DESDE}.
-        {conta && (
-          <a href="#dificuldade" onClick={() => {
-              setFixado(false);
-              setMouse(false);
-            }} className="mt-1.5 block font-bold text-rosa">
-            Ver a conta
-          </a>
-        )}
+        <span className="block">
+          Vai de 1 a 5 e compara as disciplinas do curso entre si: quanto mais perto de 5, mais difícil em relação às
+          outras.
+        </span>
+        <span className="mt-1.5 block">
+          A conta usa as turmas desde {DESDE} e três medidas: a reprovação (peso {porcento(PESOS.reprovacao)}), o
+          quanto a média das notas fica abaixo de 10 ({porcento(PESOS.notaBaixa)}) e o desvio padrão das notas
+          ({porcento(PESOS.desvio)}), que mostra se a turma se divide entre quem vai muito bem e quem vai muito mal.
+          Disciplinas com poucos alunos ficam perto do meio da escala até terem dados suficientes.
+        </span>
       </span>
     </span>
   );
