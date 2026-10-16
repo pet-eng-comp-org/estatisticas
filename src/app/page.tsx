@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import AjudaDificuldade from "@/components/AjudaDificuldade";
 import { CartaoResumo } from "@/components/Cartoes";
 import PeriodoInicial from "@/components/PeriodoInicial";
 import { curriculoEscolhido } from "@/lib/curriculos/escolha";
@@ -18,8 +19,8 @@ export default async function Inicio() {
         <span className="block text-rosa">das disciplinas de Computação UFES</span>
       </h1>
       <p className="mt-[21px] max-w-[640px] text-lg leading-[27px] text-cinza max-celular:text-base max-celular:leading-6">
-        Compare dificuldade, aprovação e organização das disciplinas entre os currículos de
-        2008 e 2022.
+        Compare dificuldade <AjudaDificuldade />, aprovação e organização das disciplinas entre os currículos
+        de 2008 e 2022.
       </p>
       <div className="mt-[27px] flex flex-wrap gap-3.5">
         <Link

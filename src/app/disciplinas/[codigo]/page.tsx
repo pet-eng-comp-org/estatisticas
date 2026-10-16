@@ -3,6 +3,7 @@ import { previa } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import AjudaDificuldade from "@/components/AjudaDificuldade";
 import { CartaoResumo } from "@/components/Cartoes";
 import GraficoDisciplina from "@/components/GraficoDisciplina";
 import Voltar from "@/components/Voltar";
@@ -108,7 +109,8 @@ export default async function PaginaDisciplina({ params }: Props) {
           cor="rosa"
           valor={formata.decimal(n?.dificuldade)}
           rotulo="Dificuldade"
-          descricao={d?.curriculo ? "De 1 a 5; veja a conta no fim da página" : "Só para disciplinas da grade de Engenharia de Computação"}
+          ajuda={d?.curriculo ? <AjudaDificuldade conta /> : undefined}
+          descricao={d?.curriculo ? undefined : "Só para disciplinas da grade de Engenharia de Computação"}
         />
         <CartaoResumo
           cor="verde"
