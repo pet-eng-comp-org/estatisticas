@@ -51,10 +51,14 @@ function colorir(trechos: { chave: string; de: number; ate: number }[]): Map<str
   return faixa;
 }
 
-/** Distribui `n` trilhos entre `inicio` e `fim`. */
+/**
+ * Distribui `n` trilhos entre `inicio` e `fim`. Com 9 px entre eles, dois
+ * trilhos pareciam uma linha só, desalinhada; com 16 dá para ver que são
+ * duas (o corredor tem uns 40 px úteis, cabem três).
+ */
 function trilhos(n: number, inicio: number, fim: number): number[] {
   if (n === 1) return [(inicio + fim) / 2];
-  const passo = Math.min(9, (fim - inicio) / (n - 1));
+  const passo = Math.min(16, (fim - inicio) / (n - 1));
   const largura = passo * (n - 1);
   const comeco = (inicio + fim) / 2 - largura / 2;
   return Array.from({ length: n }, (_, i) => comeco + i * passo);
