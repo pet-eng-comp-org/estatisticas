@@ -63,7 +63,7 @@ export const Logo = () => (
  */
 const DESENHOS: Record<TipoSimbolo, ReactNode> = {
   somatorio: <path d="M13.25 3h-8.5l5 6-5 6h8.5" />,
-  codigo: <path d="M5.5 4.5 1.5 9l4 4.5M12.5 4.5l4 4.5-4 4.5M10.5 3 7.5 15" />,
+  codigo: <path d="M4.75 4.5 1.25 9l3.5 4.5M13.25 4.5l3.5 4.5-3.5 4.5M10 4 8 14" />,
   logica: <path d="M4.5 3v12M4.5 9h9" />,
   ponto: <circle cx="9" cy="9" r="4.5" fill="currentColor" stroke="none" />,
   fisica: <path d="M5.5 3v12M5.5 3H13M5.5 9H11.5" />,
