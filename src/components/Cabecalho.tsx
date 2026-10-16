@@ -12,7 +12,7 @@ const SECOES = [
   { caminho: "/", rotulo: "Início", espaco: "" },
   { caminho: "/grade", rotulo: "Grade", espaco: "ml-[39px]" },
   { caminho: "/disciplinas", rotulo: "Disciplinas", espaco: "ml-[23px]" },
-  { caminho: "/comparar", rotulo: "Comparar currículos", espaco: "ml-[15px]" },
+  { caminho: "/comparar", rotulo: "Comparar currículos", curto: "Comparar", espaco: "ml-[15px]" },
 ];
 
 /**
@@ -43,8 +43,10 @@ const ativa = (atual: string, caminho: string) =>
 
 /**
  * Cabeçalho do mockup. O espaçamento entre os itens do menu não é uniforme
- * no desenho; foi copiado da tela inicial. O botão 2008/2022 vale para o site
- * inteiro e fica num cookie.
+ * no desenho; foi copiado da tela inicial. No celular os itens se espalham
+ * pela largura e "Comparar currículos" vira "Comparar", para os quatro caberem
+ * em 320px sem precisar rolar. O botão 2008/2022 vale para o site inteiro e
+ * fica num cookie.
  */
 export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
   const atual = usePathname();
@@ -73,16 +75,23 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
 
         <nav
           aria-label="Seções do site"
-          className="ml-auto flex items-center pt-[7px] max-[1180px]:order-3 max-[1180px]:-mx-8 max-[1180px]:w-[calc(100%+4rem)] max-[1180px]:overflow-x-auto max-[1180px]:px-8 max-[1180px]:pb-2.5 max-celular:-mx-4 max-celular:w-[calc(100%+2rem)] max-celular:px-4"
+          className="ml-auto flex items-center pt-[7px] max-[1180px]:order-3 max-[1180px]:-mx-8 max-[1180px]:w-[calc(100%+4rem)] max-[1180px]:overflow-x-auto max-[1180px]:px-8 max-[1180px]:pb-2.5 max-celular:-mx-4 max-celular:w-[calc(100%+2rem)] max-celular:justify-between max-celular:gap-3 max-celular:px-4"
         >
           {SECOES.map((s) => (
             <Link
               key={s.caminho}
               href={s.caminho}
               aria-current={ativa(atual, s.caminho) ? "page" : undefined}
-              className={`${s.espaco} rounded py-1.5 text-[15px] leading-[18px] font-bold whitespace-nowrap text-cinza no-underline hover:text-vinho aria-[current=page]:text-vinho`}
+              className={`${s.espaco} rounded py-1.5 max-celular:ml-0 text-[15px] leading-[18px] font-bold whitespace-nowrap text-cinza no-underline hover:text-vinho aria-[current=page]:text-vinho`}
             >
-              {s.rotulo}
+              {s.curto ? (
+                <>
+                  <span className="max-celular:hidden">{s.rotulo}</span>
+                  <span className="celular:hidden">{s.curto}</span>
+                </>
+              ) : (
+                s.rotulo
+              )}
             </Link>
           ))}
         </nav>

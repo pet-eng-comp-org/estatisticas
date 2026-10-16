@@ -60,7 +60,7 @@ export default function Rodape() {
           </ul>
         </div>
 
-        <div>
+        <div className="max-w-[640px]">
           <h2 className="mb-2 text-sm font-bold text-white">De onde vêm os dados</h2>
           <ul className="flex list-disc flex-col gap-1.5 pl-4 marker:text-white/40">
             <li>
