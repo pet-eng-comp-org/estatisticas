@@ -52,7 +52,7 @@ export default function PeriodoInicial({ disciplinas }: { disciplinas: Disciplin
           <span aria-hidden="true">
             {periodo === null ? "Todos os períodos" : periodo === OPTATIVA ? "Optativas" : rotuloPeriodo(periodo)}
           </span>
-          <select
+          <select name="periodo"
             value={periodo ?? ""}
             onChange={(e) => {
               setPeriodo(e.target.value === "" ? null : Number(e.target.value));

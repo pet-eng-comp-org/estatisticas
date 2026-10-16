@@ -105,7 +105,7 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
         <label className="pilula pilula-seletor w-[145px] px-0 max-celular:w-auto">
           <span className="sr-only">Período no currículo 2022</span>
           <span aria-hidden="true">{periodo === null ? "Todos os períodos" : titulo(periodo)}</span>
-          <select value={periodo ?? ""} onChange={(e) => setPeriodo(e.target.value === "" ? null : Number(e.target.value))}>
+          <select name="periodo" value={periodo ?? ""} onChange={(e) => setPeriodo(e.target.value === "" ? null : Number(e.target.value))}>
             <option value="">Todos os períodos</option>
             {periodos.map((p) => (
               <option key={p} value={p}>
