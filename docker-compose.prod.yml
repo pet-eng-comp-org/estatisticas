@@ -16,8 +16,8 @@ x-logging: &logging
 services:
   estatisticas:
     container_name: estatisticas
-    # ghcr.io/pet-eng-comp-org/estatisticas:sha-d0f56dc5d8a6b6245bf0dab108fc85e5e07fa0f4
-    image: ghcr.io/pet-eng-comp-org/estatisticas@sha256:70413ba10a82e9742db10f8bbbd04401d235abba2d60b3e9cbae6c16d2128297
+    # ghcr.io/pet-eng-comp-org/estatisticas:sha-a96083d370e70ce8b5f7a8d101a25a0801b1520f
+    image: ghcr.io/pet-eng-comp-org/estatisticas@sha256:7f06d66f90d9df13053169e3be2980b94c74d5df19665d3058f9a01604298b9e
     logging: *logging
     restart: always
     # Mesmo volume do site anterior. Na primeira subida o banco novo
