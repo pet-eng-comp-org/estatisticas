@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
 import { formata, rotuloPeriodo, rotuloTipo, simbolo, tom } from "@/lib/formato";
-import { Estrela, Ponto, Simbolo } from "./Icones";
+import { Ponto, Simbolo } from "./Icones";
 
 /*
  * Cartões do mockup. As posições são absolutas e em pixels porque foram
@@ -121,7 +121,7 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
   return (
     <Link
       href={`/disciplinas/${d.codigo}`}
-      className="cartao flex min-h-[210px] w-[300px] flex-col pt-[17px] pr-3.5 pb-[14px] pl-[21px] text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)] max-celular:w-full"
+      className="cartao flex min-h-[180px] w-[300px] flex-col pt-[17px] pr-3.5 pb-[18px] pl-[21px] text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)] max-celular:w-full"
     >
       {/* O nome quebra de linha em vez de ser cortado (pedido da Bia); com
           duas linhas, o cartão cresce e o resto desce junto. */}
@@ -145,11 +145,8 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
       <span aria-hidden="true" className="barra barra-verde mt-2 w-64 max-celular:mr-[7px] max-celular:w-auto">
         <span style={{ width: largura(n?.aprovacao) }} />
       </span>
-
-      <span className="mt-[14px] flex items-center gap-1 text-[13px] leading-4 font-bold text-cinza">
-        <Estrela />
-        Sem avaliações ainda
-      </span>
+      {/* A linha "Sem avaliações ainda" do mockup (com a Estrela) volta
+          quando as avaliações das disciplinas abrirem. */}
     </Link>
   );
 }
