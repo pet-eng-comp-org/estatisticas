@@ -64,7 +64,7 @@ export default function ListaDisciplinas({ disciplinas }: { disciplinas: Discipl
           <label className="pilula pilula-seletor w-[145px] px-0">
             <span className="sr-only">Período</span>
             <span aria-hidden="true">{periodo === null ? "Todos os períodos" : rotuloPeriodo(periodo)}</span>
-            <select value={periodo ?? ""} onChange={(e) => muda("periodo", e.target.value || null)}>
+            <select name="periodo" value={periodo ?? ""} onChange={(e) => muda("periodo", e.target.value || null)}>
               <option value="">Todos os períodos</option>
               {periodos.map((p) => (
                 <option key={p} value={p}>
@@ -98,7 +98,7 @@ export default function ListaDisciplinas({ disciplinas }: { disciplinas: Discipl
             <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
               <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
             </svg>
-            <select value={ordem} onChange={(e) => muda("ordem", e.target.value === "periodo" ? null : e.target.value)}>
+            <select name="ordem" value={ordem} onChange={(e) => muda("ordem", e.target.value === "periodo" ? null : e.target.value)}>
               {(Object.keys(ORDENS) as Ordem[]).map((o) => (
                 <option key={o} value={o}>
                   {ORDENS[o]}
