@@ -12,6 +12,12 @@ export const Lupa = ({ tamanho = 16 }: { tamanho?: number }) => (
   </svg>
 );
 
+export const Funil = ({ tamanho = 14 }: { tamanho?: number }) => (
+  <svg width={tamanho} height={tamanho} viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <path d="M2 3h12l-4.6 5.4V13l-2.8 1.2V8.4z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+  </svg>
+);
+
 export const Estrela = ({ tamanho = 13 }: { tamanho?: number }) => (
   <svg width={tamanho} height={tamanho} viewBox="0 0 20 20" aria-hidden="true" focusable="false">
     <path d="M10 1.5l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L1.3 7.8l6.1-.7z" fill="currentColor" />
