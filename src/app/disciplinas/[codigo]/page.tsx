@@ -109,7 +109,7 @@ export default async function PaginaDisciplina({ params }: Props) {
           cor="rosa"
           valor={formata.decimal(n?.dificuldade)}
           rotulo="Dificuldade"
-          ajuda={d?.curriculo ? <AjudaDificuldade conta /> : undefined}
+          ajuda={d?.curriculo ? <AjudaDificuldade /> : undefined}
           descricao={d?.curriculo ? undefined : "Só para disciplinas da grade de Engenharia de Computação"}
         />
         <CartaoResumo
@@ -167,17 +167,6 @@ export default async function PaginaDisciplina({ params }: Props) {
 
       <section className="cartao mt-5 rounded-[18px] px-[30px] pt-7 pb-[30px] max-celular:px-3.5 max-celular:py-5">
         <GraficoDisciplina nome={d?.nome ?? codigo} semestres={semestres} minimo={MINIMO_POR_SEMESTRE} />
-      </section>
-
-      <section className="mt-5 max-w-[760px] text-sm leading-[21px] text-cinza" id="dificuldade">
-        <h2 className="text-[15px] font-bold text-vinho">Como a dificuldade é calculada</h2>
-        <p className="mt-2">
-          Ela compara as disciplinas entre si, com as turmas desde {DESDE}, usando três medidas: a reprovação (peso
-          45%), o quanto a média das notas fica abaixo de 10 (35%) e o desvio padrão das notas (20%), que mostra se a
-          turma se divide entre quem vai muito bem e quem vai muito mal. Disciplinas com poucos alunos são puxadas
-          para o meio da escala até terem dados suficientes. O resultado vai de 1, a mais tranquila do curso, a 5, a
-          mais difícil.
-        </p>
       </section>
     </main>
   );
