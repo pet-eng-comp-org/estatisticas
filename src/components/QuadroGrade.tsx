@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
-import { AREAS, HORAS_OPTATIVA, MATRIZ_2022, OPTATIVAS_2022, areaDe, type Area } from "@/lib/curriculos/matriz";
+import { AREAS, HORAS_OPTATIVA, MATRIZ_2008, MATRIZ_2022, OPTATIVAS_2022, areaDe, type Area } from "@/lib/curriculos/matriz";
 import { formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
 import { desenhar, rotasDeReferencia, rotear, type Ligacao } from "@/lib/grade/rotas";
 import { SETAS_2022 } from "@/lib/curriculos/setas-2022";
@@ -15,8 +15,21 @@ type Coluna = { periodo: number; linhas: (Cartao | null)[] };
 type Posicao = { esquerda: number; direita: number; topo: number; meio: number; coluna: number; linha: number };
 
 
-/** Posições da matriz oficial (2022), com os espaços de optativa. */
-function montarOficial(disciplinas: DisciplinaComNumeros[]): Coluna[] {
+type Desenho = {
+  matriz: typeof MATRIZ_2022;
+  optativas: typeof OPTATIVAS_2022;
+  setas: typeof SETAS_2022;
+};
+
+// 2022 segue a matriz oficial do DI; 2008 não tem desenho oficial e usa as
+// posições escolhidas em matriz.ts, com as setas pelo traçado próprio.
+const DESENHOS: Record<2008 | 2022, Desenho> = {
+  2022: { matriz: MATRIZ_2022, optativas: OPTATIVAS_2022, setas: SETAS_2022 },
+  2008: { matriz: MATRIZ_2008, optativas: [], setas: [] },
+};
+
+/** Coloca cada disciplina na linha do desenho, com os espaços de optativa. */
+function montar(disciplinas: DisciplinaComNumeros[], { matriz, optativas }: Desenho): Coluna[] {
   const colunas = new Map<number, (Cartao | null)[]>();
   const coloca = (periodo: number, linha: number, c: Cartao) => {
     if (!colunas.has(periodo)) colunas.set(periodo, []);
@@ -26,11 +39,11 @@ function montarOficial(disciplinas: DisciplinaComNumeros[]): Coluna[] {
   // fim da coluna dela, em vez de sumir.
   const semLugar: DisciplinaComNumeros[] = [];
   for (const d of disciplinas) {
-    const lugar = MATRIZ_2022[d.codigo];
+    const lugar = matriz[d.codigo];
     if (lugar) coloca(d.periodo!, lugar.linha, { tipo: "disciplina", d, area: lugar.area });
     else semLugar.push(d);
   }
-  OPTATIVAS_2022.forEach((o, i) => coloca(o.periodo, o.linha, { tipo: "optativa", chave: `opt-${i}` }));
+  optativas.forEach((o, i) => coloca(o.periodo, o.linha, { tipo: "optativa", chave: `opt-${i}` }));
   for (const d of semLugar) {
     const col = colunas.get(d.periodo!) ?? [];
     colunas.set(d.periodo!, col);
@@ -41,10 +54,18 @@ function montarOficial(disciplinas: DisciplinaComNumeros[]): Coluna[] {
   );
 }
 
-/** Grade do currículo 2022, no desenho da matriz oficial do DI. */
-export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaComNumeros[] }) {
-  const colunas = useMemo(() => montarOficial(disciplinas), [disciplinas]);
-  const siglas = (c: string) => MATRIZ_2022[c]?.sigla ?? c;
+/** Grade de um currículo: a de 2022 no desenho da matriz oficial do DI. */
+export default function QuadroGrade({
+  curriculo,
+  disciplinas,
+}: {
+  curriculo: 2008 | 2022;
+  disciplinas: DisciplinaComNumeros[];
+}) {
+  const desenho = DESENHOS[curriculo];
+  const { matriz } = desenho;
+  const colunas = useMemo(() => montar(disciplinas, desenho), [disciplinas, desenho]);
+  const siglas = (c: string) => matriz[c]?.sigla ?? c;
 
   // Posição de cada cartão dentro da área rolável, medida depois do layout:
   // as setas são desenhadas por cima, num SVG do mesmo tamanho.
@@ -88,7 +109,7 @@ export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaCo
       for (const cartao of coluna.linhas) {
         if (cartao?.tipo !== "disciplina") continue;
         const { d } = cartao;
-        const etiquetas = MATRIZ_2022[d.codigo]?.etiquetas ?? [];
+        const etiquetas = matriz[d.codigo]?.etiquetas ?? [];
         for (const pre of d.preRequisitos) {
           if (etiquetas.includes(pre)) continue;
           const o = posicoes[pre];
@@ -100,7 +121,7 @@ export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaCo
     }
     // O percurso de cada seta é o da matriz oficial. O que ela
     // não tiver (seta nova de uma revisão da grade) usa o traçado próprio.
-    const copiadas = rotasDeReferencia(SETAS_2022, ligacoes, posicoes);
+    const copiadas = rotasDeReferencia(desenho.setas, ligacoes, posicoes);
     const feitas = new Set(copiadas.map((r) => `${r.de}>${r.para}`));
     const resto = rotear(
       ligacoes.filter((l) => !feitas.has(`${l.de}>${l.para}`)),
@@ -108,7 +129,7 @@ export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaCo
       livre,
     );
     return [...copiadas, ...resto];
-  }, [colunas, posicoes]);
+  }, [colunas, posicoes, matriz, desenho.setas]);
 
   const ligada = (a: Ligacao) => destaque !== null && (a.de === destaque || a.para === destaque);
   const visiveis = rotas;
@@ -152,7 +173,7 @@ export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaCo
 
   return (
     <section
-      aria-label="Grade do currículo 2022"
+      aria-label={`Grade do currículo ${curriculo}`}
       className="mt-[25px] overflow-clip rounded-[18px] border border-borda bg-white"
     >
       <div
@@ -228,7 +249,8 @@ export default function QuadroGrade({ disciplinas }: { disciplinas: DisciplinaCo
                         area={cartao.area}
                         coluna={i}
                         linha={linha}
-                        etiquetas={MATRIZ_2022[cartao.d.codigo]?.etiquetas ?? []}
+                        etiquetas={matriz[cartao.d.codigo]?.etiquetas ?? []}
+                        areaDaEtiqueta={(e) => matriz[e]?.area ?? "informatica"}
                         sigla={siglas}
                         aoDestacar={setDestaque}
                       />
@@ -268,6 +290,7 @@ function CartaoGrade({
   coluna,
   linha,
   etiquetas,
+  areaDaEtiqueta,
   sigla,
   aoDestacar,
 }: {
@@ -276,6 +299,7 @@ function CartaoGrade({
   coluna: number;
   linha: number;
   etiquetas: string[];
+  areaDaEtiqueta: (codigo: string) => Area;
   sigla: (codigo: string) => string;
   aoDestacar: (codigo: string | null) => void;
 }) {
@@ -303,7 +327,7 @@ function CartaoGrade({
       {etiquetas.length > 0 && (
         <span className="absolute -top-[9px] left-3 flex gap-1" title="Pré-requisitos de períodos distantes">
           {etiquetas.map((e) => {
-            const a = AREAS[MATRIZ_2022[e]?.area ?? "informatica"];
+            const a = AREAS[areaDaEtiqueta(e)];
             return (
               <span
                 key={e}
