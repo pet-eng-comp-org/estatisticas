@@ -107,6 +107,12 @@ export function rotear(
     const ate = caixas[l.para].esquerda;
     alcanceX.set(l.para, atual ? [Math.min(atual[0], de), ate] : [de, ate]);
   }
+  // Meio do vão entre a linha de destino e a de cima (os cartões têm todos a
+  // mesma altura e as linhas o mesmo passo).
+  const altura = validas.length ? (caixas[validas[0].para].meio - caixas[validas[0].para].topo) * 2 : 0;
+  const topos = [...new Set(Object.values(caixas).map((c) => c.topo))].sort((a, b) => a - b);
+  const passos = topos.slice(1).map((t, i) => t - topos[i]).filter((d) => d > altura);
+  const vao = passos.length ? Math.min(...passos) - altura : 2 * 9;
   const alturaVao = new Map<string, number>();
   const porLinha = new Map<number, string[]>();
   for (const destino of alcanceX.keys()) {
@@ -116,10 +122,10 @@ export function rotear(
   for (const destinos of porLinha.values()) {
     const faixa = colorir(destinos.map((d) => ({ chave: d, de: alcanceX.get(d)![0], ate: alcanceX.get(d)![1] })));
     for (const [destino, k] of faixa) {
-      // A altura normal (9 px acima do cartão) é a das etiquetas: se alguma
-      // estiver embaixo do trecho horizontal, a linha passa por cima dela, na
-      // metade de cima do vão.
-      const y = caixas[destino].topo - 9 - k * PASSO_VAO;
+      // A linha corre no meio do vão. As etiquetas ficam na metade de baixo
+      // dele: se alguma estiver embaixo do trecho horizontal, a linha sobe e
+      // passa por cima dela.
+      const y = caixas[destino].topo - vao / 2 - k * PASSO_VAO;
       const [de, ate] = alcanceX.get(destino)!;
       const embaixo = obstaculos.filter(
         (o) => o.direita > de && o.esquerda < ate && o.topo - FOLGA_ETIQUETA < y && o.base + FOLGA_ETIQUETA > y,
