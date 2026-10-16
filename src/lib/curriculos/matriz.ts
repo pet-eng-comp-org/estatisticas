@@ -13,7 +13,8 @@ import { chaveBusca } from "../formato";
 // ("Grade Curricular - 2017" na página do PPC), que é a das turmas que ainda
 // estão nele. As posições e o que vira seta ou etiqueta foram escolhidos por
 // nós, com o critério que se vê na matriz de 2022: setas curtas e sem cruzar,
-// no máximo dois trilhos por corredor, áreas em faixas. Uma busca escolheu a
+// um trilho só por corredor (sempre no mesmo x) e nenhuma linha encostando
+// no trilho de outra disciplina, áreas em faixas. Uma busca escolheu a
 // linha de cada disciplina e quais pré-requisitos ficam como etiqueta (todos os
 // que estão a três períodos ou mais, e os mais próximos que só embolariam os
 // corredores), com até quatro etiquetas por cartão.
@@ -145,69 +146,69 @@ export function areaDe(d: { codigo: string; nome: string; obrigatoria: boolean }
 /** Currículo 2008 (versão de 2017), sem desenho oficial: posições escolhidas por nós (ver comentário acima). */
 export const MATRIZ_2008: Record<string, Lugar> = {
   // 1º período
-  ELE08557: { linha: 0, area: "eletrica", sigla: "PLab" }, // Práticas de Laboratório
+  MAT09592: { linha: 0, area: "matematica", sigla: "AlgLin" }, // Álgebra Linear
   MAT09570: { linha: 1, area: "matematica", sigla: "Calc1" }, // Cálculo I
-  MAT09592: { linha: 2, area: "matematica", sigla: "AlgLin" }, // Álgebra Linear
-  QUI09677: { linha: 3, area: "fisica", sigla: "QuiA" }, // Química A
-  INF09301: { linha: 5, area: "sistemas", sigla: "IEC" }, // Introdução à Engenharia de Computação
+  QUI09677: { linha: 2, area: "fisica", sigla: "QuiA" }, // Química A
+  INF09301: { linha: 4, area: "sistemas", sigla: "IEC" }, // Introdução à Engenharia de Computação
+  ELE08557: { linha: 5, area: "eletrica", sigla: "PLab" }, // Práticas de Laboratório
   INF09330: { linha: 6, area: "programacao", sigla: "Prog2" }, // Programação II
   // 2º
-  ELE08475: { linha: 0, area: "eletrica", sigla: "CEle1" }, // Circuitos Elétricos I
+  FIS09098: { linha: 0, area: "fisica", sigla: "IMC" }, // Introdução à Mecânica Clássica
   STA08874: { linha: 1, area: "matematica", sigla: "Est" }, // Estatística Básica
   MAT09574: { linha: 2, area: "matematica", sigla: "Calc2" }, // Cálculo II
-  FIS09098: { linha: 3, area: "fisica", sigla: "IMC" }, // Introdução à Mecânica Clássica
+  ELE08475: { linha: 5, area: "eletrica", sigla: "CEle1", etiquetas: ["MAT09570"] }, // Circuitos Elétricos I
   INF09292: { linha: 6, area: "programacao", sigla: "ED1" }, // Estrutura de Dados I
   // 3º
-  ELE08476: { linha: 0, area: "eletrica", sigla: "CEle2" }, // Circuitos Elétricos II
+  FIS09057: { linha: 0, area: "fisica", sigla: "FisEx" }, // Física Experimental
   MAT09582: { linha: 1, area: "matematica", sigla: "Calc3A" }, // Cálculo III A
   ELE08501: { linha: 2, area: "eletrica", sigla: "EMag1" }, // Eletromagnetismo I
-  MCA08765: { linha: 3, area: "fisica", sigla: "Termo" }, // Termodinâmica e Transmissão de Calor
-  FIS09057: { linha: 4, area: "fisica", sigla: "FisEx" }, // Física Experimental
+  MCA08765: { linha: 3, area: "fisica", sigla: "Termo", etiquetas: ["FIS09098"] }, // Termodinâmica e Transmissão de Calor
+  ELE08476: { linha: 4, area: "eletrica", sigla: "CEle2" }, // Circuitos Elétricos II
   INF09331: { linha: 6, area: "programacao", sigla: "Prog3" }, // Programação III
   // 4º
-  ELE08500: { linha: 0, area: "eletrica", sigla: "EDig", etiquetas: ["INF09330"] }, // Eletrônica Digital
-  ELE08568: { linha: 1, area: "eletrica", sigla: "SS" }, // Sinais e Sistemas
-  ELE08502: { linha: 2, area: "eletrica", sigla: "EMag2" }, // Eletromagnetismo II
+  DEA07780: { linha: 0, area: "fisica", sigla: "MecFlu", etiquetas: ["MAT09582", "MCA08765"] }, // Introdução à Mecânica dos Fluidos
+  MCA08709: { linha: 1, area: "fisica", sigla: "MecSol", etiquetas: ["FIS09098"] }, // Mecânica dos Sólidos
+  ELE08502: { linha: 2, area: "eletrica", sigla: "EMag2", etiquetas: ["MAT09582"] }, // Eletromagnetismo II
   INF09269: { linha: 3, area: "programacao", sigla: "AlgNum", etiquetas: ["INF09330", "MAT09592"] }, // Algoritmos Numéricos I
-  DEA07780: { linha: 4, area: "fisica", sigla: "MecFlu", etiquetas: ["MAT09582"] }, // Introdução à Mecânica dos Fluidos
-  MCA08709: { linha: 5, area: "fisica", sigla: "MecSol", etiquetas: ["MAT09582"] }, // Mecânica dos Sólidos
+  ELE08568: { linha: 4, area: "eletrica", sigla: "SS", etiquetas: ["MAT09582"] }, // Sinais e Sistemas
+  ELE08500: { linha: 5, area: "eletrica", sigla: "EDig", etiquetas: ["INF09330"] }, // Eletrônica Digital
   // 5º
-  ELE08512: { linha: 1, area: "eletrica", sigla: "InstEl" }, // Instalações Elétricas I
+  INF09293: { linha: 0, area: "programacao", sigla: "ED2", etiquetas: ["INF09292"] }, // Estrutura de Dados II
+  FIS09040: { linha: 1, area: "fisica", sigla: "EstMat" }, // Estrutura da Matéria
   ELE08497: { linha: 2, area: "eletrica", sigla: "EB1", etiquetas: ["ELE08476"] }, // Eletrônica Básica I
-  INF09293: { linha: 3, area: "programacao", sigla: "ED2", etiquetas: ["INF09292"] }, // Estrutura de Dados II
-  INF09289: { linha: 4, area: "informatica", sigla: "ES" }, // Engenharia de Software
-  FIS09040: { linha: 5, area: "fisica", sigla: "EstMat" }, // Estrutura da Matéria
+  ELE08512: { linha: 4, area: "eletrica", sigla: "InstEl" }, // Instalações Elétricas I
+  INF09289: { linha: 5, area: "informatica", sigla: "ES" }, // Engenharia de Software
   INF09328: { linha: 6, area: "programacao", sigla: "Prog1" }, // Programação I
   // 6º
-  INF09274: { linha: 0, area: "sistemas", sigla: "Arq1" }, // Arquitetura de Computadores I
-  INF09344: { linha: 1, area: "sistemas", sigla: "SO", etiquetas: ["INF09331"] }, // Sistemas Operacionais
+  INF09309: { linha: 0, area: "informatica", sigla: "LFA", etiquetas: ["INF09331"] }, // Linguagens Formais e Autômatos
   ELE08498: { linha: 2, area: "eletrica", sigla: "EB2" }, // Eletrônica Básica II
-  INF09309: { linha: 3, area: "informatica", sigla: "LFA", etiquetas: ["INF09331"] }, // Linguagens Formais e Autômatos
+  ELE08472: { linha: 3, area: "eletrica", sigla: "AMSD", etiquetas: ["ELE08568", "MCA08709"] }, // Análise e Modelagem de Sistemas Dinâmicos
   INF09307: { linha: 4, area: "programacao", sigla: "LP", etiquetas: ["ELE08500", "INF09331"] }, // Linguagens de Programação
-  ELE08472: { linha: 5, area: "eletrica", sigla: "AMSD", etiquetas: ["ELE08568", "INF09269"] }, // Análise e Modelagem de Sistemas Dinâmicos
+  INF09344: { linha: 5, area: "sistemas", sigla: "SO", etiquetas: ["INF09331"] }, // Sistemas Operacionais
+  INF09274: { linha: 6, area: "sistemas", sigla: "Arq1" }, // Arquitetura de Computadores I
   // 7º
-  ELE08575: { linha: 0, area: "eletrica", sigla: "SEmb1" }, // Sistemas Embarcados I
+  INF09268: { linha: 0, area: "informatica", sigla: "AFTC", etiquetas: ["INF09293"] }, // Algoritmos e Fundamentos da Teoria de Computação
   INF09346: { linha: 1, area: "sistemas", sigla: "Telep", etiquetas: ["ELE08500"] }, // Teleprocessamento
-  INF09322: { linha: 2, area: "matematica", sigla: "ProcEst", etiquetas: ["MAT09582", "STA08874"] }, // Processos Estocásticos Aplicados à Computação
-  INF09268: { linha: 3, area: "informatica", sigla: "AFTC" }, // Algoritmos e Fundamentos da Teoria de Computação
-  ELE08577: { linha: 5, area: "eletrica", sigla: "SReal" }, // Sistemas Realimentados
-  ELE08525: { linha: 6, area: "eletrica", sigla: "LabCtrl" }, // Laboratório de Controle Automático
+  ELE08525: { linha: 2, area: "eletrica", sigla: "LabCtrl" }, // Laboratório de Controle Automático
+  ELE08577: { linha: 3, area: "eletrica", sigla: "SReal" }, // Sistemas Realimentados
+  INF09322: { linha: 4, area: "matematica", sigla: "ProcEst", etiquetas: ["MAT09582", "STA08874"] }, // Processos Estocásticos Aplicados à Computação
+  ELE08575: { linha: 6, area: "eletrica", sigla: "SEmb1" }, // Sistemas Embarcados I
   // 8º
-  ELE08572: { linha: 0, area: "eletrica", sigla: "SDig" }, // Sistemas Digitais
+  INF09281: { linha: 0, area: "informatica", sigla: "Comp", etiquetas: ["INF09307"] }, // Compiladores
   INF09341: { linha: 1, area: "sistemas", sigla: "Redes" }, // Redes de Computadores
   EPR07932: { linha: 2, area: "humanidades", sigla: "Econ1" }, // Economia da Engenharia I
   INF09282: { linha: 3, area: "informatica", sigla: "CRG", etiquetas: ["INF09269", "INF09331"] }, // Computação e Representação Gráfica
-  INF09281: { linha: 4, area: "informatica", sigla: "Comp" }, // Compiladores
-  INF09279: { linha: 5, area: "informatica", sigla: "BD", etiquetas: ["INF09289", "INF09293", "INF09344"] }, // Banco de Dados
+  INF09279: { linha: 5, area: "informatica", sigla: "BD", etiquetas: ["INF09289", "INF09293"] }, // Banco de Dados
+  ELE08572: { linha: 6, area: "eletrica", sigla: "SDig" }, // Sistemas Digitais
   // 9º
-  EPR07961: { linha: 0, area: "humanidades", sigla: "OrgInd" }, // Organização Industrial
-  DEA07756: { linha: 1, area: "humanidades", sigla: "FEA" }, // Fundamentos da Engenharia Ambiental
+  DEA07756: { linha: 0, area: "humanidades", sigla: "FEA" }, // Fundamentos da Engenharia Ambiental
+  EPR07961: { linha: 1, area: "humanidades", sigla: "OrgInd" }, // Organização Industrial
   EPR07935: { linha: 2, area: "humanidades", sigla: "Econ2" }, // Economia da Engenharia II
-  INF09277: { linha: 3, area: "informatica", sigla: "AvDes", etiquetas: ["INF09344", "INF09346"] }, // Avaliação de Desempenho de Sistemas Computacionais
-  INF09290: { linha: 4, area: "estagio", sigla: "EstSup" }, // Estágio Supervisionado
-  INF09335: { linha: 5, area: "estagio", sigla: "PG1" }, // Projeto de Graduação I
+  INF09335: { linha: 3, area: "estagio", sigla: "PG1" }, // Projeto de Graduação I
+  INF09277: { linha: 4, area: "informatica", sigla: "AvDes", etiquetas: ["INF09344", "INF09346"] }, // Avaliação de Desempenho de Sistemas Computacionais
+  INF09290: { linha: 5, area: "estagio", sigla: "EstSup" }, // Estágio Supervisionado
   // 10º
   EPR07923: { linha: 0, area: "humanidades", sigla: "ALeg" }, // Aspectos Legais e Éticos da Engenharia
-  INF09295: { linha: 4, area: "informatica", sigla: "GerProj" }, // Gerência de Projetos
-  INF09336: { linha: 5, area: "estagio", sigla: "PG2" }, // Projeto de Graduação II
+  INF09336: { linha: 3, area: "estagio", sigla: "PG2" }, // Projeto de Graduação II
+  INF09295: { linha: 5, area: "informatica", sigla: "GerProj" }, // Gerência de Projetos
 };
