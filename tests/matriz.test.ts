@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GRADE_ECOMP_2022 } from "@/lib/curriculos/grade-2022";
-import { MATRIZ_2022 } from "@/lib/curriculos/matriz";
+import { MATRIZ_2008, MATRIZ_2022 } from "@/lib/curriculos/matriz";
 
 // As 44 setas da "Representação Gráfica da Matriz Curricular - 2022 (Revisão
 // 2024)" do DI, tiradas do PDF (cada seta é um traço; as pontas foram ligadas
@@ -80,3 +80,13 @@ describe("setas da grade 2022", () => {
     }
   });
 });
+
+describe("desenho da grade 2008", () => {
+  it("tem siglas únicas e etiquetas que apontam para disciplinas do próprio desenho", () => {
+    const siglas = Object.values(MATRIZ_2008).map((l) => l.sigla);
+    expect(new Set(siglas).size).toBe(siglas.length);
+    for (const lugar of Object.values(MATRIZ_2008))
+      for (const e of lugar.etiquetas ?? []) expect(MATRIZ_2008[e], e).toBeDefined();
+  });
+});
+
