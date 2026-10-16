@@ -6,8 +6,8 @@ const PPC = "https://informatica.ufes.br/pt-br/ppc-engcomp";
 const EMAIL = "petengcomp@inf.ufes.br";
 
 const CONTATOS = [
-  { href: `mailto:${EMAIL}`, rotulo: `E-mail do PET: ${EMAIL}`, Icone: Email },
-  { href: "https://www.instagram.com/petengcomp/", rotulo: "Instagram do PET", Icone: Instagram },
+  { href: `mailto:${EMAIL}`, tipo: "E-mail", texto: EMAIL, Icone: Email },
+  { href: "https://www.instagram.com/petengcomp/", tipo: "Instagram", texto: "@petengcomp", Icone: Instagram },
 ];
 
 const Externo = ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -41,21 +41,23 @@ export default function Rodape() {
             <br />
             Universidade Federal do Espírito Santo
           </p>
-          {/* O site do PET já está no logo acima. */}
-          <div className="flex items-center gap-4">
-            {CONTATOS.map(({ href, rotulo, Icone }) => (
-              <a
-                key={href}
-                href={href}
-                {...(href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer" })}
-                aria-label={rotulo}
-                title={rotulo}
-                className="text-white transition-opacity hover:opacity-80"
-              >
-                <Icone />
-              </a>
+          {/* O site do PET já está no logo acima. O contato vai escrito: no celular
+              não há title, e o mailto não abre nada sem programa de e-mail. */}
+          <ul className="flex flex-col gap-2">
+            {CONTATOS.map(({ href, tipo, texto, Icone }) => (
+              <li key={href}>
+                <a
+                  href={href}
+                  {...(href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer" })}
+                  className="inline-flex items-center gap-2.5 font-bold text-white no-underline hover:underline hover:decoration-white/60 hover:underline-offset-2"
+                >
+                  <Icone tamanho={18} />
+                  <span className="sr-only">{tipo}: </span>
+                  {texto}
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
         <div>
