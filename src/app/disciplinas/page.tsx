@@ -8,7 +8,7 @@ import { curriculoEscolhido } from "@/lib/curriculos/escolha";
 import { disciplinasDoCurriculo } from "@/lib/notas/consultas";
 
 const DESCRICAO =
-  "Todas as disciplinas de Engenharia de Computação da UFES com aprovação, média das notas e dificuldade. Busque, filtre por período e ordene da mais difícil para a mais fácil.";
+  "Todas as disciplinas de Engenharia de Computação da Ufes com aprovação, média das notas e dificuldade. Busque, filtre por período e ordene da mais difícil para a mais fácil.";
 
 export const metadata: Metadata = {
   title: "Disciplinas",

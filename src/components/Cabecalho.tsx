@@ -66,7 +66,7 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
               Estatísticas de disciplinas
             </span>
             <span className="mt-[3px] text-sm leading-[17px] font-bold text-rosa max-celular:mt-0 max-celular:text-xs">
-              Engenharia de Computação UFES
+              Engenharia de Computação Ufes
             </span>
           </span>
         </Link>

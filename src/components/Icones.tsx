@@ -85,11 +85,19 @@ export const Simbolo = ({ tipo, tamanho = 18 }: { tipo: TipoSimbolo; tamanho?: n
     {DESENHOS[tipo]}
   </svg>
 );
+export const Instagram = ({ tamanho = 22 }: { tamanho?: number }) => (
+  <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" />
+    <circle cx="12" cy="12" r="4.3" />
+    <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none" />
+  </svg>
+);
+
 /**
  * Logo do PET Engenharia de Computação, do sitepet (Logo-PET.svg), recortado
  * no desenho e com a cor do texto em volta (`currentColor`).
  */
-export const LogoPet = ({ largura = 132, titulo = "PET Engenharia de Computação UFES" }: { largura?: number; titulo?: string }) => (
+export const LogoPet = ({ largura = 132, titulo = "PET Engenharia de Computação Ufes" }: { largura?: number; titulo?: string }) => (
   <svg width={largura} height={Math.round((largura * 358) / 818)} viewBox="41 271 818 358" role="img" aria-label={titulo} fill="currentColor">
     <path d="M242.1,378.2h30c2.7,10.4,12.2,18.1,23.4,18.1c13.4,0,24.3-10.9,24.3-24.3 c0-11.3-7.7-20.7-18.1-23.4v-29.8c10.4-2.7,18.1-12.2,18.1-23.4c0-13.4-10.9-24.3-24.3-24.3s-24.3,10.9-24.3,24.3 c0,11.3,7.7,20.7,18.1,23.4v29.8c-8.4,2.2-15,8.8-17.2,17.2h-30c-2.7-10.4-12.2-18.1-23.4-18.1c-13.4,0-24.3,10.9-24.3,24.3 c0,11.3,7.7,20.7,18.1,23.4v29.8c-10.4,2.7-18.1,12.2-18.1,23.4c0,11.3,7.7,20.7,18.1,23.4v29.8c-8.4,2.2-15,8.8-17.2,17.2h-29.8 c-2.2-8.4-8.8-15-17.2-17.2V472c10.4-2.7,18.1-12.2,18.1-23.4c0-13.4-10.9-24.3-24.3-24.3c-11.3,0-20.7,7.7-23.4,18.1h-30 C86,432,76.5,424.3,65.3,424.3c-13.4,0-24.3,10.9-24.3,24.3s10.9,24.3,24.3,24.3c11.3,0,20.7-7.7,23.4-18.1h30 c2.2,8.4,8.8,15,17.2,17.2v29.8c-10.4,2.7-18.1,12.2-18.1,23.4c0,11.3,7.7,20.7,18.1,23.4v29.8c-10.4,2.7-18.1,12.2-18.1,23.4 c0,13.4,10.9,24.3,24.3,24.3s24.3-10.9,24.3-24.3c0-11.3-7.7-20.7-18.1-23.4v-29.8c8.4-2.2,15-8.8,17.2-17.2h29.8 c2.7,10.4,12.2,18.1,23.4,18.1c13.4,0,24.3-10.9,24.3-24.3c0-11.3-7.7-20.7-18.1-23.4V472c8.4-2.2,15-8.8,17.2-17.2h30 c2.7,10.4,12.2,18.1,23.4,18.1c13.4,0,24.3-10.9,24.3-24.3s-10.9-24.3-24.3-24.3c-11.3,0-20.7,7.7-23.4,18.1h-30 c-2.2-8.4-8.8-15-17.2-17.2v-29.8C233.3,393.2,239.9,386.6,242.1,378.2z" />
     <path d="M361.2,275.8h78.2c22.5,0,41,5.7,55.5,17.2c15.9,12.6,23.9,29.8,23.9,51.7V366 c0,21.9-7.9,39.4-23.6,52.6c-14.5,12.3-33.1,18.5-55.8,18.5h-15.6v81.3h-62.5V275.8H361.2z M423.7,334.5v44.3h15 c14.5,0,21.7-7.4,21.7-22.3c0-14.7-7.2-22-21.7-22H423.7z" />

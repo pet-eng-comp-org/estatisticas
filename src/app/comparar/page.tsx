@@ -10,7 +10,7 @@ import { DESDE, disciplina, disciplinasDoCurriculo } from "@/lib/notas/consultas
 export const dynamic = "force-dynamic";
 
 const DESCRICAO =
-  "Cada disciplina do currículo 2022 de Engenharia de Computação da UFES ao lado da equivalente de 2008, segundo o PPC, com a mudança na aprovação.";
+  "Cada disciplina do currículo 2022 de Engenharia de Computação da Ufes ao lado da equivalente de 2008, segundo o PPC, com a mudança na aprovação.";
 
 export const metadata: Metadata = {
   title: "Comparar currículos",

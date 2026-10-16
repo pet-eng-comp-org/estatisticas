@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // os números da disciplina, não um texto genérico do site.
   const partes = [
     `${nome} (${codigo})`,
-    d?.curriculo ? `${rotuloPeriodo(d.periodo)} do currículo ${d.curriculo} de Engenharia de Computação da UFES` : "UFES",
+    d?.curriculo ? `${rotuloPeriodo(d.periodo)} do currículo ${d.curriculo} de Engenharia de Computação da Ufes` : "Ufes",
   ];
   const numeros = n
     ? `Aprovação de ${formata.porcento(n.aprovacao)}, média ${formata.decimal(n.media)}, mediana ${formata.decimal(n.mediana)} e dificuldade ${formata.decimal(n.dificuldade)} de 5, com ${formata.inteiro(n.alunos)} alunos desde ${DESDE}.`
