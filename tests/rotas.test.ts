@@ -43,6 +43,16 @@ describe("traçado das setas da grade", () => {
     expect(r1.segmentos.at(-2)!.x1).toBe(r2.segmentos.at(-2)!.x1);
   });
 
+  it("setas que pulam colunas passam acima das etiquetas que estiverem no vão", () => {
+    const horizontal = (obstaculos: Parameters<typeof rotear>[3]) =>
+      rotear([{ de: "A", para: "Z" }], caixas, livre, obstaculos)[0].segmentos.at(-3)!.y1;
+    const normal = horizontal([]);
+    // Etiqueta no topo do cartão W, que fica no caminho entre A e Z.
+    const etiqueta = { esquerda: 346, direita: 400, topo: 360 - 17, base: 360 - 1 };
+    expect(normal).toBeGreaterThan(etiqueta.topo);
+    expect(horizontal([etiqueta])).toBeLessThan(etiqueta.topo - 4);
+  });
+
   it("na mesma linha, com o caminho livre, é uma reta", () => {
     const [r] = rotear([{ de: "A", para: "W" }], { A: caixa(0, 3), W: caixa(1, 3) }, () => true);
     expect(r.segmentos).toHaveLength(1);
