@@ -16,6 +16,24 @@ const fracaoDificuldade = (d: number | null) => (d === null ? 0 : (d - 1) / 4);
 
 const largura = (fracao: number | null | undefined) => `${Math.round(Math.max(0, Math.min(1, fracao ?? 0)) * 100)}%`;
 
+/**
+ * Rótulo com a interrogação no fim. A última palavra e o botão não se
+ * separam: se o rótulo quebrar, a interrogação desce junto em vez de ficar
+ * sozinha na linha de baixo (o espaço inquebrável não basta, o navegador
+ * quebra antes do botão mesmo assim).
+ */
+function ComAjuda({ rotulo, ajuda }: { rotulo: string; ajuda: ReactNode }) {
+  const corte = rotulo.lastIndexOf(" ") + 1;
+  return (
+    <>
+      {rotulo.slice(0, corte)}
+      <span className="whitespace-nowrap">
+        {rotulo.slice(corte)} {ajuda}
+      </span>
+    </>
+  );
+}
+
 /** Número grande da tela inicial e da página da disciplina. */
 export function CartaoResumo({
   valor,
@@ -46,9 +64,8 @@ export function CartaoResumo({
       </span>
       <span className="mt-[30px] flex min-w-0 flex-col self-start max-celular:mt-0">
         <span className="mb-0.5 text-3xl leading-8 font-bold text-vinho max-celular:text-[26px]">{valor}</span>
-        <span className="inline-flex items-center gap-1 text-[15px] leading-[18px] font-bold text-cinza">
-          {rotulo}
-          {ajuda}
+        <span className="text-[15px] leading-[18px] font-bold text-cinza">
+          {ajuda ? <ComAjuda rotulo={rotulo} ajuda={ajuda} /> : rotulo}
         </span>
       </span>
     </div>
