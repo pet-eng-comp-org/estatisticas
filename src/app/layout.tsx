@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 
 import Cabecalho from "@/components/Cabecalho";
 import Rodape from "@/components/Rodape";
-import { URL_SITE } from "@/lib/site";
+import { NOME_SITE, URL_SITE } from "@/lib/site";
 import { curriculoEscolhido } from "@/lib/curriculos/escolha";
 import "./globals.css";
 
@@ -20,7 +20,7 @@ const inter = localFont({
 });
 
 const DESCRICAO =
-  "Aprovação, notas e dificuldade das disciplinas de Engenharia de Computação da UFES, com a grade curricular de 2022 e a comparação com o currículo 2008. Mantido pelo PET Engenharia de Computação.";
+  "Estatísticas das disciplinas de Engenharia de Computação da UFES: aprovação, notas e dificuldade, com a grade curricular de 2022 e a comparação com o currículo 2008. Mantido pelo PET Engenharia de Computação.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(URL_SITE),
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    siteName: "Estatísticas de disciplinas — Engenharia de Computação UFES",
+    siteName: NOME_SITE,
     description: DESCRICAO,
   },
   title: {
