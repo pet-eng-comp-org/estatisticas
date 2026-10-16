@@ -22,7 +22,7 @@ export default function AjudaDificuldade({ conta = false }: { conta?: boolean })
   const caixa = useRef<HTMLSpanElement>(null);
   const [mouse, setMouse] = useState(false);
   const [fixado, setFixado] = useState(false);
-  const [posicao, setPosicao] = useState<{ top: number; left: number } | null>(null);
+  const [posicao, setPosicao] = useState<{ top: number; left: number; largura: number } | null>(null);
   const aberto = mouse || fixado;
 
   // Antes da pintura, para o balão não aparecer um instante fora do lugar.
@@ -32,7 +32,13 @@ export default function AjudaDificuldade({ conta = false }: { conta?: boolean })
       const r = botao.current!.getBoundingClientRect();
       const largura = Math.min(LARGURA, window.innerWidth - 2 * MARGEM);
       const left = Math.max(MARGEM, Math.min(r.left - 12, window.innerWidth - largura - MARGEM));
-      setPosicao({ top: r.bottom + 8, left });
+      setPosicao({ top: r.bottom + 8, left, largura });
+    };
+    // A rolagem dispara muitos eventos: um reposicionamento por quadro basta.
+    let quadro = 0;
+    const rolou = () => {
+      cancelAnimationFrame(quadro);
+      quadro = requestAnimationFrame(posiciona);
     };
     const fecha = () => {
       setMouse(false);
@@ -42,12 +48,13 @@ export default function AjudaDificuldade({ conta = false }: { conta?: boolean })
     const fora = (e: PointerEvent) => !caixa.current?.contains(e.target as Node) && fecha();
     posiciona();
     window.addEventListener("resize", posiciona);
-    window.addEventListener("scroll", posiciona, true);
+    window.addEventListener("scroll", rolou, true);
     document.addEventListener("keydown", tecla);
     document.addEventListener("pointerdown", fora);
     return () => {
       window.removeEventListener("resize", posiciona);
-      window.removeEventListener("scroll", posiciona, true);
+      cancelAnimationFrame(quadro);
+      window.removeEventListener("scroll", rolou, true);
       document.removeEventListener("keydown", tecla);
       document.removeEventListener("pointerdown", fora);
     };
@@ -59,12 +66,15 @@ export default function AjudaDificuldade({ conta = false }: { conta?: boolean })
       className="relative inline-flex align-middle"
       onPointerEnter={(e) => e.pointerType === "mouse" && setMouse(true)}
       onPointerLeave={(e) => e.pointerType === "mouse" && setMouse(false)}
+      // Preso pelo teclado, fecha quando o foco sai (Tab adiante).
+      onBlur={(e) => !caixa.current?.contains(e.relatedTarget as Node | null) && setFixado(false)}
     >
       <button
         ref={botao}
         type="button"
         aria-expanded={aberto}
         aria-controls={id}
+        aria-describedby={id}
         aria-label="O que é a dificuldade?"
         // Aberto só pelo mouse, o clique prende o balão; preso, fecha.
         onClick={() => {
@@ -86,14 +96,17 @@ export default function AjudaDificuldade({ conta = false }: { conta?: boolean })
         id={id}
         role="note"
         hidden={!aberto}
-        style={posicao ? { top: posicao.top, left: posicao.left, width: LARGURA } : undefined}
+        style={posicao ? { top: posicao.top, left: posicao.left, width: posicao.largura } : undefined}
         // O before cobre o vão até o botão: o mouse passa por ele sem fechar.
-        className="fixed z-50 max-w-[calc(100vw-32px)] rounded-xl border border-borda bg-white px-4 py-3 text-left text-[13px] leading-[19px] font-normal text-cinza shadow-[0_4px_14px_rgba(128,12,51,0.12)] before:absolute before:inset-x-0 before:-top-2 before:h-2 before:content-['']"
+        className="fixed z-50 rounded-xl border border-borda bg-white px-4 py-3 text-left text-[13px] leading-[19px] font-normal text-cinza shadow-[0_4px_14px_rgba(128,12,51,0.12)] before:absolute before:inset-x-0 before:-top-2 before:h-2 before:content-['']"
       >
-        Vai de 1 a 5 e compara as disciplinas do curso entre si: 1 é a mais tranquila e 5 a mais difícil. A conta usa
-        a reprovação, a média das notas e o quanto as notas variam nas turmas desde {DESDE}.
+        Vai de 1 a 5 e compara as disciplinas do curso entre si: quanto mais perto de 5, mais difícil em relação às
+        outras. A conta usa a reprovação, a média das notas e o quanto as notas variam nas turmas desde {DESDE}.
         {conta && (
-          <a href="#dificuldade" onClick={() => setFixado(false)} className="mt-1.5 block font-bold text-rosa">
+          <a href="#dificuldade" onClick={() => {
+              setFixado(false);
+              setMouse(false);
+            }} className="mt-1.5 block font-bold text-rosa">
             Ver a conta
           </a>
         )}

@@ -21,8 +21,7 @@ export default async function Disciplinas() {
   return (
     <main className="pagina">
       <h1 className="titulo-pagina">Disciplinas</h1>
-      <p className="subtitulo-pagina">Busque uma disciplina e veja a aprovação, a média das notas e a dificuldade{" "}
-        <AjudaDificuldade />
+      <p className="subtitulo-pagina">Busque uma disciplina e veja a aprovação, a média das notas e a dificuldade <AjudaDificuldade />.
       </p>
       <Suspense>
         <ListaDisciplinas disciplinas={disciplinasDoCurriculo(curriculo)} />

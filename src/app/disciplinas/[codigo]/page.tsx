@@ -110,7 +110,7 @@ export default async function PaginaDisciplina({ params }: Props) {
           valor={formata.decimal(n?.dificuldade)}
           rotulo="Dificuldade"
           ajuda={d?.curriculo ? <AjudaDificuldade conta /> : undefined}
-          descricao={d?.curriculo ? "De 1 a 5; veja a conta no fim da página" : "Só para disciplinas da grade de Engenharia de Computação"}
+          descricao={d?.curriculo ? undefined : "Só para disciplinas da grade de Engenharia de Computação"}
         />
         <CartaoResumo
           cor="verde"
