@@ -3,6 +3,7 @@ import { previa } from "@/lib/site";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import Ajuda from "@/components/Ajuda";
 import AjudaDificuldade from "@/components/AjudaDificuldade";
 import { CartaoResumo } from "@/components/Cartoes";
 import GraficoDisciplina from "@/components/GraficoDisciplina";
@@ -122,13 +123,32 @@ export default async function PaginaDisciplina({ params }: Props) {
           cor="verde"
           valor={formata.decimal(n?.media)}
           rotulo="Média das notas"
-          descricao={`Média das notas finais (0 a 10) desde ${DESDE}`}
+          ajuda={
+            <Ajuda pergunta="Como a média é calculada?">
+              <span className="block">
+                Média das notas finais (0 a 10) nas turmas desde {DESDE}, só de quem teve nota lançada.
+              </span>
+              <span className="mt-1.5 block">
+                Quem reprova por falta costuma ficar sem nota: conta na reprovação, mas fica fora da média.
+              </span>
+            </Ajuda>
+          }
         />
         <CartaoResumo
           cor="verde"
           valor={formata.decimal(n?.mediana)}
           rotulo="Mediana das notas"
-          descricao="Metade dos alunos tirou essa nota ou mais; a outra metade, essa nota ou menos"
+          ajuda={
+            // Pedido da Bia: nas disciplinas difíceis muita nota extrema (zero
+            // de quem desistiu) puxa a média para baixo; a mediana mostra a
+            // nota do aluno do meio.
+            <Ajuda pergunta="O que é a mediana?">
+              <span className="block">
+                Metade dos alunos tirou essa nota ou mais, e a outra metade essa nota ou menos. Diferente da média, ela
+                não é puxada por notas muito baixas ou muito altas, comuns nas disciplinas difíceis.
+              </span>
+            </Ajuda>
+          }
         />
         <CartaoResumo
           cor="escuro"
@@ -137,15 +157,6 @@ export default async function PaginaDisciplina({ params }: Props) {
           descricao={n ? `${n.semestres} semestres com turma` : `Menos de ${MINIMO_ALUNOS} alunos desde ${DESDE}`}
         />
       </section>
-      {/* Pedido da Bia: nas disciplinas difíceis muita nota extrema (zero de
-          quem desistiu) puxa a média para baixo; a mediana mostra a nota do
-          aluno do meio. Texto à vista, não só no title: no celular não há
-          como passar o mouse. */}
-      <p className="mt-3 max-w-[900px] text-[13px] leading-[19px] text-cinza">
-        <b className="text-vinho">Mediana:</b> metade dos alunos tirou essa nota ou mais, e a outra metade essa nota ou
-        menos. Diferente da média, ela não é puxada por notas muito baixas ou muito altas, comuns nas disciplinas
-        difíceis.
-      </p>
 
       {d?.curriculo && (
         <div className="mt-5 grid grid-cols-3 gap-5 max-[1100px]:grid-cols-1">

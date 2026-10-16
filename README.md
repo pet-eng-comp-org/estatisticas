@@ -37,6 +37,7 @@ O banco tem nota e matrícula de aluno: não vai para o git (`dados/` está no
   reprovação, média e desvio padrão das notas desde 2018, comparando as
   disciplinas entre si; a explicação para o público fica no balão da
   interrogação ao lado de "Dificuldade" (`src/components/AjudaDificuldade.tsx`).
+  O balão é o `Ajuda.tsx`, usado também na média, na mediana e na tela Comparar.
 
 ## Importar um relatório novo
 
