@@ -93,6 +93,13 @@ export const Instagram = ({ tamanho = 22 }: { tamanho?: number }) => (
   </svg>
 );
 
+export const Email = ({ tamanho = 22 }: { tamanho?: number }) => (
+  <svg width={tamanho} height={tamanho} viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+    <rect x="2.5" y="4.5" width="19" height="15" rx="3" />
+    <path d="m3.5 6.5 8.5 6.5 8.5-6.5" />
+  </svg>
+);
+
 /**
  * Logo do PET Engenharia de Computação, do sitepet (Logo-PET.svg), recortado
  * no desenho e com a cor do texto em volta (`currentColor`).
