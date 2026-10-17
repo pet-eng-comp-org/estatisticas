@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import AjudaDificuldade from "@/components/AjudaDificuldade";
 import { CartaoResumo } from "@/components/Cartoes";
-import PeriodoInicial from "@/components/PeriodoInicial";
+import EntradaInicio from "@/components/EntradaInicio";
 import { curriculoEscolhido } from "@/lib/curriculos/escolha";
 import { disciplinasDoCurriculo, resumoGeral } from "@/lib/notas/consultas";
 import { DESDE, formata, MINIMO_ALUNOS } from "@/lib/formato";
@@ -11,7 +11,10 @@ import { NOME_SITE, URL_SITE } from "@/lib/site";
 export default async function Inicio() {
   const curriculo = await curriculoEscolhido();
   const resumo = resumoGeral(curriculo);
-  const disciplinas = disciplinasDoCurriculo(curriculo).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  // Quantas disciplinas cada período tem, para os atalhos (optativas no fim).
+  const contagem = new Map<number, number>();
+  for (const d of disciplinasDoCurriculo(curriculo)) contagem.set(d.periodo!, (contagem.get(d.periodo!) ?? 0) + 1);
+  const periodos = [...contagem].sort(([a], [b]) => a - b).map(([periodo, quantidade]) => ({ periodo, quantidade }));
 
   return (
     <main className="pagina">
@@ -77,7 +80,7 @@ export default async function Inicio() {
             disciplinas pelos alunos abrirem; até lá ele só mostraria 0. */}
       </section>
 
-      <PeriodoInicial disciplinas={disciplinas} />
+      <EntradaInicio periodos={periodos} />
     </main>
   );
 }

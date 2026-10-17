@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
-import { formata, rotuloPeriodo, rotuloTipo, simbolo, tom } from "@/lib/formato";
+import { formata, rotuloPeriodo, simbolo, tom } from "@/lib/formato";
 import { Ponto, Simbolo } from "./Icones";
 
 /*
@@ -72,49 +72,21 @@ export function CartaoResumo({
   );
 }
 
-/** Cartão pequeno da tela inicial. */
-export function CartaoInicio({ d }: { d: DisciplinaComNumeros }) {
-  const dificuldade = d.numeros?.dificuldade ?? null;
-  const t = tom(dificuldade);
+/** Quadrado com o símbolo da área, na cor da dificuldade. */
+function IconeDisciplina({ d }: { d: DisciplinaComNumeros }) {
   const cores = {
     rosa: "bg-rosa-claro text-rosa",
     verde: "bg-verde-claro text-verde",
     neutro: "bg-trilho text-cinza",
-  }[t];
+  }[tom(d.numeros?.dificuldade ?? null)];
   return (
-    <Link
-      href={`/disciplinas/${d.codigo}`}
-      className="cartao relative block h-[108px] w-[300px] text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)] max-celular:w-full"
-    >
-      <span
-        aria-hidden="true"
-        className={`absolute top-[17px] left-[17px] flex size-11 items-center justify-center rounded-[10px] ${cores}`}
-      >
-        <Simbolo tipo={simbolo(d)} />
-      </span>
-      <span className="absolute top-[28.5px] right-3 left-[75px] line-clamp-2 -translate-y-1/2 text-base leading-[19px] font-bold">
-        {d.nome}
-      </span>
-      <span className="absolute top-12 left-[75px] text-xs leading-[15px] text-cinza">
-        {d.codigo} · {rotuloTipo(d.obrigatoria)}
-      </span>
-      <span className="absolute top-[76px] left-[19px] text-xs leading-[15px] font-bold text-cinza">
-        Dificuldade {formata.decimal(dificuldade)}
-      </span>
-      <span
-        aria-hidden="true"
-        className="barra absolute top-20 left-[149px] h-[7px] w-[125px] max-celular:right-6 max-celular:w-auto"
-      >
-        <span style={{ width: largura(fracaoDificuldade(dificuldade)) }} />
-      </span>
-    </Link>
+    <span aria-hidden="true" className={`flex size-11 shrink-0 items-center justify-center rounded-[10px] ${cores}`}>
+      <Simbolo tipo={simbolo(d)} />
+    </span>
   );
 }
 
-/**
- * Cartão da tela Disciplinas. A linha de baixo é das avaliações dos alunos,
- * que ainda não existem: fica o lugar delas, como no mockup, sem número.
- */
+/** Cartão da tela Disciplinas, com o símbolo da área ao lado do nome. */
 export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
   const n = d.numeros;
   const dificuldade = n?.dificuldade ?? null;
@@ -125,9 +97,14 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
     >
       {/* O nome quebra de linha em vez de ser cortado (pedido da Bia); com
           duas linhas, o cartão cresce e o resto desce junto. */}
-      <span className="text-[17px] leading-[21px] font-bold">{d.nome}</span>
-      <span className="mt-[5px] text-xs leading-[15px] text-cinza">
-        {d.codigo} · {rotuloPeriodo(d.periodo)}
+      <span className="flex items-center gap-3">
+        <IconeDisciplina d={d} />
+        <span className="flex min-w-0 flex-col">
+          <span className="text-[17px] leading-[21px] font-bold">{d.nome}</span>
+          <span className="mt-[5px] text-xs leading-[15px] text-cinza">
+            {d.codigo} · {rotuloPeriodo(d.periodo)}
+          </span>
+        </span>
       </span>
 
       <span className="mt-5 mr-[35px] flex items-baseline justify-between max-celular:mr-[7px]">
