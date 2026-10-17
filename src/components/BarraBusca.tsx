@@ -4,8 +4,9 @@ import type { ReactNode } from "react";
 import { Lupa } from "./Icones";
 
 /**
- * Campo de busca do mockup. Na tela inicial as pílulas de filtro ficam
- * dentro da caixa (children); nas outras telas, ao lado.
+ * Campo de busca do mockup. O que vier em children (o botão Buscar da tela
+ * inicial) fica dentro da caixa, à direita; com `soNoComputador`, some no
+ * celular, onde o teclado já tem a tecla de buscar.
  */
 export default function BarraBusca({
   id,
@@ -13,6 +14,7 @@ export default function BarraBusca({
   aoMudar,
   aoEnviar,
   className = "",
+  soNoComputador = false,
   children,
 }: {
   id: string;
@@ -20,6 +22,7 @@ export default function BarraBusca({
   aoMudar: (v: string) => void;
   aoEnviar?: (v: string) => void;
   className?: string;
+  soNoComputador?: boolean;
   children?: ReactNode;
 }) {
   return (
@@ -47,7 +50,7 @@ export default function BarraBusca({
         className="h-full min-w-0 flex-1 rounded-[14px] border-0 bg-transparent pr-4 pl-[63px] text-base text-vinho outline-none placeholder:text-cinza placeholder:opacity-100 max-celular:h-[52px] max-celular:pl-[52px]"
       />
       {children && (
-        <div className="flex shrink-0 gap-2.5 max-celular:w-full max-celular:flex-wrap max-celular:gap-2 max-celular:pb-3 max-celular:pl-3">
+        <div className={`flex shrink-0 gap-2.5 max-celular:w-full max-celular:flex-wrap max-celular:gap-2 max-celular:pb-3 max-celular:pl-3 ${soNoComputador ? "max-celular:hidden" : ""}`}>
           {children}
         </div>
       )}
