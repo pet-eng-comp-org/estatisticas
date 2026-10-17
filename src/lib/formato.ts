@@ -45,31 +45,6 @@ export function chaveBusca(texto: string) {
     .toLowerCase();
 }
 
-/**
- * Rosa ou verde nos cartões da grade e da tela inicial: rosa para as
- * disciplinas da metade mais difícil da escala (3 ou mais), verde para as
- * outras. Sem dado suficiente, o cartão fica neutro em vez de inventar cor.
- */
-export function tom(dificuldade: number | null | undefined): "rosa" | "verde" | "neutro" {
-  if (vazio(dificuldade)) return "neutro";
-  return dificuldade >= 3 ? "rosa" : "verde";
-}
-
-export type TipoSimbolo = "somatorio" | "codigo" | "logica" | "ponto" | "fisica" | "eletrica";
-
-/** Símbolo do cartão da tela inicial, pela área da disciplina (ver Icones). */
-export function simbolo(d: { codigo: string; nome: string }): TipoSimbolo {
-  const nome = chaveBusca(d.nome);
-  if (nome.includes("logica")) return "logica";
-  if (nome.startsWith("introducao")) return "ponto";
-  const prefixo = d.codigo.slice(0, 3);
-  if (prefixo === "MAT" || prefixo === "STA") return "somatorio";
-  if (prefixo === "INF") return "codigo";
-  if (prefixo === "FIS") return "fisica";
-  if (prefixo === "ELE") return "eletrica";
-  return "ponto";
-}
-
 const DEPARTAMENTOS: Record<string, string> = {
   INF: "Departamento de Informática",
   MAT: "Departamento de Matemática",

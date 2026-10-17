@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
-import { formata, rotuloPeriodo, simbolo, tom } from "@/lib/formato";
+import { AREAS, areaDe } from "@/lib/curriculos/matriz";
+import { formata, rotuloPeriodo } from "@/lib/formato";
 import { Ponto, Simbolo } from "./Icones";
 
 /*
@@ -72,16 +73,18 @@ export function CartaoResumo({
   );
 }
 
-/** Quadrado com o símbolo da área, na cor da dificuldade. */
+/** Quadrado com o símbolo da área, nas cores dela na legenda da Grade. */
 function IconeDisciplina({ d }: { d: DisciplinaComNumeros }) {
-  const cores = {
-    rosa: "bg-rosa-claro text-rosa",
-    verde: "bg-verde-claro text-verde",
-    neutro: "bg-trilho text-cinza",
-  }[tom(d.numeros?.dificuldade ?? null)];
+  const area = areaDe(d);
+  const cor = AREAS[area];
   return (
-    <span aria-hidden="true" className={`flex size-11 shrink-0 items-center justify-center rounded-[10px] ${cores}`}>
-      <Simbolo tipo={simbolo(d)} />
+    <span
+      aria-hidden="true"
+      title={cor.nome}
+      className="flex size-11 shrink-0 items-center justify-center rounded-[10px] border"
+      style={{ background: cor.fundo, borderColor: cor.faixa, color: cor.borda }}
+    >
+      <Simbolo area={area} />
     </span>
   );
 }
