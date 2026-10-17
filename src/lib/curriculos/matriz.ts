@@ -124,9 +124,12 @@ export const OPTATIVAS_2022: Array<{ periodo: number; linha: number }> = [
 export const HORAS_OPTATIVA = 60;
 
 
-/** Área de uma disciplina fora do desenho oficial (2008 e optativas). */
+/**
+ * Área de uma disciplina: a do desenho da grade (2022 e 2008) e, fora dele,
+ * pelo departamento e pelo nome (optativas e outras).
+ */
 export function areaDe(d: { codigo: string; nome: string; obrigatoria: boolean }): Area {
-  const lugar = MATRIZ_2022[d.codigo];
+  const lugar = MATRIZ_2022[d.codigo] ?? MATRIZ_2008[d.codigo];
   if (lugar) return lugar.area;
   if (!d.obrigatoria) return "optativa";
   const nome = chaveBusca(d.nome);

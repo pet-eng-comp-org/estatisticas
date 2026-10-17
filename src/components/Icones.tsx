@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { TipoSimbolo } from "@/lib/formato";
+import type { Area } from "@/lib/curriculos/matriz";
 
 // Os símbolos do mockup (⌕, ★, ●, setas) não existem no subset da Inter que o
 // site serve; desenhados aqui, saem iguais em qualquer sistema.
@@ -55,22 +55,48 @@ export const Logo = () => (
 );
 
 /**
- * Símbolos dos cartões da tela inicial (∑, </>, ⊢, ●, F, Ω no mockup). Eram
- * texto, mas a Inter servida não tem ∑, ⊢, Ω nem ●: o navegador pegava cada
- * um de outra fonte do sistema, que os põe em alturas diferentes, e eles
- * saíam de 2 a 3,5 px fora do centro, diferente em cada computador.
- * Desenhados aqui, ficam no centro geométrico da caixa em qualquer sistema.
+ * Símbolo de cada área da grade (as mesmas da legenda da Grade). Desenhados
+ * em vez de texto: a Inter servida não tem ∑ nem Ω, o navegador pegava de
+ * outra fonte do sistema e eles saíam fora do centro, diferente em cada
+ * computador. Assim ficam no centro geométrico da caixa em qualquer sistema.
  */
-const DESENHOS: Record<TipoSimbolo, ReactNode> = {
-  somatorio: <path d="M13.25 3h-8.5l5 6-5 6h8.5" />,
-  codigo: <path d="M4.75 4.5 1.25 9l3.5 4.5M13.25 4.5l3.5 4.5-3.5 4.5M10 4 8 14" />,
-  logica: <path d="M4.5 3v12M4.5 9h9" />,
-  ponto: <circle cx="9" cy="9" r="4.5" fill="currentColor" stroke="none" />,
-  fisica: <path d="M5.5 3v12M5.5 3H13M5.5 9H11.5" />,
+const DESENHOS: Record<Area, ReactNode> = {
+  matematica: <path d="M13.25 3h-8.5l5 6-5 6h8.5" />,
+  programacao: <path d="M4.75 4.5 1.25 9l3.5 4.5M13.25 4.5l3.5 4.5-3.5 4.5M10 4 8 14" />,
   eletrica: <path d="M3 15h3.5v-1.8A5.6 5.6 0 1 1 11.5 13.2V15H15" />,
+  // Átomo: três órbitas (traço mais fino, senão embolam) e o núcleo.
+  fisica: (
+    <g strokeWidth="1.6">
+      <ellipse cx="9" cy="9" rx="7.6" ry="2.7" />
+      <ellipse cx="9" cy="9" rx="7.6" ry="2.7" transform="rotate(60 9 9)" />
+      <ellipse cx="9" cy="9" rx="7.6" ry="2.7" transform="rotate(120 9 9)" />
+      <circle cx="9" cy="9" r="1.5" fill="currentColor" stroke="none" />
+    </g>
+  ),
+  // Chip: o quadrado e os pinos dos quatro lados.
+  sistemas: (
+    <>
+      <rect x="5" y="5" width="8" height="8" rx="1.5" />
+      <path d="M7.25 2v3M10.75 2v3M7.25 13v3M10.75 13v3M2 7.25h3M2 10.75h3M13 7.25h3M13 10.75h3" />
+    </>
+  ),
+  // Grafo: três nós ligados.
+  informatica: (
+    <>
+      <circle cx="9" cy="3.9" r="1.9" />
+      <circle cx="3.6" cy="13.6" r="1.9" />
+      <circle cx="14.4" cy="13.6" r="1.9" />
+      <path d="M8 5.7 4.6 11.9M10 5.7l3.4 6.2M5.5 13.6h7" />
+    </>
+  ),
+  // Balança.
+  humanidades: <path d="M9 2.5v12.5M5.5 15h7M3.5 5.5h11M3.5 5.5 1.5 10a2 2 0 0 0 4 0zM14.5 5.5l-2 4.5a2 2 0 0 0 4 0z" />,
+  // Capelo de formatura.
+  estagio: <path d="M1.5 7 9 3.5 16.5 7 9 10.5zM4.75 8.6v3.4c0 1.2 1.9 2.3 4.25 2.3s4.25-1.1 4.25-2.3V8.6M16.5 7v4.3" />,
+  optativa: <path d="M9 3.5v11M3.5 9h11" />,
 };
 
-export const Simbolo = ({ tipo, tamanho = 18 }: { tipo: TipoSimbolo; tamanho?: number }) => (
+export const Simbolo = ({ area, tamanho = 18 }: { area: Area; tamanho?: number }) => (
   <svg
     width={tamanho}
     height={tamanho}
@@ -83,7 +109,7 @@ export const Simbolo = ({ tipo, tamanho = 18 }: { tipo: TipoSimbolo; tamanho?: n
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    {DESENHOS[tipo]}
+    {DESENHOS[area]}
   </svg>
 );
 export const Instagram = ({ tamanho = 22 }: { tamanho?: number }) => (
