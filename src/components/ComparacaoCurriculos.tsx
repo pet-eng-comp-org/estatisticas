@@ -128,7 +128,8 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
             {g.linhas.map(({ nova, antigas }) => {
               const antes = aprovacaoDe(antigas);
               const depois = nova.numeros?.aprovacao ?? null;
-              const diferenca = antes !== null && depois !== null ? Math.round((depois - antes) * 100) : null;
+              // Entre as porcentagens já arredondadas, para bater com a conta de quem lê os cartões.
+              const diferenca = antes !== null && depois !== null ? Math.round(depois * 100) - Math.round(antes * 100) : null;
               return (
                 <li
                   key={nova.codigo}
