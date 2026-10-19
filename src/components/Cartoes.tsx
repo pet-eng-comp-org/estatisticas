@@ -42,8 +42,11 @@ export function CartaoResumo({
   cor,
   descricao,
   ajuda,
+  escala,
 }: {
   valor: string;
+  /** Teto da escala ("5" na dificuldade): sem ele, 4,9 não diz se é muito. */
+  escala?: string;
   rotulo: string;
   cor: "rosa" | "verde" | "escuro";
   descricao?: string;
@@ -66,7 +69,10 @@ export function CartaoResumo({
         <Ponto />
       </span>
       <span className="mt-[30px] flex min-w-0 flex-col self-start max-celular:mt-0">
-        <span className="mb-0.5 text-3xl leading-8 font-bold text-vinho max-celular:text-[26px]">{valor}</span>{" "}
+        <span className="mb-0.5 text-3xl leading-8 font-bold text-vinho max-celular:text-[26px]">
+          {valor}
+          {escala && valor !== "—" && <span className="text-base font-bold text-cinza"> /{escala}</span>}
+        </span>{" "}
         <span className="text-[15px] leading-[18px] font-bold text-cinza max-celular:text-[13px] max-celular:leading-4">
           {ajuda ? <ComAjuda rotulo={rotulo} ajuda={ajuda} /> : rotulo}
         </span>
@@ -114,7 +120,10 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
 
       <span className="mt-5 mr-[35px] flex items-baseline justify-between max-celular:mr-[7px]">
         <span className="text-[13px] leading-4 font-bold text-cinza">Dificuldade</span>
-        <span className="text-base leading-[19px] font-bold text-rosa">{formata.decimal(dificuldade)}</span>
+        <span className="text-base leading-[19px] font-bold text-rosa">
+          {formata.decimal(dificuldade)}
+          {dificuldade !== null && <span className="text-xs text-cinza"> /5</span>}
+        </span>
       </span>
       <span aria-hidden="true" className="mt-2 barra w-64 max-celular:mr-[7px] max-celular:w-auto">
         <span style={{ width: largura(fracaoDificuldade(dificuldade)) }} />

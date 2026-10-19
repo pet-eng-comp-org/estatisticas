@@ -55,6 +55,45 @@ function aprovacaoDe(lados: Lado[]) {
   return alunos ? aprovados / alunos : null;
 }
 
+/** Diferença na aprovação em p.p., entre as porcentagens já arredondadas, para bater com a conta de quem lê os cartões. */
+function diferencaDe({ nova, antigas }: LinhaComparacao) {
+  const antes = aprovacaoDe(antigas);
+  const depois = nova.numeros?.aprovacao ?? null;
+  return antes !== null && depois !== null ? Math.round(depois * 100) - Math.round(antes * 100) : null;
+}
+
+/**
+ * A resposta curta antes dos cartões: sem ela, a pessoa rolava uns cem cartões
+ * para ter uma ideia geral. E o aviso de que os dois lados não contam as mesmas
+ * pessoas, que antes só aparecia na página de cada disciplina.
+ */
+function Resumo({ linhas }: { linhas: LinhaComparacao[] }) {
+  const diferencas = linhas.map(diferencaDe).filter((d): d is number => d !== null);
+  const subiu = diferencas.filter((d) => d > 0).length;
+  const caiu = diferencas.filter((d) => d < 0).length;
+  const igual = diferencas.length - subiu - caiu;
+  return (
+    <section aria-label="Resumo da comparação" className="mt-6 cartao px-5 py-4 text-sm leading-5 text-cinza">
+      <p>
+        Das <b className="text-vinho">{diferencas.length}</b> disciplinas com números nos dois currículos, a aprovação
+        subiu em <b className="text-verde-escuro">{subiu}</b>, caiu em <b className="text-rosa">{caiu}</b>
+        {igual > 0 && (
+          <>
+            {" "}
+            e ficou igual em <b className="text-vinho">{igual}</b>
+          </>
+        )}
+        .
+      </p>
+      <p className="mt-2">
+        Os dois lados não contam as mesmas pessoas: até 2021 o relatório da coordenação trazia todos os alunos da turma,
+        de qualquer curso, e de 2022 em diante só os de Engenharia de Computação. Por isso as de 2008 têm muito mais
+        alunos (Cálculo I, por exemplo), e a diferença mistura a mudança de currículo com a mudança de turma.
+      </p>
+    </section>
+  );
+}
+
 export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparacao[] }) {
   const [busca, setBusca] = useState("");
   const [periodo, setPeriodo] = useState<number | null>(null);
@@ -106,6 +145,7 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
 
   return (
     <>
+      <Resumo linhas={linhas.filter((l) => l.antigas.length > 0)} />
       <div className="mt-[25px] flex items-center gap-3.5 max-celular:flex-col max-celular:items-stretch">
         <BarraBusca id="busca-comparar" className="h-14! min-w-0 flex-1" valor={busca} aoMudar={setBusca} />
         <label className="pilula-seletor pilula w-[145px] px-0 max-celular:w-auto">
@@ -136,11 +176,7 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
           <span aria-hidden="true" className="mt-2.5 block h-2 rounded bg-rosa-claro" />
           <ul className="mt-5 grid grid-cols-2 gap-5 max-[1100px]:grid-cols-1">
             {g.linhas.map(({ nova, antigas }) => {
-              const antes = aprovacaoDe(antigas);
-              const depois = nova.numeros?.aprovacao ?? null;
-              // Entre as porcentagens já arredondadas, para bater com a conta de quem lê os cartões.
-              const diferenca =
-                antes !== null && depois !== null ? Math.round(depois * 100) - Math.round(antes * 100) : null;
+              const diferenca = diferencaDe({ nova, antigas });
               return (
                 <li
                   key={nova.codigo}
