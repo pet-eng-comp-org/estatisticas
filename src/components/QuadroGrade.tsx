@@ -183,25 +183,38 @@ export default function QuadroGrade({
     return pares;
   }, [colunas, posicoes]);
 
-  // Navegação por período (sugestão do Leonardo): a rolagem para sempre no
-  // começo de uma coluna, e os botões avançam o que cabe na tela, um período
-  // no celular e quatro num monitor comum.
-  const [vista, setVista] = useState({ primeiro: 0, ultimo: 0 });
+  // Navegação por período (sugestão do Leonardo). Arrastar e rolar são
+  // livres e podem parar com um período cortado; os botões, presos nas
+  // laterais no meio da tela, levam ao começo de um período e avançam o que
+  // cabe: um no celular, quatro num monitor comum.
+  const [vista, setVista] = useState({ primeiro: 0, ultimo: 0, cabem: 1, noInicio: true, noFim: false });
   const periodosDaArea = () => Array.from(areaRef.current?.querySelectorAll<HTMLElement>("[data-periodo]") ?? []);
   useEffect(() => {
     const area = areaRef.current;
     if (!area) return;
     const mede = () => {
       const cols = periodosDaArea();
-      const inteiras = cols
-        .map((c, i) => ({ c, i }))
-        .filter(
-          ({ c }) =>
-            c.offsetLeft >= area.scrollLeft - 2 &&
-            c.offsetLeft + c.offsetWidth <= area.scrollLeft + area.clientWidth + 2,
-        );
-      if (!inteiras.length) return;
-      setVista({ primeiro: inteiras[0].i, ultimo: inteiras[inteiras.length - 1].i });
+      if (!cols.length) return;
+      const recuo = parseFloat(getComputedStyle(area).paddingLeft);
+      const passo = cols.length > 1 ? cols[1].offsetLeft - cols[0].offsetLeft : cols[0].offsetWidth;
+      const vao = passo - cols[0].offsetWidth;
+      const cabem = Math.max(1, Math.floor((area.clientWidth - 2 * recuo + vao) / passo));
+      const esquerda = area.scrollLeft;
+      const direita = esquerda + area.clientWidth;
+      const inteiras = cols.flatMap((c, i) =>
+        c.offsetLeft >= esquerda - 2 && c.offsetLeft + c.offsetWidth <= direita + 2 ? [i] : [],
+      );
+      // No meio de um arraste pode não haver período inteiro à mostra: vale o
+      // que está no meio da tela.
+      const meio = (esquerda + direita) / 2;
+      const noMeio = cols.findIndex((c) => c.offsetLeft + c.offsetWidth + vao >= meio);
+      setVista({
+        primeiro: inteiras[0] ?? noMeio,
+        ultimo: inteiras.at(-1) ?? noMeio,
+        cabem,
+        noInicio: esquerda <= 1,
+        noFim: direita >= area.scrollWidth - 1,
+      });
     };
     mede();
     area.addEventListener("scroll", mede, { passive: true });
@@ -212,21 +225,17 @@ export default function QuadroGrade({
       tamanho.disconnect();
     };
   }, [colunas]);
-  const quantos = vista.ultimo - vista.primeiro + 1;
   const ir = (lado: -1 | 1) => {
     const area = areaRef.current;
     const cols = periodosDaArea();
     if (!area || !cols.length) return;
-    const alvo = Math.min(Math.max(vista.primeiro + lado * quantos, 0), Math.max(cols.length - quantos, 0));
-    const recuo = parseFloat(getComputedStyle(area).paddingLeft);
-    area.scrollTo({ left: cols[alvo].offsetLeft - recuo, behavior: "smooth" });
+    // Para a frente, o primeiro período que não está inteiro na tela; para
+    // trás, a tela anterior inteira, que termina no período cortado à esquerda.
+    const alvo = lado > 0 ? vista.ultimo + 1 : vista.primeiro - vista.cabem;
+    const coluna = cols[Math.min(Math.max(alvo, 0), cols.length - 1)];
+    area.scrollTo({ left: coluna.offsetLeft - parseFloat(getComputedStyle(area).paddingLeft), behavior: "smooth" });
   };
-  const numero = (i: number) => colunas[i] && rotuloPeriodo(colunas[i].periodo);
-  const naTela =
-    quantos > 1
-      ? `${numero(vista.primeiro).replace(" período", "")} ao ${numero(vista.ultimo)}`
-      : numero(vista.primeiro);
-  const tudoNaTela = quantos >= colunas.length;
+  const tudoNaTela = vista.cabem >= colunas.length;
 
   // Carga por área, para a legenda, como na matriz oficial.
   const horasPorArea = new Map<Area, number>();
@@ -243,143 +252,121 @@ export default function QuadroGrade({
       aria-label={`Grade do currículo ${curriculo}`}
       className="mt-[25px] overflow-clip rounded-[18px] border border-borda bg-white"
     >
-      {!tudoNaTela && (
-        <nav
-          aria-label="Períodos"
-          className="flex items-center justify-between gap-3 border-b border-borda px-[29px] py-3 max-celular:px-4"
+      <div className="relative">
+        {!tudoNaTela && (
+          <>
+            <BotaoLado lado={-1} desligado={vista.noInicio} onClick={() => ir(-1)} />
+            <BotaoLado lado={1} desligado={vista.noFim} onClick={() => ir(1)} />
+          </>
+        )}
+        <div
+          ref={areaRef}
+          className="relative flex [scrollbar-color:var(--color-borda)_transparent] gap-16 overflow-x-auto px-[29px] pt-[27px] pb-8 max-celular:px-4 max-celular:pt-5"
         >
-          <span aria-live="polite" className="text-sm font-bold text-cinza">
-            {naTela} <span className="font-normal">de {colunas.length}</span>
-          </span>
-          <span className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => ir(-1)}
-              disabled={vista.primeiro === 0}
-              aria-label="Períodos anteriores"
-              className="pilula w-11 px-0 pb-0 disabled:cursor-default disabled:opacity-40"
-            >
-              <Seta esquerda />
-            </button>
-            <button
-              type="button"
-              onClick={() => ir(1)}
-              disabled={vista.ultimo >= colunas.length - 1}
-              aria-label="Próximos períodos"
-              className="pilula w-11 px-0 pb-0 disabled:cursor-default disabled:opacity-40"
-            >
-              <Seta />
-            </button>
-          </span>
-        </nav>
-      )}
-      <div
-        ref={areaRef}
-        className="relative flex snap-x snap-mandatory scroll-pl-[29px] [scrollbar-color:var(--color-borda)_transparent] gap-16 overflow-x-auto px-[29px] pt-[27px] pb-8 max-celular:scroll-pl-4 max-celular:px-4 max-celular:pt-5"
-      >
-        <svg
-          aria-hidden="true"
-          width={tamanho.largura}
-          height={tamanho.altura}
-          className="pointer-events-none absolute top-0 left-0 overflow-visible"
-        >
-          <defs>
-            {/* Uma ponta por cor: context-stroke ainda não funciona em todo navegador. */}
-            {[
-              ["ponta", "#C6C6C6"],
-              ["ponta-ligada", "#BF2D5D"],
-            ].map(([id, cor]) => (
-              <marker
-                key={id}
-                id={id}
-                viewBox="0 0 12 22"
-                refX="11"
-                refY="11"
-                markerWidth="12"
-                markerHeight="22"
-                markerUnits="userSpaceOnUse"
-                orient="auto-start-reverse"
-              >
-                <path
-                  d="M1.5 1.5 11 11l-9.5 9.5"
-                  fill="none"
-                  stroke={cor}
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </marker>
+          <svg
+            aria-hidden="true"
+            width={tamanho.largura}
+            height={tamanho.altura}
+            className="pointer-events-none absolute top-0 left-0 overflow-visible"
+          >
+            <defs>
+              {/* Uma ponta por cor: context-stroke ainda não funciona em todo navegador. */}
+              {[
+                ["ponta", "#C6C6C6"],
+                ["ponta-ligada", "#BF2D5D"],
+              ].map(([id, cor]) => (
+                <marker
+                  key={id}
+                  id={id}
+                  viewBox="0 0 12 22"
+                  refX="11"
+                  refY="11"
+                  markerWidth="12"
+                  markerHeight="22"
+                  markerUnits="userSpaceOnUse"
+                  orient="auto-start-reverse"
+                >
+                  <path
+                    d="M1.5 1.5 11 11l-9.5 9.5"
+                    fill="none"
+                    stroke={cor}
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </marker>
+              ))}
+            </defs>
+            {/* As ligadas por último, para ficarem por cima das outras. */}
+            {[...visiveis.filter((a) => !ligada(a)), ...visiveis.filter(ligada)].map((a) => (
+              <path
+                key={`${a.de}-${a.para}`}
+                d={caminhos.get(`${a.de}>${a.para}`)}
+                fill="none"
+                strokeWidth={2.5}
+                className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
+                markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
+              />
             ))}
-          </defs>
-          {/* As ligadas por último, para ficarem por cima das outras. */}
-          {[...visiveis.filter((a) => !ligada(a)), ...visiveis.filter(ligada)].map((a) => (
-            <path
-              key={`${a.de}-${a.para}`}
-              d={caminhos.get(`${a.de}>${a.para}`)}
-              fill="none"
-              strokeWidth={2.5}
-              className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
-              markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
-            />
-          ))}
-          {corequisitos.map((a) => (
-            <path
-              key={`co-${a.de}-${a.para}`}
-              d={a.d}
-              fill="none"
-              strokeWidth={2.5}
-              className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
-              markerStart={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
-              markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
-            >
-              <title>Co-requisitos: cursados no mesmo período</title>
-            </path>
-          ))}
-        </svg>
+            {corequisitos.map((a) => (
+              <path
+                key={`co-${a.de}-${a.para}`}
+                d={a.d}
+                fill="none"
+                strokeWidth={2.5}
+                className={ligada(a) ? "stroke-rosa" : destaque ? "stroke-seta opacity-40" : "stroke-seta"}
+                markerStart={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
+                markerEnd={ligada(a) ? "url(#ponta-ligada)" : "url(#ponta)"}
+              >
+                <title>Co-requisitos: cursados no mesmo período</title>
+              </path>
+            ))}
+          </svg>
 
-        {colunas.map((coluna, i) => {
-          // Como na matriz oficial, o estágio (200h, fora do horário de aula)
-          // não entra no total do período.
-          const horas = coluna.linhas.reduce(
-            (s, c) =>
-              s +
-              (!c || (c.tipo === "disciplina" && /^Estágio/.test(c.d.nome))
-                ? 0
-                : c.tipo === "optativa"
-                  ? HORAS_OPTATIVA
-                  : (c.d.cargaHoraria ?? 0)),
-            0,
-          );
-          return (
-            <div key={coluna.periodo} data-periodo className="relative flex w-[270px] shrink-0 snap-start flex-col">
-              <h2 className="text-lg leading-[22px] font-bold text-vinho">{rotuloPeriodo(coluna.periodo)}</h2>
-              <span aria-hidden="true" className="mt-2.5 block h-2 rounded bg-rosa-claro" />
-              <ul className="mt-[27px] flex flex-col gap-8">
-                {coluna.linhas.map((cartao, linha) => (
-                  <li
-                    key={cartao?.tipo === "disciplina" ? cartao.d.codigo : cartao ? cartao.chave : `vazio-${linha}`}
-                    className="h-[88px]"
-                  >
-                    {cartao?.tipo === "disciplina" && (
-                      <CartaoGrade
-                        d={cartao.d}
-                        area={cartao.area}
-                        coluna={i}
-                        linha={linha}
-                        etiquetas={matriz[cartao.d.codigo]?.etiquetas ?? []}
-                        areaDaEtiqueta={(e) => matriz[e]?.area ?? "informatica"}
-                        sigla={siglas}
-                        aoDestacar={setDestaque}
-                      />
-                    )}
-                    {cartao?.tipo === "optativa" && <CartaoOptativa />}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-auto pt-8 text-[13px] leading-4 font-bold text-cinza">Total: {horas}h</p>
-            </div>
-          );
-        })}
+          {colunas.map((coluna, i) => {
+            // Como na matriz oficial, o estágio (200h, fora do horário de aula)
+            // não entra no total do período.
+            const horas = coluna.linhas.reduce(
+              (s, c) =>
+                s +
+                (!c || (c.tipo === "disciplina" && /^Estágio/.test(c.d.nome))
+                  ? 0
+                  : c.tipo === "optativa"
+                    ? HORAS_OPTATIVA
+                    : (c.d.cargaHoraria ?? 0)),
+              0,
+            );
+            return (
+              <div key={coluna.periodo} data-periodo className="relative flex w-[270px] shrink-0 flex-col">
+                <h2 className="text-lg leading-[22px] font-bold text-vinho">{rotuloPeriodo(coluna.periodo)}</h2>
+                <span aria-hidden="true" className="mt-2.5 block h-2 rounded bg-rosa-claro" />
+                <ul className="mt-[27px] flex flex-col gap-8">
+                  {coluna.linhas.map((cartao, linha) => (
+                    <li
+                      key={cartao?.tipo === "disciplina" ? cartao.d.codigo : cartao ? cartao.chave : `vazio-${linha}`}
+                      className="h-[88px]"
+                    >
+                      {cartao?.tipo === "disciplina" && (
+                        <CartaoGrade
+                          d={cartao.d}
+                          area={cartao.area}
+                          coluna={i}
+                          linha={linha}
+                          etiquetas={matriz[cartao.d.codigo]?.etiquetas ?? []}
+                          areaDaEtiqueta={(e) => matriz[e]?.area ?? "informatica"}
+                          sigla={siglas}
+                          aoDestacar={setDestaque}
+                        />
+                      )}
+                      {cartao?.tipo === "optativa" && <CartaoOptativa />}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-auto pt-8 text-[13px] leading-4 font-bold text-cinza">Total: {horas}h</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
       <BarraRolagem alvo={areaRef} />
 
@@ -401,6 +388,23 @@ export default function QuadroGrade({
           ))}
       </ul>
     </section>
+  );
+}
+
+/** Botão de ir para os lados, preso no meio da altura da tela enquanto a grade passa. */
+function BotaoLado({ lado, desligado, onClick }: { lado: -1 | 1; desligado: boolean; onClick: () => void }) {
+  return (
+    <div className={`pointer-events-none absolute inset-y-0 z-20 ${lado < 0 ? "left-1.5" : "right-1.5"}`}>
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={desligado}
+        aria-label={lado < 0 ? "Períodos anteriores" : "Próximos períodos"}
+        className="pointer-events-auto sticky top-[calc(50vh-22px)] mt-24 flex size-11 cursor-pointer items-center justify-center rounded-full border border-borda bg-white/95 text-rosa shadow-[0_4px_14px_rgba(128,12,51,0.15)] transition-opacity hover:bg-rosa-claro disabled:pointer-events-none disabled:opacity-0"
+      >
+        <Seta esquerda={lado < 0} tamanho={18} />
+      </button>
+    </div>
   );
 }
 
