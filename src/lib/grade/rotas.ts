@@ -111,7 +111,10 @@ export function rotear(
   // mesma altura e as linhas o mesmo passo).
   const altura = validas.length ? (caixas[validas[0].para].meio - caixas[validas[0].para].topo) * 2 : 0;
   const topos = [...new Set(Object.values(caixas).map((c) => c.topo))].sort((a, b) => a - b);
-  const passos = topos.slice(1).map((t, i) => t - topos[i]).filter((d) => d > altura);
+  const passos = topos
+    .slice(1)
+    .map((t, i) => t - topos[i])
+    .filter((d) => d > altura);
   const vao = passos.length ? Math.min(...passos) - altura : 2 * 9;
   const alturaVao = new Map<string, number>();
   const porLinha = new Map<number, string[]>();
@@ -202,7 +205,8 @@ export function rotear(
 }
 
 const horizontal = (s: Segmento) => s.y1 === s.y2;
-const entre = (v: number, a: number, b: number, folga: number) => v > Math.min(a, b) + folga && v < Math.max(a, b) - folga;
+const entre = (v: number, a: number, b: number, folga: number) =>
+  v > Math.min(a, b) + folga && v < Math.max(a, b) - folga;
 
 /**
  * O `d` do SVG de cada rota, com um saltinho onde um trecho horizontal cruza

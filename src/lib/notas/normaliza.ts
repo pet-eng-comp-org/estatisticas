@@ -5,46 +5,44 @@
 // codigo de tres digitos e a coluna de media passa vazia quando a situacao
 // nao tem nota. Tudo isso fica concentrado aqui.
 
-import { chaveBusca } from '../formato';
+import { chaveBusca } from "../formato";
 
 export type Situacao = string;
 
 /** Minusculas, sem acento e sem espaco sobrando. Usado so para comparar. */
 export function chave(valor: string | null | undefined): string {
-    return chaveBusca(String(valor || '')).trim().replace(/\s+/g, ' ');
+  return chaveBusca(String(valor || ""))
+    .trim()
+    .replace(/\s+/g, " ");
 }
 
 // Cada situacao conhecida e a forma como ela deve ser gravada.
 const SITUACOES: { [k: string]: Situacao } = {
-    'aprovado': 'Aprovado',
-    'aprovado sem nota': 'Aprovado sem Nota',
-    'reprovado por nota': 'Reprovado por Nota',
-    'reprovado por frequencia': 'Reprovado por Frequência',
-    'matricula': 'Matrícula',
-    'dispensa sem nota': 'Dispensa sem nota',
-    'amparo legal': 'Amparo Legal',
-    'aproveitamento de estudos': 'Aproveitamento de Estudos',
-    'mobilidade academica': 'Mobilidade Acadêmica',
-    'trancamento de curso': 'Trancamento de Curso',
+  aprovado: "Aprovado",
+  "aprovado sem nota": "Aprovado sem Nota",
+  "reprovado por nota": "Reprovado por Nota",
+  "reprovado por frequencia": "Reprovado por Frequência",
+  matricula: "Matrícula",
+  "dispensa sem nota": "Dispensa sem nota",
+  "amparo legal": "Amparo Legal",
+  "aproveitamento de estudos": "Aproveitamento de Estudos",
+  "mobilidade academica": "Mobilidade Acadêmica",
+  "trancamento de curso": "Trancamento de Curso",
 };
 
 /** Grafia canonica da situacao. Valor desconhecido volta limpo, sem perder o dado. */
 export function situacaoCanonica(valor: string | null | undefined): Situacao {
-    const k = chave(valor);
-    return SITUACOES[k] || String(valor || '').trim();
+  const k = chave(valor);
+  return SITUACOES[k] || String(valor || "").trim();
 }
 
 // Situacoes que representam alguem que cursou a disciplina e recebeu um
 // resultado. Aproveitamento, trancamento e mobilidade ficam de fora: entram
 // no historico do aluno, mas nao dizem nada sobre o desempenho da turma.
-const NUCLEO = [
-    'aprovado',
-    'reprovado por nota',
-    'reprovado por frequencia',
-];
+const NUCLEO = ["aprovado", "reprovado por nota", "reprovado por frequencia"];
 
 export function contaNaTurma(situacao: string | null | undefined): boolean {
-    return NUCLEO.indexOf(chave(situacao)) !== -1;
+  return NUCLEO.indexOf(chave(situacao)) !== -1;
 }
 
 /**
@@ -66,13 +64,13 @@ export function contaNaTurma(situacao: string | null | undefined): boolean {
  * nossa: virou periodo especial, como o "2014/C" que o banco ja tinha.
  */
 export function semestreDe(ano: string | number, periodo: string | number): string {
-    const a = String(ano).trim();
-    const p = String(periodo).trim();
+  const a = String(ano).trim();
+  const p = String(periodo).trim();
 
-    if (p === '1' || p === '2') return `${a}/${p}`;
-    if (/^2\d\d$/.test(p)) return `${a}/${p.slice(-1)}`;
-    if (/^3\d\d$/.test(p)) return `${a}/C`;
-    return `${a}/${p}`;
+  if (p === "1" || p === "2") return `${a}/${p}`;
+  if (/^2\d\d$/.test(p)) return `${a}/${p.slice(-1)}`;
+  if (/^3\d\d$/.test(p)) return `${a}/C`;
+  return `${a}/${p}`;
 }
 
 // Cursos do Departamento de Informatica em Goiabeiras. O relatorio antigo
@@ -83,21 +81,17 @@ export function semestreDe(ano: string | number, periodo: string | number): stri
 // "Engenharia da Computacao -" podem ser tanto uma enfase de Goiabeiras
 // quanto Sao Mateus ou Alegre. Casar por prefixo traria outros campi para
 // dentro da media do DI.
-const CURSOS_DI = [
-    'engenharia da computacao',
-    'engenharia de computacao',
-    'ciencia da computacao',
-];
+const CURSOS_DI = ["engenharia da computacao", "engenharia de computacao", "ciencia da computacao"];
 
 export function cursoEhDI(curso: string | null | undefined): boolean {
-    return CURSOS_DI.indexOf(chave(curso)) !== -1;
+  return CURSOS_DI.indexOf(chave(curso)) !== -1;
 }
 
 /** Media como numero, ou null quando a situacao nao tem nota. */
 export function mediaDe(valor: unknown): number | null {
-    if (valor === null || valor === undefined) return null;
-    const texto = String(valor).trim().replace(',', '.');
-    if (texto === '') return null;
-    const n = parseFloat(texto);
-    return isNaN(n) ? null : n;
+  if (valor === null || valor === undefined) return null;
+  const texto = String(valor).trim().replace(",", ".");
+  if (texto === "") return null;
+  const n = parseFloat(texto);
+  return isNaN(n) ? null : n;
 }

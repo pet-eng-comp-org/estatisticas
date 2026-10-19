@@ -4,7 +4,15 @@ import Link from "next/link";
 import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
-import { AREAS, HORAS_OPTATIVA, MATRIZ_2008, MATRIZ_2022, OPTATIVAS_2022, areaDe, type Area } from "@/lib/curriculos/matriz";
+import {
+  AREAS,
+  HORAS_OPTATIVA,
+  MATRIZ_2008,
+  MATRIZ_2022,
+  OPTATIVAS_2022,
+  areaDe,
+  type Area,
+} from "@/lib/curriculos/matriz";
 import { formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
 import { desenhar, rotasDeReferencia, rotear, type Ligacao, type Obstaculo } from "@/lib/grade/rotas";
 import { SETAS_2022 } from "@/lib/curriculos/setas-2022";
@@ -13,7 +21,6 @@ import BarraRolagem from "./BarraRolagem";
 type Cartao = { tipo: "disciplina"; d: DisciplinaComNumeros; area: Area } | { tipo: "optativa"; chave: string };
 type Coluna = { periodo: number; linhas: (Cartao | null)[] };
 type Posicao = { esquerda: number; direita: number; topo: number; meio: number; coluna: number; linha: number };
-
 
 type Desenho = {
   matriz: typeof MATRIZ_2022;
@@ -192,7 +199,7 @@ export default function QuadroGrade({
     >
       <div
         ref={areaRef}
-        className="relative flex gap-16 overflow-x-auto px-[29px] pt-[27px] pb-8 [scrollbar-color:var(--color-borda)_transparent] max-celular:px-4 max-celular:pt-5"
+        className="relative flex [scrollbar-color:var(--color-borda)_transparent] gap-16 overflow-x-auto px-[29px] pt-[27px] pb-8 max-celular:px-4 max-celular:pt-5"
       >
         <svg
           aria-hidden="true"
@@ -206,8 +213,25 @@ export default function QuadroGrade({
               ["ponta", "#C6C6C6"],
               ["ponta-ligada", "#BF2D5D"],
             ].map(([id, cor]) => (
-              <marker key={id} id={id} viewBox="0 0 12 22" refX="11" refY="11" markerWidth="12" markerHeight="22" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
-                <path d="M1.5 1.5 11 11l-9.5 9.5" fill="none" stroke={cor} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <marker
+                key={id}
+                id={id}
+                viewBox="0 0 12 22"
+                refX="11"
+                refY="11"
+                markerWidth="12"
+                markerHeight="22"
+                markerUnits="userSpaceOnUse"
+                orient="auto-start-reverse"
+              >
+                <path
+                  d="M1.5 1.5 11 11l-9.5 9.5"
+                  fill="none"
+                  stroke={cor}
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </marker>
             ))}
           </defs>
@@ -256,7 +280,10 @@ export default function QuadroGrade({
               <span aria-hidden="true" className="mt-2.5 block h-2 rounded bg-rosa-claro" />
               <ul className="mt-[27px] flex flex-col gap-8">
                 {coluna.linhas.map((cartao, linha) => (
-                  <li key={cartao?.tipo === "disciplina" ? cartao.d.codigo : cartao ? cartao.chave : `vazio-${linha}`} className="h-[88px]">
+                  <li
+                    key={cartao?.tipo === "disciplina" ? cartao.d.codigo : cartao ? cartao.chave : `vazio-${linha}`}
+                    className="h-[88px]"
+                  >
                     {cartao?.tipo === "disciplina" && (
                       <CartaoGrade
                         d={cartao.d}
@@ -280,7 +307,10 @@ export default function QuadroGrade({
       </div>
       <BarraRolagem alvo={areaRef} />
 
-      <ul aria-label="Áreas" className="flex flex-wrap gap-x-5 gap-y-2.5 border-t border-borda px-[29px] py-5 max-celular:px-4">
+      <ul
+        aria-label="Áreas"
+        className="flex flex-wrap gap-x-5 gap-y-2.5 border-t border-borda px-[29px] py-5 max-celular:px-4"
+      >
         {(Object.keys(AREAS) as Area[])
           .filter((a) => horasPorArea.has(a))
           .map((a) => (
@@ -333,13 +363,21 @@ function CartaoGrade({
       style={estilo}
       className="relative block h-[88px] rounded-[14px] border text-vinho no-underline transition-shadow hover:shadow-[0_4px_14px_rgba(128,12,51,0.1)]"
     >
-      <span aria-hidden="true" className="absolute top-[17px] left-[13px] h-[52px] w-3.5 rounded-[7px]" style={{ background: cor.faixa }} />
+      <span
+        aria-hidden="true"
+        className="absolute top-[17px] left-[13px] h-[52px] w-3.5 rounded-[7px]"
+        style={{ background: cor.faixa }}
+      />
       <span className="absolute top-[29px] right-3 left-[41px] line-clamp-2 -translate-y-1/2 text-[15px] leading-[18px] font-bold">
         {d.nome}
       </span>
       <span className="absolute top-[47px] left-[41px] text-xs leading-[15px] text-cinza">{rotuloCarga(d)}</span>
       {etiquetas.length > 0 && (
-        <span data-etiquetas className="absolute -top-[9px] left-3 flex gap-1" title="Pré-requisitos de períodos distantes">
+        <span
+          data-etiquetas
+          className="absolute -top-[9px] left-3 flex gap-1"
+          title="Pré-requisitos de períodos distantes"
+        >
           {etiquetas.map((e) => {
             const a = AREAS[areaDaEtiqueta(e)];
             return (
@@ -366,9 +404,17 @@ function CartaoOptativa() {
       style={{ borderColor: cor.borda, background: cor.fundo }}
       className="relative block h-[88px] rounded-[14px] border border-dashed text-vinho no-underline transition-shadow hover:shadow-[0_4px_14px_rgba(128,12,51,0.1)]"
     >
-      <span aria-hidden="true" className="absolute top-[17px] left-[13px] h-[52px] w-3.5 rounded-[7px]" style={{ background: cor.faixa }} />
-      <span className="absolute top-[29px] left-[41px] -translate-y-1/2 text-[15px] leading-[18px] font-bold">Optativa</span>
-      <span className="absolute top-[47px] left-[41px] text-xs leading-[15px] text-cinza">{HORAS_OPTATIVA}h · Ver as opções</span>
+      <span
+        aria-hidden="true"
+        className="absolute top-[17px] left-[13px] h-[52px] w-3.5 rounded-[7px]"
+        style={{ background: cor.faixa }}
+      />
+      <span className="absolute top-[29px] left-[41px] -translate-y-1/2 text-[15px] leading-[18px] font-bold">
+        Optativa
+      </span>
+      <span className="absolute top-[47px] left-[41px] text-xs leading-[15px] text-cinza">
+        {HORAS_OPTATIVA}h · Ver as opções
+      </span>
     </Link>
   );
 }

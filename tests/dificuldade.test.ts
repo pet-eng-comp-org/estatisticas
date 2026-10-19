@@ -55,6 +55,8 @@ describe("dificuldade", () => {
   it("não calcula com menos de duas disciplinas nem sem notas", () => {
     expect(calcularDificuldade([disciplina("SO", 50, 0.5, 5)]).size).toBe(0);
     const semNota = { ...disciplina("X", 50, 0.5, 5), comNota: 0, somaNotas: 0, somaQuadrados: 0 };
-    expect(calcularDificuldade([semNota, disciplina("A", 50, 0.9, 8), disciplina("B", 50, 0.6, 5)]).has("X")).toBe(false);
+    expect(calcularDificuldade([semNota, disciplina("A", 50, 0.9, 8), disciplina("B", 50, 0.6, 5)]).has("X")).toBe(
+      false,
+    );
   });
 });

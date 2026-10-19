@@ -26,7 +26,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // os números da disciplina, não um texto genérico do site.
   const partes = [
     `${nome} (${codigo})`,
-    d?.curriculo ? `${rotuloPeriodo(d.periodo)} do currículo ${d.curriculo} de Engenharia de Computação da Ufes` : "Ufes",
+    d?.curriculo
+      ? `${rotuloPeriodo(d.periodo)} do currículo ${d.curriculo} de Engenharia de Computação da Ufes`
+      : "Ufes",
   ];
   const numeros = n
     ? `Aprovação de ${formata.porcento(n.aprovacao)}, média ${formata.decimal(n.media)}, mediana ${formata.decimal(n.mediana)} e dificuldade ${formata.decimal(n.dificuldade)} de 5, com ${formata.inteiro(n.alunos)} alunos desde ${DESDE}.`
@@ -36,7 +38,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /** Disciplinas como pílulas que levam à página de cada uma. */
-function Ligacoes({ titulo, codigos, nome, vazio }: { titulo: string; codigos: string[]; nome: (c: string) => string; vazio: string }) {
+function Ligacoes({
+  titulo,
+  codigos,
+  nome,
+  vazio,
+}: {
+  titulo: string;
+  codigos: string[];
+  nome: (c: string) => string;
+  vazio: string;
+}) {
   return (
     <section className="cartao px-[22px] pt-5 pb-[22px]">
       <h2 className="text-[15px] leading-[18px] font-bold text-cinza">{titulo}</h2>
@@ -176,7 +188,7 @@ export default async function PaginaDisciplina({ params }: Props) {
         </div>
       )}
 
-      <section className="cartao mt-5 rounded-[18px] px-[30px] pt-7 pb-[30px] max-celular:px-3.5 max-celular:py-5">
+      <section className="mt-5 cartao rounded-[18px] px-[30px] pt-7 pb-[30px] max-celular:px-3.5 max-celular:py-5">
         <GraficoDisciplina nome={d?.nome ?? codigo} semestres={semestres} minimo={MINIMO_POR_SEMESTRE} />
       </section>
     </main>

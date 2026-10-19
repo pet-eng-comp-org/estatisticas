@@ -41,8 +41,14 @@ export function copiarBancoAntigo(origem: string, destino: Database.Database) {
   db.transaction((tx) => {
     tx.delete(schema.notas).run();
     tx.delete(schema.disciplinas).run();
-    for (let i = 0; i < disciplinas.length; i += 200) tx.insert(schema.disciplinas).values(disciplinas.slice(i, i + 200)).run();
-    for (let i = 0; i < notas.length; i += 500) tx.insert(schema.notas).values(notas.slice(i, i + 500)).run();
+    for (let i = 0; i < disciplinas.length; i += 200)
+      tx.insert(schema.disciplinas)
+        .values(disciplinas.slice(i, i + 200))
+        .run();
+    for (let i = 0; i < notas.length; i += 500)
+      tx.insert(schema.notas)
+        .values(notas.slice(i, i + 500))
+        .run();
     // Disciplina que só aparece nas notas ganha linha com o nome dela.
     const conhecidas = new Set(disciplinas.map((d) => d.codigo));
     const soNasNotas = new Map(notas.filter((n) => !conhecidas.has(n.codigo)).map((n) => [n.codigo, n.nomeDisciplina]));

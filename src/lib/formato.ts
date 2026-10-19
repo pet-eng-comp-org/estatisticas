@@ -18,8 +18,7 @@ export const MINIMO_POR_SEMESTRE = 5;
 const decimal = new Intl.NumberFormat("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const inteiro = new Intl.NumberFormat("pt-BR");
 
-const vazio = (n: number | null | undefined): n is null | undefined =>
-  n === null || n === undefined || Number.isNaN(n);
+const vazio = (n: number | null | undefined): n is null | undefined => n === null || n === undefined || Number.isNaN(n);
 
 export const formata = {
   decimal: (n: number | null | undefined) => (vazio(n) ? "—" : decimal.format(n)),
@@ -39,10 +38,7 @@ export function rotuloCarga(d: { cargaHoraria: number | null; obrigatoria: boole
 
 /** Sem acento e em minúsculas: "calculo" encontra "Cálculo". */
 export function chaveBusca(texto: string) {
-  return texto
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase();
+  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 }
 
 const DEPARTAMENTOS: Record<string, string> = {

@@ -7,7 +7,12 @@ const d = (nome: string, periodo: number, dificuldade: number | null, aprovacao 
   numeros: dificuldade === null ? null : { dificuldade, aprovacao },
 });
 
-const lista = [d("Cálculo I", 1, 4.9, 0.53), d("Sem dados", 2, null), d("Física I", 2, 3.2, 0.82), d("Álgebra", 1, 4.9, 0.55)];
+const lista = [
+  d("Cálculo I", 1, 4.9, 0.53),
+  d("Sem dados", 2, null),
+  d("Física I", 2, 3.2, 0.82),
+  d("Álgebra", 1, 4.9, 0.55),
+];
 const nomes = (l: { nome: string }[]) => l.map((x) => x.nome);
 
 describe("ordenação das disciplinas", () => {

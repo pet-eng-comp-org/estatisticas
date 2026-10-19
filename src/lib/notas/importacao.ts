@@ -65,7 +65,11 @@ export function lerRelatorio(texto: string): { notas: NotaNova[]; problemas: Pro
     const ok = Linha.safeParse(candidato);
     if (ok.success) notas.push(ok.data);
     // +2: a linha 1 é o cabeçalho e a contagem começa em 1.
-    else problemas.push({ linha: i + 2, erro: ok.error.issues.map((x) => `${x.path.join(".")}: ${x.message}`).join("; ") });
+    else
+      problemas.push({
+        linha: i + 2,
+        erro: ok.error.issues.map((x) => `${x.path.join(".")}: ${x.message}`).join("; "),
+      });
   });
   return { notas, problemas };
 }
@@ -102,7 +106,11 @@ export function gravar(db: Banco, notas: NotaNova[], substituir: boolean): Resul
   if (semMatricula.length > 0 && !substituir) {
     let existentes = 0;
     for (const p of paresDe(semMatricula)) {
-      const [{ n }] = db.select({ n: sql<number>`count(*)` }).from(schema.notas).where(doPar(p)).all();
+      const [{ n }] = db
+        .select({ n: sql<number>`count(*)` })
+        .from(schema.notas)
+        .where(doPar(p))
+        .all();
       existentes += n;
     }
     if (existentes > 0) return { ok: false, conflito: true, semestres, existentes };
@@ -143,7 +151,10 @@ export function gravar(db: Banco, notas: NotaNova[], substituir: boolean): Resul
       inseridos++;
     }
     // Em blocos: o SQLite limita o número de parâmetros por comando.
-    for (let i = 0; i < novas.length; i += 500) tx.insert(schema.notas).values(novas.slice(i, i + 500)).run();
+    for (let i = 0; i < novas.length; i += 500)
+      tx.insert(schema.notas)
+        .values(novas.slice(i, i + 500))
+        .run();
 
     // Disciplina que ainda não existe no banco (optativa nova, de outro
     // curso) entra só com o nome, fora da grade: a página dela precisa dele.

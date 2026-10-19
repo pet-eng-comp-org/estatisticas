@@ -35,7 +35,17 @@ const virgula = (v: number | null) => (v === null ? "—" : v.toFixed(1).replace
 type Dica = TooltipContentProps<ValueType, NameType>;
 type Itens = NonNullable<Dica["payload"]>;
 
-function Caixa({ titulo, extra, itens, formato }: { titulo?: string | number; extra?: string; itens: Itens; formato: (v: number | null) => string }) {
+function Caixa({
+  titulo,
+  extra,
+  itens,
+  formato,
+}: {
+  titulo?: string | number;
+  extra?: string;
+  itens: Itens;
+  formato: (v: number | null) => string;
+}) {
   return (
     <div className="flex min-w-[190px] flex-col gap-1 rounded-xl border border-borda bg-white px-3.5 py-3 text-[13px] leading-[17px] text-cinza shadow-[0_6px_18px_rgba(128,12,51,0.1)]">
       <strong className="text-sm text-vinho">{titulo}</strong>
@@ -53,7 +63,12 @@ function Caixa({ titulo, extra, itens, formato }: { titulo?: string | number; ex
 
 const DicaResultado = ({ active, payload, label }: Dica) =>
   active && payload?.length ? (
-    <Caixa titulo={label} extra={`${payload[0].payload?.alunos} alunos`} itens={payload} formato={(v) => porcento(v ?? 0)} />
+    <Caixa
+      titulo={label}
+      extra={`${payload[0].payload?.alunos} alunos`}
+      itens={payload}
+      formato={(v) => porcento(v ?? 0)}
+    />
   ) : null;
 
 // O texto da legenda fica na cor do texto; a cor da série vai só no ícone.
@@ -74,11 +89,7 @@ export default function GraficoDisciplina({
   const [tabela, setTabela] = useState(false);
 
   if (semestres.length === 0) {
-    return (
-      <p className="aviso">
-        Esta disciplina não tem semestre com pelo menos {minimo} alunos registrados.
-      </p>
-    );
+    return <p className="aviso">Esta disciplina não tem semestre com pelo menos {minimo} alunos registrados.</p>;
   }
 
   const dados = semestres.map((s) => ({
@@ -115,11 +126,26 @@ export default function GraficoDisciplina({
         <ComposedChart data={dados} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} barCategoryGap="22%">
           <CartesianGrid stroke={GRADE} vertical={false} />
           <XAxis dataKey="semestre" tick={EIXO} tickLine={false} axisLine={{ stroke: "#E9DDE2" }} />
-          <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} unit="%" tick={EIXO} tickLine={false} axisLine={false} width={46} />
+          <YAxis
+            domain={[0, 100]}
+            ticks={[0, 25, 50, 75, 100]}
+            unit="%"
+            tick={EIXO}
+            tickLine={false}
+            axisLine={false}
+            width={46}
+          />
           <Tooltip content={DicaResultado} cursor={{ fill: "rgba(191, 45, 93, 0.06)" }} />
           <Legend itemSorter={null} iconType="circle" iconSize={10} wrapperStyle={legenda} formatter={textoLegenda} />
           <Bar dataKey="aprovados" name="Aprovados" stackId="r" fill={COR.aprovados} stroke="#fff" strokeWidth={2} />
-          <Bar dataKey="reprovadosNota" name="Reprovados por nota" stackId="r" fill={COR.nota} stroke="#fff" strokeWidth={2} />
+          <Bar
+            dataKey="reprovadosNota"
+            name="Reprovados por nota"
+            stackId="r"
+            fill={COR.nota}
+            stroke="#fff"
+            strokeWidth={2}
+          />
           <Bar
             dataKey="reprovadosFalta"
             name="Reprovados por falta"
@@ -138,11 +164,31 @@ export default function GraficoDisciplina({
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={dados} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
           <CartesianGrid stroke={GRADE} vertical={false} />
-          <XAxis dataKey="semestre" tick={EIXO} tickLine={false} axisLine={{ stroke: "#E9DDE2" }} padding={{ left: 24, right: 24 }} />
-          <YAxis domain={[0, 10]} ticks={[0, 2, 4, 6, 8, 10]} tick={EIXO} tickLine={false} axisLine={false} width={46} />
+          <XAxis
+            dataKey="semestre"
+            tick={EIXO}
+            tickLine={false}
+            axisLine={{ stroke: "#E9DDE2" }}
+            padding={{ left: 24, right: 24 }}
+          />
+          <YAxis
+            domain={[0, 10]}
+            ticks={[0, 2, 4, 6, 8, 10]}
+            tick={EIXO}
+            tickLine={false}
+            axisLine={false}
+            width={46}
+          />
           <Tooltip content={DicaMedia} cursor={{ stroke: "#E9DDE2", strokeWidth: 2 }} />
           <Legend itemSorter={null} iconType="plainline" wrapperStyle={legenda} formatter={textoLegenda} />
-          <Line dataKey="mediaTodos" name="Todos os cursos" stroke={COR.todos} strokeWidth={2} dot={{ r: 4, strokeWidth: 2, fill: "#fff" }} connectNulls />
+          <Line
+            dataKey="mediaTodos"
+            name="Todos os cursos"
+            stroke={COR.todos}
+            strokeWidth={2}
+            dot={{ r: 4, strokeWidth: 2, fill: "#fff" }}
+            connectNulls
+          />
           {/* Tracejada de propósito: de 2022 em diante as duas médias
               coincidem, e uma linha contínua sobre a outra sumiria. */}
           <Line
@@ -165,11 +211,11 @@ export default function GraficoDisciplina({
       )}
 
       <p className="mt-3 text-[13px] leading-[19px] text-cinza">
-        Semestres com menos de {minimo} alunos não aparecem: numa turma tão pequena, a média mostraria a nota de
-        cada um.
+        Semestres com menos de {minimo} alunos não aparecem: numa turma tão pequena, a média mostraria a nota de cada
+        um.
       </p>
 
-      <button type="button" aria-expanded={tabela} onClick={() => setTabela((v) => !v)} className="pilula mt-6">
+      <button type="button" aria-expanded={tabela} onClick={() => setTabela((v) => !v)} className="mt-6 pilula">
         {tabela ? "Ocultar tabela" : "Ver os números em tabela"}
       </button>
 

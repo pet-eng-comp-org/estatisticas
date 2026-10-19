@@ -23,7 +23,14 @@ export default function EntradaInicio({ periodos }: { periodos: { periodo: numbe
 
   return (
     <>
-      <BarraBusca id="busca-inicio" className="mt-[50px] max-celular:mt-8" valor={busca} aoMudar={setBusca} aoEnviar={buscar} soNoComputador>
+      <BarraBusca
+        id="busca-inicio"
+        className="mt-[50px] max-celular:mt-8"
+        valor={busca}
+        aoMudar={setBusca}
+        aoEnviar={buscar}
+        soNoComputador
+      >
         <button type="submit" className="pilula min-w-[100px]">
           Buscar
         </button>
@@ -38,7 +45,7 @@ export default function EntradaInicio({ periodos }: { periodos: { periodo: numbe
             <li key={periodo}>
               <Link
                 href={periodo === OPTATIVA ? "/disciplinas?tipo=OP" : `/disciplinas?periodo=${periodo}`}
-                className="cartao flex flex-col px-5 py-4 text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)]"
+                className="flex flex-col cartao px-5 py-4 text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)]"
               >
                 <span className="text-lg leading-[22px] font-bold">
                   {periodo === OPTATIVA ? "Optativas" : rotuloPeriodo(periodo)}

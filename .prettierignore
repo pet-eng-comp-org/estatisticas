@@ -1,0 +1,7 @@
+drizzle/
+public/
+package-lock.json
+# Tabelas de dados com uma linha por disciplina ou por seta: o Prettier
+# quebraria cada uma em várias e a tabela deixaria de ser legível.
+src/lib/curriculos/grade-2022.ts
+src/lib/curriculos/setas-2022.ts

@@ -18,7 +18,9 @@ function Ponta({ d, ano }: { d: Lado; ano: string }) {
       href={`/disciplinas/${d.codigo}`}
       className="flex flex-col rounded-xl px-3.5 pt-3.5 pb-4 text-vinho no-underline transition hover:bg-rosa-fundo"
     >
-      <span className="self-start rounded-[10px] bg-rosa-claro px-2.5 py-0.5 text-xs leading-4 font-bold text-rosa">{ano}</span>
+      <span className="self-start rounded-[10px] bg-rosa-claro px-2.5 py-0.5 text-xs leading-4 font-bold text-rosa">
+        {ano}
+      </span>
       <span className="mt-2 text-base leading-5 font-bold">{d.nome}</span>
       <span className="mt-1 text-xs leading-[15px] text-cinza">
         {[d.codigo, d.periodo ? rotuloPeriodo(d.periodo) : null, d.cargaHoraria ? `${d.cargaHoraria}h` : null]
@@ -62,7 +64,8 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
   // A busca vale para os dois lados: procurar "Estrutura de Dados I" acha
   // Estruturas de Dados, a nova que a substituiu.
   const casa = (l: LinhaComparacao) =>
-    !termo || [l.nova, ...l.antigas].some((x) => chaveBusca(x.nome).includes(termo) || chaveBusca(x.codigo).includes(termo));
+    !termo ||
+    [l.nova, ...l.antigas].some((x) => chaveBusca(x.nome).includes(termo) || chaveBusca(x.codigo).includes(termo));
   const filtradas = linhas.filter((l) => (periodo === null || l.nova.periodo === periodo) && casa(l));
 
   const grupos: { periodo: number; linhas: LinhaComparacao[] }[] = [];
@@ -82,12 +85,15 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
   const nota = (nova: DisciplinaComNumeros, antigas: Lado[]) => {
     const partes: string[] = [];
     if (antigas.length > 1) {
-      partes.push(`O PPC liga ${antigas.length === 2 ? "as duas" : `as ${antigas.length}`} disciplinas de 2008 a ${nova.nome} (2022).`);
+      partes.push(
+        `O PPC liga ${antigas.length === 2 ? "as duas" : `as ${antigas.length}`} disciplinas de 2008 a ${nova.nome} (2022).`,
+      );
     }
     const outras = antigas.map((a) => (novasDaAntiga.get(a.codigo) ?? []).filter((n) => n !== nova.nome));
     const iguais = antigas.length > 1 && outras.every((o) => o.length && o.join() === outras[0].join());
     const lista = (nomes: string[]) => nomes.map((n) => `${n} (2022)`).join(" e ");
-    if (iguais) partes.push(`${antigas.length === 2 ? "As duas" : "Todas"} também são equivalentes de ${lista(outras[0])}.`);
+    if (iguais)
+      partes.push(`${antigas.length === 2 ? "As duas" : "Todas"} também são equivalentes de ${lista(outras[0])}.`);
     else
       antigas.forEach((a, i) => {
         if (outras[i].length) partes.push(`${a.nome} (2008) também é equivalente de ${lista(outras[i])}.`);
@@ -102,10 +108,14 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
     <>
       <div className="mt-[25px] flex items-center gap-3.5 max-celular:flex-col max-celular:items-stretch">
         <BarraBusca id="busca-comparar" className="h-14! min-w-0 flex-1" valor={busca} aoMudar={setBusca} />
-        <label className="pilula pilula-seletor w-[145px] px-0 max-celular:w-auto">
+        <label className="pilula-seletor pilula w-[145px] px-0 max-celular:w-auto">
           <span className="sr-only">Período no currículo 2022</span>
           <span aria-hidden="true">{periodo === null ? "Todos os períodos" : titulo(periodo)}</span>
-          <select name="periodo" value={periodo ?? ""} onChange={(e) => setPeriodo(e.target.value === "" ? null : Number(e.target.value))}>
+          <select
+            name="periodo"
+            value={periodo ?? ""}
+            onChange={(e) => setPeriodo(e.target.value === "" ? null : Number(e.target.value))}
+          >
             <option value="">Todos os períodos</option>
             {periodos.map((p) => (
               <option key={p} value={p}>
@@ -129,11 +139,12 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
               const antes = aprovacaoDe(antigas);
               const depois = nova.numeros?.aprovacao ?? null;
               // Entre as porcentagens já arredondadas, para bater com a conta de quem lê os cartões.
-              const diferenca = antes !== null && depois !== null ? Math.round(depois * 100) - Math.round(antes * 100) : null;
+              const diferenca =
+                antes !== null && depois !== null ? Math.round(depois * 100) - Math.round(antes * 100) : null;
               return (
                 <li
                   key={nova.codigo}
-                  className="cartao grid grid-cols-[minmax(0,1fr)_76px_minmax(0,1fr)] items-center p-2 max-celular:grid-cols-1"
+                  className="grid grid-cols-[minmax(0,1fr)_76px_minmax(0,1fr)] items-center cartao p-2 max-celular:grid-cols-1"
                 >
                   <div className="flex flex-col gap-2">
                     {antigas.map((a) => (
@@ -156,9 +167,7 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
                   </div>
                   <Ponta d={nova} ano="2022" />
                   {nota(nova, antigas) && (
-                    <p className="col-span-full px-3.5 pb-2 text-xs leading-[17px] text-cinza">
-                      {nota(nova, antigas)}
-                    </p>
+                    <p className="col-span-full px-3.5 pb-2 text-xs leading-[17px] text-cinza">{nota(nova, antigas)}</p>
                   )}
                 </li>
               );

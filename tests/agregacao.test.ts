@@ -28,7 +28,9 @@ describe("agregação das notas", () => {
   });
 
   it("aceita a grafia antiga das situações, com e sem acento", () => {
-    const r = resumir([nota("2019/1", "REPROVADO POR FREQUENCIA", null), nota("2019/1", "aprovado", 9)]).get("INF15927")!;
+    const r = resumir([nota("2019/1", "REPROVADO POR FREQUENCIA", null), nota("2019/1", "aprovado", 9)]).get(
+      "INF15927",
+    )!;
     expect(r.reprovadosFalta).toBe(1);
     expect(r.aprovados).toBe(1);
   });
@@ -43,7 +45,9 @@ describe("agregação das notas", () => {
     expect(mediana([])).toBeNull();
     expect(mediana([7, 0, 9])).toBe(7);
     expect(mediana([0, 0, 6, 8])).toBe(3);
-    const r = resumir([0, 0, 7, 7, 8].map((m) => nota("2024/1", m >= 5 ? "Aprovado" : "Reprovado por Nota", m))).get("INF15927")!;
+    const r = resumir([0, 0, 7, 7, 8].map((m) => nota("2024/1", m >= 5 ? "Aprovado" : "Reprovado por Nota", m))).get(
+      "INF15927",
+    )!;
     expect(r.mediana).toBe(7);
     expect(estatistica(r).media).toBeCloseTo(4.4, 6);
     expect(porSemestre([nota("2024/1", "Aprovado", 6), nota("2024/1", "Aprovado", 8)])[0].mediana).toBe(7);

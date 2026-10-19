@@ -75,11 +75,22 @@ export function sincronizarGrade(db: BetterSQLite3Database<typeof schema>) {
   db.transaction((tx) => {
     for (const l of linhas) {
       const { codigo, ...resto } = l;
-      tx.insert(schema.disciplinas).values(l).onConflictDoUpdate({ target: schema.disciplinas.codigo, set: resto }).run();
+      tx.insert(schema.disciplinas)
+        .values(l)
+        .onConflictDoUpdate({ target: schema.disciplinas.codigo, set: resto })
+        .run();
     }
     tx.update(schema.disciplinas)
       .set({ curriculo: null, periodo: null, preRequisitos: "" })
-      .where(and(eq(schema.disciplinas.curriculo, 2022), notInArray(schema.disciplinas.codigo, linhas.map((l) => l.codigo))))
+      .where(
+        and(
+          eq(schema.disciplinas.curriculo, 2022),
+          notInArray(
+            schema.disciplinas.codigo,
+            linhas.map((l) => l.codigo),
+          ),
+        ),
+      )
       .run();
     for (const [codigo, horas] of Object.entries(CARGA_HORARIA_2008)) {
       tx.update(schema.disciplinas).set({ cargaHoraria: horas }).where(eq(schema.disciplinas.codigo, codigo)).run();
