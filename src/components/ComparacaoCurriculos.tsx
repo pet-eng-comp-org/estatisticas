@@ -151,14 +151,16 @@ export default function ComparacaoCurriculos({ linhas }: { linhas: LinhaComparac
                       <Ponta key={a.codigo} d={a} ano="2008" />
                     ))}
                   </div>
-                  <div className="flex flex-col items-center gap-2 text-seta max-celular:flex-row max-celular:justify-center">
-                    <span className="max-celular:rotate-90">
+                  {/* No celular a seta fica no meio do cartão, alinhada com os de cima e de baixo, e a
+                      diferença vai ao lado dela. */}
+                  <div className="flex flex-col items-center gap-2 text-seta max-celular:grid max-celular:grid-cols-[1fr_auto_1fr] max-celular:gap-3">
+                    <span className="max-celular:col-start-2 max-celular:rotate-90">
                       <Seta tamanho={22} />
                     </span>
                     {diferenca !== null && (
                       <span
                         title="Diferença na aprovação, em pontos percentuais"
-                        className={`rounded-[10px] px-2 py-[3px] text-xs leading-4 font-bold whitespace-nowrap ${diferenca >= 0 ? "bg-verde-claro text-verde-escuro" : "bg-rosa-claro text-rosa"}`}
+                        className={`rounded-[10px] px-2 py-[3px] text-xs leading-4 font-bold whitespace-nowrap max-celular:justify-self-start ${diferenca >= 0 ? "bg-verde-claro text-verde-escuro" : "bg-rosa-claro text-rosa"}`}
                       >
                         {diferenca > 0 ? "+" : diferenca < 0 ? "−" : "±"}
                         {Math.abs(diferenca)} p.p.

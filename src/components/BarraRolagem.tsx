@@ -2,6 +2,25 @@
 
 import { useEffect, useRef, useState, type PointerEvent, type RefObject } from "react";
 
+// Área com encaixe (a grade para no começo de um período): passos pequenos
+// da roda ou do arraste voltariam para o mesmo encaixe. Enquanto a barra é
+// usada o encaixe fica desligado; ao soltar, o navegador encaixa no mais
+// próximo.
+const esperas = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
+function semEncaixe(area: HTMLElement | null) {
+  if (!area) return;
+  clearTimeout(esperas.get(area));
+  area.style.scrollSnapType = "none";
+}
+function comEncaixe(area: HTMLElement | null, atraso = 0) {
+  if (!area) return;
+  clearTimeout(esperas.get(area));
+  esperas.set(
+    area,
+    setTimeout(() => (area.style.scrollSnapType = ""), atraso),
+  );
+}
+
 /**
  * Barra de rolagem lateral que acompanha a tela (sugestão da Bia). A grade é
  * mais larga e mais alta que a tela, e a barra do navegador fica no pé do
@@ -40,6 +59,8 @@ export default function BarraRolagem({ alvo }: { alvo: RefObject<HTMLElement | n
     // passivo para impedir que a página desça junto.
     const roda = (e: WheelEvent) => {
       e.preventDefault();
+      semEncaixe(area);
+      comEncaixe(area, 200);
       area.scrollLeft += Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
     };
     const b = barra.current;
@@ -63,6 +84,7 @@ export default function BarraRolagem({ alvo }: { alvo: RefObject<HTMLElement | n
     e.preventDefault();
     e.stopPropagation();
     e.currentTarget.setPointerCapture(e.pointerId);
+    semEncaixe(alvo.current);
     arraste.current = { x: e.clientX, inicio: alvo.current?.scrollLeft ?? 0 };
   };
   const mover = (e: PointerEvent<HTMLDivElement>) => {
@@ -74,6 +96,7 @@ export default function BarraRolagem({ alvo }: { alvo: RefObject<HTMLElement | n
   };
   const soltar = () => {
     arraste.current = null;
+    comEncaixe(alvo.current);
   };
   // Clique na faixa, fora do polegar: anda quase uma tela para aquele lado.
   const pular = (e: PointerEvent<HTMLDivElement>) => {
