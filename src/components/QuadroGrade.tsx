@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 import type { DisciplinaComNumeros } from "@/lib/notas/consultas";
 import {
@@ -17,6 +17,7 @@ import { formata, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
 import { desenhar, rotasDeReferencia, rotear, type Ligacao, type Obstaculo } from "@/lib/grade/rotas";
 import { SETAS_2022 } from "@/lib/curriculos/setas-2022";
 import BarraRolagem from "./BarraRolagem";
+import { Seta } from "./Icones";
 
 type Cartao = { tipo: "disciplina"; d: DisciplinaComNumeros; area: Area } | { tipo: "optativa"; chave: string };
 type Coluna = { periodo: number; linhas: (Cartao | null)[] };
@@ -182,6 +183,51 @@ export default function QuadroGrade({
     return pares;
   }, [colunas, posicoes]);
 
+  // Navegação por período (sugestão do Leonardo): a rolagem para sempre no
+  // começo de uma coluna, e os botões avançam o que cabe na tela, um período
+  // no celular e quatro num monitor comum.
+  const [vista, setVista] = useState({ primeiro: 0, ultimo: 0 });
+  const periodosDaArea = () => Array.from(areaRef.current?.querySelectorAll<HTMLElement>("[data-periodo]") ?? []);
+  useEffect(() => {
+    const area = areaRef.current;
+    if (!area) return;
+    const mede = () => {
+      const cols = periodosDaArea();
+      const inteiras = cols
+        .map((c, i) => ({ c, i }))
+        .filter(
+          ({ c }) =>
+            c.offsetLeft >= area.scrollLeft - 2 &&
+            c.offsetLeft + c.offsetWidth <= area.scrollLeft + area.clientWidth + 2,
+        );
+      if (!inteiras.length) return;
+      setVista({ primeiro: inteiras[0].i, ultimo: inteiras[inteiras.length - 1].i });
+    };
+    mede();
+    area.addEventListener("scroll", mede, { passive: true });
+    const tamanho = new ResizeObserver(mede);
+    tamanho.observe(area);
+    return () => {
+      area.removeEventListener("scroll", mede);
+      tamanho.disconnect();
+    };
+  }, [colunas]);
+  const quantos = vista.ultimo - vista.primeiro + 1;
+  const ir = (lado: -1 | 1) => {
+    const area = areaRef.current;
+    const cols = periodosDaArea();
+    if (!area || !cols.length) return;
+    const alvo = Math.min(Math.max(vista.primeiro + lado * quantos, 0), Math.max(cols.length - quantos, 0));
+    const recuo = parseFloat(getComputedStyle(area).paddingLeft);
+    area.scrollTo({ left: cols[alvo].offsetLeft - recuo, behavior: "smooth" });
+  };
+  const numero = (i: number) => colunas[i] && rotuloPeriodo(colunas[i].periodo);
+  const naTela =
+    quantos > 1
+      ? `${numero(vista.primeiro).replace(" período", "")} ao ${numero(vista.ultimo)}`
+      : numero(vista.primeiro);
+  const tudoNaTela = quantos >= colunas.length;
+
   // Carga por área, para a legenda, como na matriz oficial.
   const horasPorArea = new Map<Area, number>();
   for (const col of colunas)
@@ -197,9 +243,39 @@ export default function QuadroGrade({
       aria-label={`Grade do currículo ${curriculo}`}
       className="mt-[25px] overflow-clip rounded-[18px] border border-borda bg-white"
     >
+      {!tudoNaTela && (
+        <nav
+          aria-label="Períodos"
+          className="flex items-center justify-between gap-3 border-b border-borda px-[29px] py-3 max-celular:px-4"
+        >
+          <span aria-live="polite" className="text-sm font-bold text-cinza">
+            {naTela} <span className="font-normal">de {colunas.length}</span>
+          </span>
+          <span className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => ir(-1)}
+              disabled={vista.primeiro === 0}
+              aria-label="Períodos anteriores"
+              className="pilula w-11 px-0 pb-0 disabled:cursor-default disabled:opacity-40"
+            >
+              <Seta esquerda />
+            </button>
+            <button
+              type="button"
+              onClick={() => ir(1)}
+              disabled={vista.ultimo >= colunas.length - 1}
+              aria-label="Próximos períodos"
+              className="pilula w-11 px-0 pb-0 disabled:cursor-default disabled:opacity-40"
+            >
+              <Seta />
+            </button>
+          </span>
+        </nav>
+      )}
       <div
         ref={areaRef}
-        className="relative flex [scrollbar-color:var(--color-borda)_transparent] gap-16 overflow-x-auto px-[29px] pt-[27px] pb-8 max-celular:px-4 max-celular:pt-5"
+        className="relative flex snap-x snap-mandatory scroll-pl-[29px] [scrollbar-color:var(--color-borda)_transparent] gap-16 overflow-x-auto px-[29px] pt-[27px] pb-8 max-celular:scroll-pl-4 max-celular:px-4 max-celular:pt-5"
       >
         <svg
           aria-hidden="true"
@@ -275,7 +351,7 @@ export default function QuadroGrade({
             0,
           );
           return (
-            <div key={coluna.periodo} className="relative flex w-[270px] shrink-0 flex-col">
+            <div key={coluna.periodo} data-periodo className="relative flex w-[270px] shrink-0 snap-start flex-col">
               <h2 className="text-lg leading-[22px] font-bold text-vinho">{rotuloPeriodo(coluna.periodo)}</h2>
               <span aria-hidden="true" className="mt-2.5 block h-2 rounded bg-rosa-claro" />
               <ul className="mt-[27px] flex flex-col gap-8">
