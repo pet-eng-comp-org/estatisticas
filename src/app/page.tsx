@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import Ajuda from "@/components/Ajuda";
 import AjudaDificuldade from "@/components/AjudaDificuldade";
 import { CartaoResumo } from "@/components/Cartoes";
 import EntradaInicio from "@/components/EntradaInicio";
@@ -61,19 +62,37 @@ export default async function Inicio() {
           cor="rosa"
           valor={formata.inteiro(resumo.disciplinas)}
           rotulo="Disciplinas avaliadas"
-          descricao={`Disciplinas com pelo menos ${MINIMO_ALUNOS} alunos desde ${DESDE}`}
+          // No celular não há title: sem o balão, o número não batia com o total da lista de disciplinas.
+          ajuda={
+            <Ajuda pergunta="Quais disciplinas contam?">
+              <span className="block">
+                Só as que tiveram pelo menos {MINIMO_ALUNOS} alunos desde {DESDE}. As outras também estão na lista de
+                disciplinas, mas sem números.
+              </span>
+            </Ajuda>
+          }
         />
         <CartaoResumo
           cor="verde"
           valor={formata.decimal(resumo.media)}
           rotulo="Média geral"
-          descricao={`Média das notas finais (0 a 10) desde ${DESDE}, ponderada pelo número de alunos com nota`}
+          ajuda={
+            <Ajuda pergunta="Como é a média geral?">
+              <span className="block">
+                Média das notas finais (0 a 10) desde {DESDE}, ponderada pelo número de alunos com nota.
+              </span>
+            </Ajuda>
+          }
         />
         <CartaoResumo
           cor="verde"
           valor={formata.porcento(resumo.aprovacao)}
           rotulo="Aprovação média"
-          descricao={`Alunos aprovados sobre o total das turmas desde ${DESDE}`}
+          ajuda={
+            <Ajuda pergunta="Como é a aprovação média?">
+              <span className="block">Alunos aprovados sobre o total das turmas desde {DESDE}.</span>
+            </Ajuda>
+          }
         />
         {/* O cartão "Avaliações" do mockup volta quando as avaliações das
             disciplinas pelos alunos abrirem; até lá ele só mostraria 0. */}

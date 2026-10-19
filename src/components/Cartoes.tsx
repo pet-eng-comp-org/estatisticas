@@ -122,7 +122,7 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
 
       <span className="mt-4 mr-[35px] flex items-baseline justify-between max-celular:mr-[7px]">
         <span className="text-[13px] leading-4 font-bold text-cinza">Aprovação</span>
-        <span className="text-base leading-[19px] font-bold text-verde">{formata.porcento(n?.aprovacao)}</span>
+        <span className="text-base leading-[19px] font-bold text-verde-escuro">{formata.porcento(n?.aprovacao)}</span>
       </span>
       <span aria-hidden="true" className="mt-2 barra w-64 barra-verde max-celular:mr-[7px] max-celular:w-auto">
         <span style={{ width: largura(n?.aprovacao) }} />
