@@ -8,6 +8,7 @@
  */
 @theme {
   --color-vinho: #800c33;
+  --color-vinho-escuro: #5c0925;
   --color-rosa: #bf2d5d;
   --color-rosa-vivo: #ff6b9d;
   --color-rosa-claro: #fff0f5;
@@ -21,7 +22,7 @@
   --color-verde-claro: #f1fff3;
   --color-verde-cartao: #f6fff7;
   --color-verde-trilho: #eaf5ec;
-  --color-cinza: #7a7074;
+  --color-cinza: #716a6d;
   --color-borda: #e9dde2;
   --color-seta: #c6c6c6;
 

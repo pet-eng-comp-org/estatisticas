@@ -10,7 +10,7 @@ import GraficoDisciplina from "@/components/GraficoDisciplina";
 import Voltar from "@/components/Voltar";
 import { EQUIVALENCIAS, NOMES_2008 } from "@/lib/curriculos/equivalencias";
 import { DESDE, MINIMO_ALUNOS, disciplina, historico, liberadasPor, nomes } from "@/lib/notas/consultas";
-import { departamento, formata, MINIMO_POR_SEMESTRE, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
+import { departamento, formata, MINIMO_POR_SEMESTRE, OPTATIVA, rotuloCarga, rotuloPeriodo } from "@/lib/formato";
 
 // Os números mudam com a importação: a página é montada a cada visita.
 export const dynamic = "force-dynamic";
@@ -20,6 +20,8 @@ type Props = { params: Promise<{ codigo: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { codigo } = await params;
   const d = disciplina(codigo);
+  // Sem isto a aba da página 404 mostraria o código digitado como se a disciplina existisse.
+  if (!d && !NOMES_2008[codigo]) notFound();
   const nome = d?.nome ?? NOMES_2008[codigo] ?? codigo;
   const n = d?.numeros;
   // A descrição é o que aparece no resultado da busca e na prévia do link:
@@ -96,7 +98,8 @@ export default async function PaginaDisciplina({ params }: Props) {
 
   const detalhes = [
     codigo,
-    d?.periodo !== undefined && d?.periodo !== null ? rotuloPeriodo(d.periodo) : null,
+    // Optativa já sai no rótulo da carga ("60h · Optativa"); sem o filtro ela aparecia duas vezes.
+    d?.periodo !== undefined && d?.periodo !== null && d.periodo !== OPTATIVA ? rotuloPeriodo(d.periodo) : null,
     d?.curriculo ? rotuloCarga(d) : null,
     d?.curriculo ? `Currículo ${d.curriculo}` : null,
     departamento(codigo),

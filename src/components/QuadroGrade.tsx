@@ -463,7 +463,7 @@ function CartaoGrade({
             return (
               <span
                 key={e}
-                className="rounded-[5px] border px-1.5 text-[10px] leading-4 font-bold text-vinho"
+                className="rounded-[5px] border px-1.5 text-[10px] leading-4 font-bold text-vinho-escuro"
                 style={{ background: a.faixa, borderColor: a.borda }}
               >
                 {sigla(e)}

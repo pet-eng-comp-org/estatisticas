@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import Ajuda from "@/components/Ajuda";
 import AjudaDificuldade from "@/components/AjudaDificuldade";
 import { CartaoResumo } from "@/components/Cartoes";
 import EntradaInicio from "@/components/EntradaInicio";
@@ -61,7 +62,15 @@ export default async function Inicio() {
           cor="rosa"
           valor={formata.inteiro(resumo.disciplinas)}
           rotulo="Disciplinas avaliadas"
-          descricao={`Disciplinas com pelo menos ${MINIMO_ALUNOS} alunos desde ${DESDE}`}
+          // No celular não há title: sem o balão, o número não batia com o total da lista de disciplinas.
+          ajuda={
+            <Ajuda pergunta="Quais disciplinas contam?">
+              <span className="block">
+                Só as que tiveram pelo menos {MINIMO_ALUNOS} alunos desde {DESDE}. As outras também estão na lista de
+                disciplinas, mas sem números.
+              </span>
+            </Ajuda>
+          }
         />
         <CartaoResumo
           cor="verde"

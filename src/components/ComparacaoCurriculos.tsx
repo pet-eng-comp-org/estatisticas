@@ -29,7 +29,7 @@ function Ponta({ d, ano }: { d: Lado; ano: string }) {
       </span>
       <span className="mt-3.5 mb-1.5 flex items-baseline justify-between text-[13px] font-bold text-cinza">
         <span>Aprovação</span>
-        <b className="text-base text-verde">{formata.porcento(n?.aprovacao)}</b>
+        <b className="text-base text-verde-escuro">{formata.porcento(n?.aprovacao)}</b>
       </span>
       <span aria-hidden="true" className="barra barra-verde">
         <span style={{ width: `${Math.round((n?.aprovacao ?? 0) * 100)}%` }} />
