@@ -386,6 +386,18 @@ export default function QuadroGrade({
               {AREAS[a].nome} <span className="font-normal">{horasPorArea.get(a)}h</span>
             </li>
           ))}
+        <li className="flex items-center gap-2 text-[13px] font-bold text-cinza">
+          <span
+            aria-hidden="true"
+            className="rounded-[5px] border px-1.5 text-[10px] leading-4 font-bold text-vinho-escuro"
+            style={{ background: AREAS.fisica.faixa, borderColor: AREAS.fisica.borda }}
+          >
+            Fis1
+          </span>
+          <span>
+            Pré-requisito de um período distante <span className="font-normal">(sigla no canto do cartão)</span>
+          </span>
+        </li>
       </ul>
     </section>
   );
@@ -451,7 +463,13 @@ function CartaoGrade({
       <span className="absolute top-[29px] right-3 left-[41px] line-clamp-2 -translate-y-1/2 text-[15px] leading-[18px] font-bold">
         {d.nome}
       </span>
-      <span className="absolute top-[47px] left-[41px] text-xs leading-[15px] text-cinza">{rotuloCarga(d)}</span>
+      {/* Quem planeja o semestre olha a grade: a dificuldade aparece no cartão,
+          no lugar de "Obrigatória", que é o que quase todos os cartões daqui são. */}
+      <span className="absolute top-[47px] left-[41px] text-xs leading-[15px] text-cinza">
+        {d.numeros && d.obrigatoria
+          ? `${d.cargaHoraria ? `${d.cargaHoraria}h · ` : ""}dificuldade ${formata.decimal(d.numeros.dificuldade)}`
+          : rotuloCarga(d)}
+      </span>
       {etiquetas.length > 0 && (
         <span
           data-etiquetas
