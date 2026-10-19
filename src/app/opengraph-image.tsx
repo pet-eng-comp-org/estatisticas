@@ -46,7 +46,7 @@ export default async function Imagem() {
       </div>
       <div style={{ marginTop: 48, fontSize: 64, fontWeight: 700, color: "#800C33" }}>Estatísticas de disciplinas</div>
       <div style={{ marginTop: 8, fontSize: 40, fontWeight: 700, color: "#BF2D5D" }}>Engenharia de Computação Ufes</div>
-      <div style={{ marginTop: 28, fontSize: 30, color: "#716A6D" }}>
+      <div style={{ marginTop: 28, fontSize: 30, color: "#6E676A" }}>
         Aprovação, notas, dificuldade e a grade curricular de cada disciplina
       </div>
     </div>,

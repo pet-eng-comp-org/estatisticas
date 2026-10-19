@@ -24,8 +24,8 @@ import type { Semestre } from "@/lib/notas/agregacao";
 // rosa escuro para reprovado por nota, rosa vivo para reprovado por falta. O
 // contraste do verde e do rosa vivo contra o branco fica abaixo de 3:1, e por
 // isso o gráfico sempre tem legenda e a tabela com os números.
-const COR = { aprovados: "#43AB4D", nota: "#BF2D5D", falta: "#FF6B9D", todos: "#716A6D", computacao: "#800C33" };
-const EIXO = { fontSize: 12, fill: "#716A6D" };
+const COR = { aprovados: "#43AB4D", nota: "#BF2D5D", falta: "#FF6B9D", todos: "#6E676A", computacao: "#800C33" };
+const EIXO = { fontSize: 12, fill: "#6E676A" };
 const GRADE = "#F1E7EB";
 
 const umaCasa = (n: number | null) => (n === null ? null : Math.round(n * 10) / 10);
@@ -116,7 +116,7 @@ export default function GraficoDisciplina({
 
   // itemSorter={null} nas legendas: sem ele o Recharts 3 ordena os itens
   // pelo nome, e a legenda deixa de seguir a ordem da pilha.
-  const legenda = { fontSize: 13, fontWeight: 700, color: "#716A6D" };
+  const legenda = { fontSize: 13, fontWeight: 700, color: "#6E676A" };
 
   return (
     <div>

@@ -17,11 +17,15 @@ export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ codigo: string }> };
 
+// hasOwn, e não NOMES_2008[codigo]: "constructor" ou "toString" achariam o
+// método do Object e a página abriria com uma função no lugar do nome.
+const existe = (codigo: string) => Boolean(disciplina(codigo)) || Object.hasOwn(NOMES_2008, codigo);
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { codigo } = await params;
   const d = disciplina(codigo);
   // Sem isto a aba da página 404 mostraria o código digitado como se a disciplina existisse.
-  if (!d && !NOMES_2008[codigo]) notFound();
+  if (!existe(codigo)) notFound();
   const nome = d?.nome ?? NOMES_2008[codigo] ?? codigo;
   const n = d?.numeros;
   // A descrição é o que aparece no resultado da busca e na prévia do link:
@@ -85,7 +89,7 @@ export default async function PaginaDisciplina({ params }: Props) {
   const d = disciplina(codigo);
   // Código que não está no banco nem entre as disciplinas de 2008 do PPC:
   // erro de digitação ou link velho, não uma página vazia.
-  if (!d && !NOMES_2008[codigo]) notFound();
+  if (!existe(codigo)) notFound();
   const semestres = historico(codigo);
   const todosOsNomes = nomes();
   const nome = (c: string) => todosOsNomes[c] ?? NOMES_2008[c] ?? c;
@@ -99,7 +103,9 @@ export default async function PaginaDisciplina({ params }: Props) {
   const detalhes = [
     codigo,
     // Optativa já sai no rótulo da carga ("60h · Optativa"); sem o filtro ela aparecia duas vezes.
-    d?.periodo !== undefined && d?.periodo !== null && d.periodo !== OPTATIVA ? rotuloPeriodo(d.periodo) : null,
+    d?.periodo !== undefined && d?.periodo !== null && !(d.periodo === OPTATIVA && d.curriculo)
+      ? rotuloPeriodo(d.periodo)
+      : null,
     d?.curriculo ? rotuloCarga(d) : null,
     d?.curriculo ? `Currículo ${d.curriculo}` : null,
     departamento(codigo),

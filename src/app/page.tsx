@@ -76,13 +76,23 @@ export default async function Inicio() {
           cor="verde"
           valor={formata.decimal(resumo.media)}
           rotulo="Média geral"
-          descricao={`Média das notas finais (0 a 10) desde ${DESDE}, ponderada pelo número de alunos com nota`}
+          ajuda={
+            <Ajuda pergunta="Como é a média geral?">
+              <span className="block">
+                Média das notas finais (0 a 10) desde {DESDE}, ponderada pelo número de alunos com nota.
+              </span>
+            </Ajuda>
+          }
         />
         <CartaoResumo
           cor="verde"
           valor={formata.porcento(resumo.aprovacao)}
           rotulo="Aprovação média"
-          descricao={`Alunos aprovados sobre o total das turmas desde ${DESDE}`}
+          ajuda={
+            <Ajuda pergunta="Como é a aprovação média?">
+              <span className="block">Alunos aprovados sobre o total das turmas desde {DESDE}.</span>
+            </Ajuda>
+          }
         />
         {/* O cartão "Avaliações" do mockup volta quando as avaliações das
             disciplinas pelos alunos abrirem; até lá ele só mostraria 0. */}
