@@ -13,9 +13,9 @@ export default function AjudaDificuldade() {
         outras.
       </span>
       <span className="mt-1.5 block">
-        A conta usa as turmas desde {DESDE} e três medidas: a reprovação (peso {porcento(PESOS.reprovacao)}), o
-        quanto a média das notas fica abaixo de 10 ({porcento(PESOS.notaBaixa)}) e o desvio padrão das notas
-        ({porcento(PESOS.desvio)}), que mostra se a turma se divide entre quem vai muito bem e quem vai muito mal.
+        A conta usa as turmas desde {DESDE} e três medidas: a reprovação (peso {porcento(PESOS.reprovacao)}), o quanto a
+        média das notas fica abaixo de 10 ({porcento(PESOS.notaBaixa)}) e o desvio padrão das notas (
+        {porcento(PESOS.desvio)}), que mostra se a turma se divide entre quem vai muito bem e quem vai muito mal.
         Disciplinas com poucos alunos ficam perto do meio da escala até terem dados suficientes.
       </span>
     </Ajuda>

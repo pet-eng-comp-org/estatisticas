@@ -91,7 +91,7 @@ export default function BarraRolagem({ alvo }: { alvo: RefObject<HTMLElement | n
         ref={barra}
         aria-hidden="true"
         onPointerDown={pular}
-        className={`sticky cursor-pointer bottom-0 z-10 -mt-7 h-7 border-t border-borda bg-white/90 px-[29px] py-[9px] backdrop-blur-sm transition-opacity max-celular:px-4 ${mostra ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`sticky bottom-0 z-10 -mt-7 h-7 cursor-pointer border-t border-borda bg-white/90 px-[29px] py-[9px] backdrop-blur-sm transition-opacity max-celular:px-4 ${mostra ? "opacity-100" : "pointer-events-none opacity-0"}`}
       >
         <div ref={trilho} className="relative h-2.5 rounded-full bg-trilho">
           <div

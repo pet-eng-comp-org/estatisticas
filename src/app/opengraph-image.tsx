@@ -13,51 +13,43 @@ const fonte = (peso: string) => readFile(path.join(process.cwd(), "src/app/fonte
 
 export default async function Imagem() {
   const [normal, negrito] = await Promise.all([fonte("400"), fonte("700")]);
-  const barra = (altura: number) => (
-    <div style={{ width: 34, height: altura, borderRadius: 17, background: "#fff" }} />
-  );
+  const barra = (altura: number) => <div style={{ width: 34, height: altura, borderRadius: 17, background: "#fff" }} />;
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        padding: "0 90px",
+        background: "#FFF9FB",
+        fontFamily: "Inter",
+      }}
+    >
       <div
         style={{
-          width: "100%",
-          height: "100%",
+          width: 200,
+          height: 200,
+          borderRadius: 48,
+          background: "#800C33",
           display: "flex",
-          flexDirection: "column",
+          alignItems: "flex-end",
           justifyContent: "center",
-          padding: "0 90px",
-          background: "#FFF9FB",
-          fontFamily: "Inter",
+          gap: 18,
+          paddingBottom: 34,
         }}
       >
-        <div
-          style={{
-            width: 200,
-            height: 200,
-            borderRadius: 48,
-            background: "#800C33",
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "center",
-            gap: 18,
-            paddingBottom: 34,
-          }}
-        >
-          {barra(56)}
-          {barra(94)}
-          {barra(132)}
-        </div>
-        <div style={{ marginTop: 48, fontSize: 64, fontWeight: 700, color: "#800C33" }}>
-          Estatísticas de disciplinas
-        </div>
-        <div style={{ marginTop: 8, fontSize: 40, fontWeight: 700, color: "#BF2D5D" }}>
-          Engenharia de Computação Ufes
-        </div>
-        <div style={{ marginTop: 28, fontSize: 30, color: "#7A7074" }}>
-          Aprovação, notas, dificuldade e a grade curricular de cada disciplina
-        </div>
+        {barra(56)}
+        {barra(94)}
+        {barra(132)}
       </div>
-    ),
+      <div style={{ marginTop: 48, fontSize: 64, fontWeight: 700, color: "#800C33" }}>Estatísticas de disciplinas</div>
+      <div style={{ marginTop: 8, fontSize: 40, fontWeight: 700, color: "#BF2D5D" }}>Engenharia de Computação Ufes</div>
+      <div style={{ marginTop: 28, fontSize: 30, color: "#7A7074" }}>
+        Aprovação, notas, dificuldade e a grade curricular de cada disciplina
+      </div>
+    </div>,
     {
       ...size,
       fonts: [

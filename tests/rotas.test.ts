@@ -17,7 +17,14 @@ describe("traçado das setas da grade", () => {
   const livre = (c: number, l: number) => !ocupado.has(`${c},${l}`);
 
   it("disciplinas de origem diferentes descem por trilhos diferentes", () => {
-    const rotas = rotear([{ de: "A", para: "Y" }, { de: "B", para: "X" }], caixas, livre);
+    const rotas = rotear(
+      [
+        { de: "A", para: "Y" },
+        { de: "B", para: "X" },
+      ],
+      caixas,
+      livre,
+    );
     const trilho = (de: string) => rotas.find((r) => r.de === de)!.segmentos[1].x1;
     expect(trilho("A")).not.toBe(trilho("B"));
   });
@@ -25,18 +32,39 @@ describe("traçado das setas da grade", () => {
   it("dá um saltinho onde a horizontal cruza a vertical de outra seta", () => {
     // A desce até Y (linha 2); B sobe até X (linha 1). A horizontal final de
     // uma cruza a vertical da outra.
-    const rotas = rotear([{ de: "A", para: "Y" }, { de: "B", para: "X" }], caixas, livre);
+    const rotas = rotear(
+      [
+        { de: "A", para: "Y" },
+        { de: "B", para: "X" },
+      ],
+      caixas,
+      livre,
+    );
     const caminhos = [...desenhar(rotas).values()];
     expect(caminhos.some((d) => d.includes("A5 5"))).toBe(true);
   });
 
   it("não salta onde setas para o mesmo destino se juntam", () => {
-    const rotas = rotear([{ de: "A", para: "X" }, { de: "B", para: "X" }], caixas, livre);
+    const rotas = rotear(
+      [
+        { de: "A", para: "X" },
+        { de: "B", para: "X" },
+      ],
+      caixas,
+      livre,
+    );
     for (const d of desenhar(rotas).values()) expect(d).not.toContain("A");
   });
 
   it("setas que pulam colunas para o mesmo destino dividem trilho e altura", () => {
-    const rotas = rotear([{ de: "A", para: "Z" }, { de: "B", para: "Z" }], caixas, livre);
+    const rotas = rotear(
+      [
+        { de: "A", para: "Z" },
+        { de: "B", para: "Z" },
+      ],
+      caixas,
+      livre,
+    );
     const [r1, r2] = rotas;
     // Segmento horizontal no vão e trilho de chegada são os mesmos.
     expect(r1.segmentos.at(-3)!.y1).toBe(r2.segmentos.at(-3)!.y1);
@@ -68,8 +96,11 @@ describe("percursos da matriz oficial", () => {
   it("as 43 setas entre colunas viram linhas retas que encostam nos cartões", () => {
     const periodo = new Map(GRADE_ECOMP_2022.map((d) => [d.codigo_disciplina, d.periodo_ecomp]));
     const caixas: Record<string, Caixa> = {};
-    for (const [codigo, lugar] of Object.entries(MATRIZ_2022)) caixas[codigo] = caixa(periodo.get(codigo)! - 1, lugar.linha);
-    const ligacoes = SETAS_2022.map(([de, para]) => ({ de, para })).filter((l) => caixas[l.de].coluna !== caixas[l.para].coluna);
+    for (const [codigo, lugar] of Object.entries(MATRIZ_2022))
+      caixas[codigo] = caixa(periodo.get(codigo)! - 1, lugar.linha);
+    const ligacoes = SETAS_2022.map(([de, para]) => ({ de, para })).filter(
+      (l) => caixas[l.de].coluna !== caixas[l.para].coluna,
+    );
     const rotas = rotasDeReferencia(SETAS_2022, ligacoes, caixas);
     expect(rotas).toHaveLength(43);
     for (const r of rotas) {

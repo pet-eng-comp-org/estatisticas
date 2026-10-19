@@ -180,8 +180,7 @@ export function resumoGeral(curriculo: Curriculo): ResumoGeral {
  */
 export function historico(codigo: string): Semestre[] {
   const linhas = banco()
-    .db
-    .select({
+    .db.select({
       codigo: schema.notas.codigo,
       curso: schema.notas.curso,
       media: schema.notas.media,

@@ -63,7 +63,10 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
   return (
     <header className="border-b border-borda bg-white">
       <div className="mx-auto flex h-[85px] max-w-[1440px] items-center pr-9 pl-[34px] max-[1180px]:h-auto max-[1180px]:flex-wrap max-[1180px]:gap-y-2.5 max-[1180px]:px-8 max-[1180px]:pt-4 max-celular:px-4">
-        <Link href="/" className="flex shrink-0 items-center gap-4 no-underline max-celular:min-w-0 max-celular:gap-2.5">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-4 no-underline max-celular:min-w-0 max-celular:gap-2.5"
+        >
           <Logo />
           <span className="flex flex-col">
             <span className="text-2xl leading-[29px] font-bold text-vinho uppercase max-celular:text-base max-celular:leading-5">
@@ -88,7 +91,7 @@ export default function Cabecalho({ curriculo }: { curriculo: 2008 | 2022 }) {
               key={s.caminho}
               href={s.caminho}
               aria-current={ativa(atual, s.caminho) ? "page" : undefined}
-              className={`${s.espaco} rounded py-1.5 max-celular:ml-0 text-[15px] leading-[18px] font-bold whitespace-nowrap text-cinza no-underline hover:text-vinho aria-[current=page]:text-vinho`}
+              className={`${s.espaco} rounded py-1.5 text-[15px] leading-[18px] font-bold whitespace-nowrap text-cinza no-underline hover:text-vinho aria-[current=page]:text-vinho max-celular:ml-0`}
             >
               {s.curto ? (
                 <>

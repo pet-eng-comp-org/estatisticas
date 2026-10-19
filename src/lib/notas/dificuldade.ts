@@ -49,8 +49,7 @@ function padroniza(valores: number[]): number[] {
 /** Função de distribuição da normal padrão (aproximação de Abramowitz e Stegun, erro < 1e-7). */
 export function normal(z: number): number {
   const t = 1 / (1 + 0.3275911 * (Math.abs(z) / Math.SQRT2));
-  const p =
-    t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+  const p = t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
   const erf = 1 - p * Math.exp(-(z * z) / 2);
   return z >= 0 ? (1 + erf) / 2 : (1 - erf) / 2;
 }
@@ -77,9 +76,7 @@ export function calcularDificuldade(entradas: Entrada[]): Map<string, number> {
   const zr = padroniza(reprovacao);
   const zn = padroniza(notaBaixa);
   const zd = padroniza(desvio);
-  const combinado = validas.map(
-    (_, i) => PESOS.reprovacao * zr[i] + PESOS.notaBaixa * zn[i] + PESOS.desvio * zd[i],
-  );
+  const combinado = validas.map((_, i) => PESOS.reprovacao * zr[i] + PESOS.notaBaixa * zn[i] + PESOS.desvio * zd[i]);
   // A soma de escores correlacionados não tem desvio 1: padroniza de novo
   // para a curva normal espalhar a escala inteira.
   const final = padroniza(combinado);

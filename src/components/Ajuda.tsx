@@ -125,7 +125,7 @@ export default function Ajuda({ pergunta, children }: { pergunta: string; childr
         hidden={!aberto}
         ref={balao}
         // whitespace-normal porque o rótulo do cartão em volta é nowrap.
-        className="fixed z-50 overflow-y-auto overscroll-contain rounded-xl border border-borda bg-white px-4 py-3 text-left text-[13px] leading-[19px] font-normal text-cinza shadow-[0_4px_14px_rgba(128,12,51,0.12)] whitespace-normal"
+        className="fixed z-50 overflow-y-auto overscroll-contain rounded-xl border border-borda bg-white px-4 py-3 text-left text-[13px] leading-[19px] font-normal whitespace-normal text-cinza shadow-[0_4px_14px_rgba(128,12,51,0.12)]"
       >
         {children}
       </span>

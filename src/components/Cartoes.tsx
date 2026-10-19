@@ -58,9 +58,11 @@ export function CartaoResumo({
     <div
       // Com a ajuda ao lado do rótulo, o title repetiria o balão dela.
       title={ajuda ? undefined : descricao}
-      className="cartao flex h-[111px] items-center gap-[18px] px-[17px] max-celular:h-auto max-celular:flex-col max-celular:items-start max-celular:gap-2.5 max-celular:px-3 max-celular:py-3.5"
+      className="flex h-[111px] items-center gap-[18px] cartao px-[17px] max-celular:h-auto max-celular:flex-col max-celular:items-start max-celular:gap-2.5 max-celular:px-3 max-celular:py-3.5"
     >
-      <span className={`mt-[33px] flex h-[38px] w-12 shrink-0 items-center justify-center self-start rounded-xl max-celular:mt-0 ${icone}`}>
+      <span
+        className={`mt-[33px] flex h-[38px] w-12 shrink-0 items-center justify-center self-start rounded-xl max-celular:mt-0 ${icone}`}
+      >
         <Ponto />
       </span>
       <span className="mt-[30px] flex min-w-0 flex-col self-start max-celular:mt-0">
@@ -96,7 +98,7 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
   return (
     <Link
       href={`/disciplinas/${d.codigo}`}
-      className="cartao flex min-h-[180px] w-[300px] flex-col pt-[17px] pr-3.5 pb-[18px] pl-[21px] text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)] max-celular:w-full"
+      className="flex min-h-[180px] w-[300px] flex-col cartao pt-[17px] pr-3.5 pb-[18px] pl-[21px] text-vinho no-underline transition hover:border-rosa hover:shadow-[0_4px_14px_rgba(128,12,51,0.08)] max-celular:w-full"
     >
       {/* O nome quebra de linha em vez de ser cortado (pedido da Bia); com
           duas linhas, o cartão cresce e o resto desce junto. */}
@@ -114,7 +116,7 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
         <span className="text-[13px] leading-4 font-bold text-cinza">Dificuldade</span>
         <span className="text-base leading-[19px] font-bold text-rosa">{formata.decimal(dificuldade)}</span>
       </span>
-      <span aria-hidden="true" className="barra mt-2 w-64 max-celular:mr-[7px] max-celular:w-auto">
+      <span aria-hidden="true" className="mt-2 barra w-64 max-celular:mr-[7px] max-celular:w-auto">
         <span style={{ width: largura(fracaoDificuldade(dificuldade)) }} />
       </span>
 
@@ -122,7 +124,7 @@ export function CartaoDisciplina({ d }: { d: DisciplinaComNumeros }) {
         <span className="text-[13px] leading-4 font-bold text-cinza">Aprovação</span>
         <span className="text-base leading-[19px] font-bold text-verde">{formata.porcento(n?.aprovacao)}</span>
       </span>
-      <span aria-hidden="true" className="barra barra-verde mt-2 w-64 max-celular:mr-[7px] max-celular:w-auto">
+      <span aria-hidden="true" className="mt-2 barra w-64 barra-verde max-celular:mr-[7px] max-celular:w-auto">
         <span style={{ width: largura(n?.aprovacao) }} />
       </span>
       {/* A linha "Sem avaliações ainda" do mockup (com a Estrela) volta

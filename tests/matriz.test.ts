@@ -89,4 +89,3 @@ describe("desenho da grade 2008", () => {
       for (const e of lugar.etiquetas ?? []) expect(MATRIZ_2008[e], e).toBeDefined();
   });
 });
-

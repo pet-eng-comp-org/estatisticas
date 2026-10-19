@@ -123,7 +123,6 @@ export const OPTATIVAS_2022: Array<{ periodo: number; linha: number }> = [
 // Carga de cada espaço de optativa na matriz oficial.
 export const HORAS_OPTATIVA = 60;
 
-
 /**
  * Área de uma disciplina: a do desenho da grade (2022 e 2008) e, fora dele,
  * pelo departamento e pelo nome (optativas e outras).
